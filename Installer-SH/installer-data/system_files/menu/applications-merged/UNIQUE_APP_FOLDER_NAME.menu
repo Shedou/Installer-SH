@@ -1,0 +1,17 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN" "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu><!-- Level 0 -->
+	<Name>Applications</Name>
+	<Menu><!-- apps category -->
+		<Name>apps</Name>
+		<Menu><!-- SubMenu -->
+			<Name>UNIQUE_APP_FOLDER_NAME</Name>
+			<Directory>apps/UNIQUE_APP_FOLDER_NAME/UNIQUE_APP_FOLDER_NAME.directory</Directory>
+			<Include>
+				<Category>UNIQUE_APP_FOLDER_NAME</Category>
+				<!-- Example
+				<Filename>apps-UNIQUE_APP_FOLDER_NAME-UNIQUE_APP_FOLDER_NAME-uninstall.desktop</Filename>
+				-->
+			</Include>
+		</Menu>
+	</Menu>
+</Menu>

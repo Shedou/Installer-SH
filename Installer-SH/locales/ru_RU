@@ -1,0 +1,123 @@
+# Locale file for Installer-SH
+
+Locale_Version="2.0"
+Current_Locale="RU Русский"
+
+# Localization:
+
+Info_Description="\
+  1) Этот установщик (краткое описание):
+     - Подходит для установки на автономные ПК без доступа в Интернет.
+     - Хранит установочные файлы в архиве 7-zip (хорошее сжатие и быстрая распаковка).
+  2) Проверьте текущий файл \"installer.sh\", чтобы настроить установочный пакет."
+
+Str_ERROR="${Font_Bold}${Font_Red}ОШИБКА${Font_Reset_Color}${Font_Reset}"
+Str_ATTENTION="${Font_Bold}${Font_Yellow}ВНИМАНИЕ${Font_Reset_Color}${Font_Reset}"
+Str_WARNING="${Font_Bold}${Font_Yellow}ПРЕДУПРЕЖДЕНИЕ${Font_Reset_Color}${Font_Reset}"
+
+Str_Interrupted_By_User="Прервано пользователем"
+Str_Complete_Install="Процесс установки успешно завершен."
+
+Str_Error_All_Ok="Условие "all_ok" не пройдено в функции:"
+
+Str_ABORT_Msg="Код выхода -"
+Str_ABORT_Exit="Нажмите Enter или закройте окно, чтобы выйти."
+Str_ABORT_Errors="Ошибки:"
+Str_ABORT_Warnings="Предупреждения:"
+
+Str_BASEINFO_Head="Установка базовых компонентов:"
+Str_BASEINFO_Warning="Внимание! Если вы здесь - вы не используете Chimbalix,\n  другие дистрибутивы Linux требуют некоторой подготовки, должны быть установлены следующие компоненты:"
+Str_BASEINFO_PortSoft="Каталог PortSoft:"
+Str_BASEINFO_PortSoft_Full="Базовый каталог для размещения файлов программ, основной каталог приложений в дистрибутиве Chimbalix."
+Str_BASEINFO_MenuApps="Стабильная категория меню \"Приложения\":"
+Str_BASEINFO_MenuApps_Full="Стабильная категория \"Приложения\" в меню для размещения ярлыков установленных программ."
+Str_BASEINFO_Attention="Внимание! Вышеперечисленные компоненты будут установлены в соответствии с текущим режимом установки.\n  ПОСЛЕ ПОДТВЕРЖДЕНИЯ ЭТО ДЕЙСТВИЕ НЕЛЬЗЯ ОТМЕНИТЬ!\n  Для корректной работы ваш дистрибутив должен поддерживать стандарт XDG!\n  Меню также должно поддерживать подкатегории!\n  Вам также может потребоваться выйти из системы, чтобы обновить меню после установки."
+Str_BASEINFO_Confirm="Начать процесс установки? Введите \"y\" или \"yes\" для подтверждения."
+Str_BASE_COMPLETE="Готово, в зависимости от дистрибутива меню может появиться только после повторного входа в систему.\n Нажмите \"Enter\" чтобы продолжить."
+
+Str_BASECHECKMD5PRINT_Hash_Not_Match="The Base Data archive hash sum does not match the value specified in the settings!"
+Str_BASECHECKMD5PRINT_Hash_Not_Match2="The files may have been copied with errors or modified! Be careful!"
+Str_BASECHECKMD5PRINT_Expected_bHash="Expected MD5 hash of \"Base Data\":"
+Str_BASECHECKMD5PRINT_Real_bHash="Real MD5 hash of \"Base Data\":"
+
+Str_PACKAGEINFO_Head="Информация о ПО:"
+Str_PACKAGEINFO_Name="Имя:"
+Str_PACKAGEINFO_ReleaseDate="Дата Выпуска:"
+Str_PACKAGEINFO_Category="Категория:"
+Str_PACKAGEINFO_Platform="Платформа:"
+Str_PACKAGEINFO_InstalledSize="Размер после установки:"
+Str_PACKAGEINFO_Licensing="Лицензия:"
+Str_PACKAGEINFO_Developer="Разработчик:"
+Str_PACKAGEINFO_URL="URL:"
+Str_PACKAGEINFO_Description="Описание:"
+Str_PACKAGEINFO_CurrentOS="Текущая ОС:"
+Str_PACKAGEINFO_InstallMode="Режим Установки:"
+Str_PACKAGEINFO_Confirm="Начать процесс установки приложения? Введите \"y\" или \"yes\" для подтверждения."
+
+Str_CHECKMD5PRINT_Head="Проверка целостности:"
+Str_CHECKMD5PRINT_Hash_Not_Match="Хэш-сумма архива не соответствует значению, указанному в настройках!"
+Str_CHECKMD5PRINT_Hash_Not_Match2="Файлы могли быть скопированы с ошибками или изменены! Будьте осторожны!"
+Str_CHECKMD5PRINT_Expected_pHash="Ожидаемый MD5-хэш \"Program Files\":"
+Str_CHECKMD5PRINT_Expected_sHash="Ожидаемый MD5-хэш \"System Files\":"
+Str_CHECKMD5PRINT_Expected_uHash="Ожидаемый MD5-хэш \"User Files\":"
+Str_CHECKMD5PRINT_Real_pHash="Реальный MD5-хэш \"Program Files\":"
+Str_CHECKMD5PRINT_Real_sHash="Реальный MD5-хэш \"System Files\":"
+Str_CHECKMD5PRINT_Real_uHash="Реальный MD5-хэш \"User Files\":"
+Str_CHECKMD5PRINT_yes_To_Continue="Введите \"y\" or \"yes\" для продолжения установки (не рекомендуется):"
+Str_CHECKMD5PRINT_Enter_To_Continue="Нажмите Enter, чтобы продолжить."
+
+Str_CHECKMD5_Head="Проверка целостности архивов:"
+Str_CHECKMD5_Sub_Head="Проверка целостности установочных архивов, пожалуйста, подождите..."
+Str_CHECKMD5_Sub_Head2="(это может занять некоторое время, если приложение большое)"
+
+Str_PRINTINSTALLSETTINGS_Head="Параметры установки"
+Str_PRINTINSTALLSETTINGS_Temp_Dir="Временный каталог:"
+Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Каталог установки приложения:"
+Str_PRINTINSTALLSETTINGS_Menu_Dirs="Файлы меню будут установлены в:"
+Str_PRINTINSTALLSETTINGS_Bin_Dir="Файлы \"bin\" будут установлены в:"
+Str_PRINTINSTALLSETTINGS_Copy_uData_To="Данные пользователя будут установлены в:"
+Str_PRINTINSTALLSETTINGS_Copy_uData_To2="Это экспериментальная функция."
+Str_PRINTINSTALLSETTINGS_Copy_uData_To3="Это позволяет избежать конфликтов между разными версиями приложения."
+Str_PRINTINSTALLSETTINGS_Copy_uData_To4="Это не предназначено для приложений, устанавливаемых в системном режиме."
+Str_PRINTINSTALLSETTINGS_System_Mode="Используйте режим \"System\" только при установке ПО для всех пользователей!"
+Str_PRINTINSTALLSETTINGS_System_Mode2="Для установки требуются права root!"
+Str_PRINTINSTALLSETTINGS_Before_Install="Перед установкой закройте все важные приложения."
+Str_PRINTINSTALLSETTINGS_Confirm="Введите \"y\" or \"yes\" для начала установки."
+Str_PRINTINSTALLSETTINGS_Helpers_Dir="Файлы \"приложений по умолчанию\" (Helpers) будут установлены в:"
+Str_PRINTINSTALLSETTINGS_Desktop_Dir="Ярлыки рабочего стола будут установлены в:"
+
+Str_PREPAREINPUTFILES_Err_Unpack="Ошибка распаковки временных файлов:"
+Str_PREPAREINPUTFILES_Err_Unpack2="Попробуйте перед запуском скопировать установочные файлы на другой диск."
+
+Str_CHECKOUTPUTS_Head="Проверка выходных каталогов:"
+Str_CHECKOUTPUTS_Already_Present="Папки|Файлы уже присутствуют:"
+Str_CHECKOUTPUTS_Attention="Продолжить установку и перезаписать каталоги/файлы?"
+Str_CHECKOUTPUTS_Attention2="Пожалуйста, сделайте резервную копию ваших данных, если таковые имеются, в указанных выше каталогах."
+Str_CHECKOUTPUTS_Confirm="Введите \"y\" or \"yes\", чтобы продолжить."
+
+Str_INSTALLAPP_Head="Установка..."
+Str_INSTALLAPP_No_Rights="Нет прав на каталог установки приложения?"
+Str_INSTALLAPP_Create_Out="Создание конечной папки, если она не существует..."
+Str_INSTALLAPP_Unpack_App="Распаковка файлов приложения..."
+Str_INSTALLAPP_Unpack_Err="Ошибка распаковки файлов программы..."
+Str_INSTALLAPP_Unpack_Err2="Испорченный архив? Или символические ссылки с абсолютными путями как часть приложения?"
+Str_INSTALLAPP_Unpack_Err_Continue="Введите \"y\" or \"yes\", чтобы продолжить процесс установки..."
+Str_INSTALLAPP_Unpack_Err_Abort="На этапе распаковки файлов программы."
+Str_INSTALLAPP_Unpack_Continue="Установка продолжается..."
+Str_INSTALLAPP_Set_Rights="Установка прав и владельца..."
+Str_INSTALLAPP_Install_Bin_Menu="Установка Bin-файлов и копирование файлов меню..."
+Str_INSTALLAPP_Copy_uFiles="Копирование пользовательских файлов..."
+Str_INSTALLAPP_Copy_uFiles_Err="Ошибка распаковки пользовательских файлов..."
+
+Str_CHECKSYSDE_NotFound="Не найдено..."
+Str_CHECKSYSDE_XDG_INFO_INCORRECT="Дистрибутив не предоставил корректную информацию через \"XDG\" переменную..."
+Str_CHECKSYSDE_DE_CHECK="Проверка DE"
+Str_CHECKSYSDE_DE_WEIRD="Странное DE"
+Str_CHECKSYSDE_DE_WEIRD_OPENBOX="OpenBox не следует спецификациям XDG!\n    Установщик не раассчитан на работу со специфической структурой меню OpenBox."
+Str_CHECKSYSDE_DE_WEIRD_SWAY="Что за..."
+Str_CHECKSYSDE_DE_WEIRD_LXQT="Перезайдите в систему, если новые ярлыки не появились в меню!"
+Str_CHECKSYSDE_DE_WEIRD_BUDGIE="New shortcuts may not appear in the menu..."
+Str_CHECKSYSDE_DE_WEIRD_GNOME="Меню не соответствует спецификациям XDG в полной мере...\n    Перезайдите в систему, если новые ярлыки не появились в меню!"
+
+Str_CHECK_ERRORS_ARCH="Внимание!"
+Str_CHECK_ERRORS_ARCH_WARN="Архитектура системы ($Current_Architecture) не соответствует выбранной архитектуре инструментов ($Tools_Architecture)!"

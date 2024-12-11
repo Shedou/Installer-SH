@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec "PATH_TO_FOLDER/PROGRAM_UNINSTALLER_FILE" "$@"

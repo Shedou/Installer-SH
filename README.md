@@ -1,5 +1,5 @@
 ## Installer-SH
 
-The Installer-SH directory is under active development.
+The current repository is for active development of Installer-SH, it contains the latest version of the installation package, however it may be unstable.
 
-Stable versions of Installer-SH can be found in the Installer-SH-Archive directory.
+Stable and archive versions are located in the "[Installer-SH-Archive](https://github.com/Shedou/Installer-SH-Archive)" repository.

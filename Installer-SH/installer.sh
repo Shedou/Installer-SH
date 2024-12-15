@@ -40,8 +40,8 @@ function _INSTALLER_SETTINGS() {
 	
 	# Copy data to the "userdata" directory.
 	#  For example:
-	#   Install path:  /home/USER/.local/portsoft/script/example-application-20
-	#   UserData path: /home/USER/.local/portsoft/script/example-application-20/userdata
+	#   Install path:  /home/USER/portsoft/script/example-application-20
+	#   UserData path: /home/USER/portsoft/script/example-application-20/userdata
 	#
 	# This can help avoid application version conflicts, but requires special preparation.
 	# Do not use for applications installed in "System" mode!
@@ -268,7 +268,7 @@ function _INIT_GLOBAL_PATHS() {
 	
 	# Application installation directory.
 	Out_PortSoft_System="/portsoft"
-	Out_PortSoft_User="$User_Home/.local/portsoft"
+	Out_PortSoft_User="$User_Home/portsoft"
 	
 	Out_Install_Dir_System="$Out_PortSoft_System/$Program_Architecture/$Unique_App_Folder_Name"
 	Out_Install_Dir_User="$Out_PortSoft_User/$Program_Architecture/$Unique_App_Folder_Name"
@@ -523,12 +523,10 @@ function _CHECK_SYSTEM() {
 
 function _CHECK_PORTSOFT() {
 	# Check PortSoft
-	if [ "$Current_OS_Name" != "Chimbalix" ]; then
-		if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-			if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
-			source "$Tool_Prepare_Base"
-			_CLEAR_BACKGROUND
-		fi
+	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
+		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
+		source "$Tool_Prepare_Base"
+		_CLEAR_BACKGROUND
 	fi
 }
 
@@ -1221,9 +1219,9 @@ function _SET_LOCALE_DEFAULT() {
 	Str_ABORT_Warnings="Warnings:"
 	
 	Str_BASEINFO_Head="Installing basic components:"
-	Str_BASEINFO_Warning="Warning! If you are here - you are not using Chimbalix,\n  other Linux distributions require some preparation, the following components must be installed:"
+	Str_BASEINFO_Warning="Attention! Your system requires preparation, the following basic components must be installed:"
 	Str_BASEINFO_PortSoft="PortSoft directory:"
-	Str_BASEINFO_PortSoft_Full="Base directory for placing program files, the main application directory in the Chimbalix distribution."
+	Str_BASEINFO_PortSoft_Full="The base directory for placing programs,\n   since version 0.3 it can be located in the root of the file system or in the user's home directory."
 	Str_BASEINFO_MenuApps="Stable \"Applications\" menu category:"
 	Str_BASEINFO_MenuApps_Full="Stable \"Applications\" category in the menu for placing shortcuts to installed programs."
 	Str_BASEINFO_Attention="Attention! The above components will be installed according to the current installation mode.\n  AFTER CONFIRMATION, THIS ACTION CANNOT BE CANCELLED!\n  For proper operation, your distribution must support the XDG standard!\n  The menu must also support subcategories!\n  You may also need to Log Out to refresh the menu after installation."

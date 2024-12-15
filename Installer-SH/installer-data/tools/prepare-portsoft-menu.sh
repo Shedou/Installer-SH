@@ -9,7 +9,7 @@ Base_Temp_Dir="/tmp/chimbalix-portsoft-menu-prepare""_$RANDOM""_$RANDOM" # TEMP 
 
 ######### - Archive path - #########
 Archive_Base_Data="$Path_Installer_Data/tools/base_data.7z"
-Archive_Base_Data_MD5="ce6a991ac1fcc596308e943c58369c11"
+Archive_Base_Data_MD5="6bb60828b9e2b98d08ffbbf4145c2c0e"
 
 function _BASE_MAIN() {
 	_BASE_PRINT_INFO

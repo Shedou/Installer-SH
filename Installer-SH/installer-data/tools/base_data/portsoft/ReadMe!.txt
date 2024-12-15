@@ -1,4 +1,4 @@
-Chimbalix "portsoft" directory v0.2
+Chimbalix "portsoft" directory v0.3
 
 -= BASIC RULES =-
 
@@ -28,8 +28,8 @@ Owner-group: root:root
 -= USER =-
 
 - User side PORTSOFT_FOLDER and ARCHI_FOLDERS:
-Path: /home/USERNAME/.local/portsoft
-Path: /home/USERNAME/.local/portsoft/ARCHI_FOLDERS
+Path: /home/USERNAME/portsoft
+Path: /home/USERNAME/portsoft/ARCHI_FOLDERS
 Owner and rights: Not specified
 
 -= ======== =-
@@ -62,3 +62,6 @@ I don't know, think of something...
 and so on...
 
 
+- Changelog:
+ -= v0.3 =-
+ Removed ".local" from portsoft user directory path, the dot could cause problems with some applications.

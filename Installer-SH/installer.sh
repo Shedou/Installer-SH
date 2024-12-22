@@ -30,6 +30,10 @@ function _MAIN() {
 	_POST_INSTALL
 }
 
+######### ---- -------- ---- #########
+######### ---- SETTINGS ---- #########
+######### ---- -------- ---- #########
+
 function _INSTALLER_SETTINGS() {
 	Tools_Architecture="x86_64"   # x86_64, x86
 	Program_Architecture="script" # x86_64, x86, script, other
@@ -53,11 +57,8 @@ function _INSTALLER_SETTINGS() {
 }
 
 function _PACKAGE_SETTINGS() {
-######### ---- -------- ---- #########
-######### ---- SETTINGS ---- #########
-######### ---- -------- ---- #########
 
-Unique_App_Folder_Name="example-application-20" #=> UNIQUE_APP_FOLDER_NAME
+Unique_App_Folder_Name="example-application-21" #=> UNIQUE_APP_FOLDER_NAME
 
  # Unique name of the output directory.
  # WARNING! Do not use capital letters in this place!
@@ -70,7 +71,7 @@ Unique_App_Folder_Name="example-application-20" #=> UNIQUE_APP_FOLDER_NAME
 ######### - ------------------- - #########
 
 Info_Name="Example Application"
-Info_Version="2.0"
+Info_Version="2.1"
 Info_Release_Date="2024-12-xx"
 Info_Category="Other"
 Info_Platform="Linux"
@@ -95,11 +96,11 @@ fi
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application,
  # this functionality does not allow you to fully customize the menu files.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Example Application 2.0"   #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="Example Application 2.1"   #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                  #=> MENU_DIRECTORY_ICON
 
 Program_Executable_File="example-application"           #=> PROGRAM_EXECUTABLE_FILE
-Program_Name_In_Menu="Example Application 2.0"          #=> PROGRAM_NAME_IN_MENU
+Program_Name_In_Menu="Example Application 2.1"          #=> PROGRAM_NAME_IN_MENU
 Program_Icon_In_Menu="icon.png"                         #=> PROGRAM_ICON_IN_MENU
 Program_Exe_Run_In_Terminal="true"                      #=> PROGRAM_EXE_RUN_IN_TERMINAL
 Program_Install_Mode="$Install_Mode"                    #=> PROGRAM_INSTALL_MODE
@@ -125,12 +126,49 @@ Archive_MD5_System_Files_Hash=""
 Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 
  # Header
-Header="${Font_DarkYellow}${Font_Bold} -=: Universal Software Installer Script for Chimbalix (Installer-SH v2.0) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
+ Header="${Font_DarkYellow}${Font_Bold} -=: Universal Software Installer Script for Chimbalix (Installer-SH v2.1) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
+}
 
 ######### -- ------------ -- #########
 ######### -- END SETTINGS -- #########
 ######### -- ------------ -- #########
+
+######### -------------------- #########
+######### Check execute rights #########
+
+_CECK_EXECUTE_RIGHTS() {
+	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
+		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
+	fi
+	
+	#if [ $Current_DE == "XFCE" ]; then
+	#	if ! [[ -x "$Tool_Gio_Trust_Xfce" ]]; then
+	#		if ! chmod +x "$Tool_Gio_Trust_Xfce"; then _ABORT "chmod Tool_Gio_Trust_Xfce error."; fi
+	#	fi
+	#fi
 }
+
+######### Check PortSoft #########
+######### -------------- #########
+
+function _CHECK_PORTSOFT() {
+	# Check PortSoft
+	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
+		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
+		source "$Tool_Prepare_Base"
+		_CLEAR_BACKGROUND
+	fi
+}
+
+######### ------------ #########
+######### Check Errors #########
+
+function _CHECK_ERRORS() {
+	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+}
+
+######### ----------- #########
+######### Test colors #########
 
 function _TEST_COLORS() {
 	echo -e "\n${Font_Bold} -= TEST COLORS =-"
@@ -409,9 +447,6 @@ function _WARNING() {
 	List_Warnings="${List_Warnings}\n    $warn_first - $warn_second"
 }
 
-######### Base functions #########
-######### -------------- #########
-
 ######### ------------ #########
 ######### Check System #########
 
@@ -518,31 +553,6 @@ function _CHECK_SYSTEM() {
 	#if [ "$Current_OS_Name" == "Chimbalix" ]; then Font_Styles_RGB=true; fi
 }
 
-######### Check PortSoft #########
-######### -------------- #########
-
-function _CHECK_PORTSOFT() {
-	# Check PortSoft
-	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
-		source "$Tool_Prepare_Base"
-		_CLEAR_BACKGROUND
-	fi
-}
-
-######### Check PortSoft #########
-######### -------------- #########
-
-######### ------------ #########
-######### Check Errors #########
-
-function _CHECK_ERRORS() {
-	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
-}
-
-######### Check Errors #########
-######### ------------ #########
-
 ######### ------------------------- #########
 ######### Print package information #########
 
@@ -584,9 +594,6 @@ $Info_Description
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_PACKAGE_INFO ${Font_Reset_Color}${Font_Reset}"; fi
 fi
 }
-
-######### Print package information #########
-######### ------------------------- #########
 
 ######### -------------------------------- #########
 ######### Check and compare MD5 of archive #########
@@ -676,9 +683,6 @@ else
 fi
 }
 
-######### Check and compare MD5 of archive #########
-######### -------------------------------- #########
-
 ######### --------------------------- #########
 ######### Print installation settings #########
 
@@ -740,28 +744,6 @@ $Header
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_INSTALL_SETTINGS ${Font_Reset_Color}${Font_Reset}"; fi
 fi
 }
-
-######### Print installation settings #########
-######### --------------------------- #########
-
-######### -------------------- #########
-######### Check execute rights #########
-
-_CECK_EXECUTE_RIGHTS() {
-	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
-		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
-	fi
-	
-	#if [ $Current_DE == "XFCE" ]; then
-	#	if ! [[ -x "$Tool_Gio_Trust_Xfce" ]]; then
-	#		if ! chmod +x "$Tool_Gio_Trust_Xfce"; then _ABORT "chmod Tool_Gio_Trust_Xfce error."; fi
-	#	fi
-	#fi
-}
-
-######### Check execute rights #########
-######### -------------------- #########
-
 
 ######### ------------------- #########
 ######### Prepare Input Files #########
@@ -837,9 +819,6 @@ function _PREPARE_INPUT_FILES() {
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_INPUT_FILES ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-######### Prepare Input Files #########
-######### ------------------- #########
-
 ######### ------------- #########
 ######### Check outputs #########
 
@@ -876,9 +855,6 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _CHECK_OUTPUTS ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-######### Check outputs #########
-######### ------------- #########
-
 ######### ----------------- #########
 ######### Install USER DATA #########
 
@@ -894,9 +870,6 @@ function _INSTALL_USER_DATA() {
 	fi
 	if [ $MODE_DEBUG == true ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
 }
-
-######### Install USER DATA #########
-######### ----------------- #########
 
 ######### --------------- #########
 ######### Install Helpers #########
@@ -927,9 +900,6 @@ function _INSTALL_HELPERS() {
 	else _ERROR "_INSTALL_HELPERS" "Input_Helpers_Dir not found."; fi
 }
 
-######### Install Helpers #########
-######### --------------- #########
-
 ######### --------------------- #########
 ######### Install Desktop Icons #########
 
@@ -951,9 +921,6 @@ function _INSTALL_DESKTOP_ICONS() {
 		
 	else _ERROR "_INSTALL_DESKTOP_ICONS" "Input_Desktop_Dir not found."; fi
 }
-
-######### Install Desktop Icons #########
-######### --------------------- #########
 
 ######### ------------------------------- #########
 ######### Install application (USER MODE) #########
@@ -1013,9 +980,6 @@ $Header
 		if [ $MODE_DEBUG == true ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
 }
-
-######### Install application (USER MODE) #########
-######### ------------------------------- #########
 
 ######### --------------------------------- #########
 ######### Install application (SYSTEM MODE) #########
@@ -1121,9 +1085,6 @@ function _PREPARE_UNINSTALLER() {
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_UNINSTALLER ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-######### Prepare uninstaller file #########
-######### ------------------------ #########
-
 ######### ------------ #########
 ######### Post Install #########
 
@@ -1193,9 +1154,6 @@ function _POST_INSTALL() {
 		if [ $MODE_DEBUG == true ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
 }
-
-######### Post Install #########
-######### ------------ #########
 
 ######### ---- #########
 ####### Strings! #######

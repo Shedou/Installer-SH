@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script version 2.0
+# Script version 2.1
 # LICENSE for this script is at the end of this file
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
@@ -367,10 +367,7 @@ function _INIT_GLOBAL_PATHS() {
 ######### Base functions #########
 
 function _CLEAR_BACKGROUND() {
-	#setterm -background black -clear
-	#setterm -foreground white -clear
-	clear
-	clear
+	clear; clear
 	echo -ne '\e]11;black\e\\'
 	echo -ne '\e[48;5;232m' # Crutch for GNOME...
 	echo -ne '\e]10;white\e\\'
@@ -523,7 +520,7 @@ function _CHECK_SYSTEM_DE() {
 		elif plasma-desktop --version &>/dev/null; then local check_de_raw="KDE"
 		elif gnome-shell --version &>/dev/null;    then local check_de_raw="GNOME"
 		fi
-fi
+	fi
 	
 	# Extra checks
 	if [ "$check_de_raw" == "OPENBOX" ]; then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Openbox)" "$Str_CHECKSYSDE_DE_WEIRD_OPENBOX"; fi
@@ -531,7 +528,6 @@ fi
 	if [ "$check_de_raw" == "LXQT" ];    then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (LXQt)" "$Str_CHECKSYSDE_DE_WEIRD_LXQT"; fi
 	if [ "$check_de_raw" == "BUDGIE" ];  then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Budgie)" "$Str_CHECKSYSDE_DE_WEIRD_BUDGIE"; fi
 	if [ "$check_de_raw" == "GNOME" ];   then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (GNOME)" "$Str_CHECKSYSDE_DE_WEIRD_GNOME"; fi
-	
 	
 	Current_DE="$check_de_raw"
 }
@@ -1096,9 +1092,7 @@ function _POST_INSTALL_UPDATE_MENU_LXQT() { ### WARNING! This function has been 
 			for ((post_install_update_menu_lxqt=0; post_install_update_menu_lxqt<10; post_install_update_menu_lxqt++)); do
 				if [ $MODE_SILENT == false ]; then
 					echo " Restarting LXQt Panel..."; fi
-				
 				sleep 1s
-				
 				if ! pidof lxqt-panel; then
 					if setsid lxqt-panel & disown &> /dev/null; then
 						local panel_restarted=true
@@ -1114,13 +1108,9 @@ function _POST_INSTALL_UPDATE_MENU_LXQT() { ### WARNING! This function has been 
 	done
 }
 
-function _POST_INSTALL_UPDATE_MENU_LXDE() {
-	lxpanelctl restart &> /dev/null
-}
-
-function _POST_INSTALL_UPDATE_MENU_XFCE() {
-	xfce4-panel -r &> /dev/null
-}
+function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
+function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
+function _POST_INSTALL_UPDATE_MENU_XFCE() { xfce4-panel -r &> /dev/null; }
 
 function _POST_INSTALL_UPDATE_MENU_KDE() {
 	if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null
@@ -1128,10 +1118,6 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 	elif type "kbuildsycoca5" &> /dev/null; then kbuildsycoca5 &> /dev/null
 	elif type "kbuildsycoca4" &> /dev/null; then kbuildsycoca4 &> /dev/null
 	fi
-}
-
-function _POST_INSTALL_UPDATE_MENU_OPENBOX() {
-	openbox --restart &> /dev/null
 }
 
 function _POST_INSTALL() {

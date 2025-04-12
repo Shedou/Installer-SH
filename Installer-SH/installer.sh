@@ -125,7 +125,7 @@ Archive_MD5_System_Files_Hash=""
 Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 
  # Header
- Header="${Font_DarkYellow}${Font_Bold} -=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
+ Header="${Font_DarkYellow}${Font_Bold}-=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
 }
 
 ######### -- ------------ -- #########
@@ -1267,7 +1267,7 @@ function _SET_LOCALE() {
 	if [ $MODE_SILENT == true ]; then Locale_Display="-silent"
 	else
 		if [ -e "$Locale_File" ]; then
-			if [ $(grep Locale_Version "$Locale_File") == 'Locale_Version="$LocaleVersion"' ]; then
+			if [ $(grep Locale_Version "$Locale_File") == "Locale_Version=\"$LocaleVersion\"" ]; then
 				Locale_Use_Default=false
 				Locale_Display="$Language"
 				source "$Locale_File"

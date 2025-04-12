@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Script version 2.1
 # LICENSE for this script is at the end of this file
+# Versions... DON'T TOUCH THIS!
+ScriptVersion="2.2"; LocaleVersion="2.0"
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 
@@ -71,8 +72,8 @@ Unique_App_Folder_Name="example-application-21" #=> UNIQUE_APP_FOLDER_NAME
 ######### - ------------------- - #########
 
 Info_Name="Example Application"
-Info_Version="2.1"
-Info_Release_Date="2024-12-xx"
+Info_Version="v$ScriptVersion" # Change this value to the version of the application!
+Info_Release_Date="2025-04-xx"
 Info_Category="Other"
 Info_Platform="Linux"
 Info_Installed_Size="~1 MiB"
@@ -96,11 +97,11 @@ fi
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application,
  # this functionality does not allow you to fully customize the menu files.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Example Application 2.1"   #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="Example Application $ScriptVersion"   #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                  #=> MENU_DIRECTORY_ICON
 
 Program_Executable_File="example-application"           #=> PROGRAM_EXECUTABLE_FILE
-Program_Name_In_Menu="Example Application 2.1"          #=> PROGRAM_NAME_IN_MENU
+Program_Name_In_Menu="Example Application $ScriptVersion"          #=> PROGRAM_NAME_IN_MENU
 Program_Icon_In_Menu="icon.png"                         #=> PROGRAM_ICON_IN_MENU
 Program_Exe_Run_In_Terminal="true"                      #=> PROGRAM_EXE_RUN_IN_TERMINAL
 Program_Install_Mode="$Install_Mode"                    #=> PROGRAM_INSTALL_MODE
@@ -126,7 +127,7 @@ Archive_MD5_System_Files_Hash=""
 Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 
  # Header
- Header="${Font_DarkYellow}${Font_Bold} -=: Universal Software Installer Script for Chimbalix (Installer-SH v2.1) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
+ Header="${Font_DarkYellow}${Font_Bold} -=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
 }
 
 ######### -- ------------ -- #########
@@ -1270,7 +1271,7 @@ function _SET_LOCALE() {
 	if [ $MODE_SILENT == true ]; then Locale_Display="-silent"
 	else
 		if [ -e "$Locale_File" ]; then
-			if [ $(grep Locale_Version "$Locale_File") == 'Locale_Version="2.0"' ]; then
+			if [ $(grep Locale_Version "$Locale_File") == 'Locale_Version="$LocaleVersion"' ]; then
 				Locale_Use_Default=false
 				Locale_Display="$Language"
 				source "$Locale_File"

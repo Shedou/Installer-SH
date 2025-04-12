@@ -94,8 +94,7 @@ fi
  ### ------------------------ ###
  ### Basic Menu File Settings ###
  ### ------------------------ ###
- # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application,
- # this functionality does not allow you to fully customize the menu files.
+ # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
 Menu_Directory_Name="Example Application v$ScriptVersion"       #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
@@ -108,7 +107,6 @@ Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNIN
 Program_Uninstaller_Icon="ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
 
  # Additional menu categories that will include the main application shortcuts.
- # Please do not use this variable in the uninstaller shortcut file.
 Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
  # -=== Chimbalix 24.4+ main categories:
  # chi-ai  chi-accessories  chi-accessories-fm  chi-view  chi-admin  chi-info  chi-info-bench  chi-info-help
@@ -139,12 +137,6 @@ _CECK_EXECUTE_RIGHTS() {
 	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
 		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
 	fi
-	
-	#if [ $Current_DE == "XFCE" ]; then
-	#	if ! [[ -x "$Tool_Gio_Trust_Xfce" ]]; then
-	#		if ! chmod +x "$Tool_Gio_Trust_Xfce"; then _ABORT "chmod Tool_Gio_Trust_Xfce error."; fi
-	#	fi
-	#fi
 }
 
 ######### Check PortSoft #########
@@ -294,7 +286,6 @@ function _INIT_GLOBAL_PATHS() {
 		Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
 	fi
 	
-	Tool_Gio_Trust_Xfce="$Path_Installer_Data/tools/gio-trust-xfce.sh"
 	Tool_Prepare_Base="$Path_Installer_Data/tools/prepare-portsoft-menu.sh"
 	
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
@@ -532,20 +523,13 @@ function _CHECK_SYSTEM_DE() {
 }
 
 function _CHECK_SYSTEM() {
-	# Check System Version
 	_CHECK_SYSTEM_VERSION
-	
 	Current_Architecture="$(uname -m)"
-	
-	# Normalize Arch
 	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
-	
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
 		if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
 		else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
 	fi
-	
-	#if [ "$Current_OS_Name" == "Chimbalix" ]; then Font_Styles_RGB=true; fi
 }
 
 ######### ------------------------- #########
@@ -596,17 +580,14 @@ fi
 function _CHECK_MD5_COMPARE() {
 	MD5_ProgramFiles_Error=false; MD5_SystemFiles_Error=false; MD5_UserFiles_Error=false
 	MD5_Warning=false;
-	
 	MD5_Program_Files_Hash=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
 	MD5_System_Files_Hash=`md5sum "$Archive_System_Files" | awk '{print $1}'`
 	
 	if [ "$MD5_Program_Files_Hash" != "$Archive_MD5_Program_Files_Hash" ]; then MD5_ProgramFiles_Error=true; fi
 	if [ "$MD5_System_Files_Hash" != "$Archive_MD5_System_Files_Hash" ]; then MD5_SystemFiles_Error=true; fi
-	
 	if [ $Install_User_Data == true ]; then
 		MD5_User_Data_Hash=`md5sum "$Archive_User_Data" | awk '{print $1}'`
-		if [ "$MD5_User_Data_Hash" != "$Archive_MD5_User_Data_Hash" ]; then MD5_UserFiles_Error=true; fi
-	fi
+		if [ "$MD5_User_Data_Hash" != "$Archive_MD5_User_Data_Hash" ]; then MD5_UserFiles_Error=true; fi; fi
 	
 	if [ $MD5_ProgramFiles_Error == true ] || [ $MD5_SystemFiles_Error == true ] || [ $MD5_UserFiles_Error == true ]; then MD5_Warning=true; fi
 }
@@ -750,15 +731,13 @@ function _PREPARE_INPUT_FILES_GREP() {
 	else local prepare_error=true; _WARNING "PREPARE_INPUT_FILES_GREP" "not enough arguments for the function to work."; fi
 	
 	if [ $prepare_error == false ]; then 
-		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null
-	fi
+		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null; fi
 }
 
 function _PREPARE_INPUT_FILES() {
 	if [ $all_ok == true ]; then all_ok=false
 		if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
-			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"
-		fi
+			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
 		
 		for file in "$Temp_Dir"/*; do
 			_PREPARE_INPUT_FILES_GREP "PATH_TO_FOLDER" "$Output_Install_Dir"
@@ -772,8 +751,9 @@ function _PREPARE_INPUT_FILES() {
 			_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_NAME" "$Menu_Directory_Name"
 			_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
 		done
-	
+		
 		local All_Renamed=false
+		
 		while [ $All_Renamed == false ]; do
 			if find "$Temp_Dir/" -name "UNIQUE_APP_FOLDER_NAME*" | sed -e "p;s~UNIQUE_APP_FOLDER_NAME~$Unique_App_Folder_Name~" | xargs -n2 mv &> /dev/null; then
 				local All_Renamed=true
@@ -784,7 +764,6 @@ function _PREPARE_INPUT_FILES() {
 		local Files_Menu=( $(ls "$Input_Menu_Files_Dir") )
 		local Files_Menu_Dir=( $(ls "$Input_Menu_Desktop_Dir") )
 		local Files_Menu_Apps=( $(ls "$Input_Menu_Apps_Dir") )
-		
 		local arr_0=(); local arr_1=(); local arr_2=(); local arr_3=(); local arr_4=(); local arr_5=()
 		
 		for file in "${!Files_Bin_Dir[@]}"; do local arr_0[$file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
@@ -855,9 +834,7 @@ function _INSTALL_USER_DATA() {
 	# Copy user data
 	if [ $Install_User_Data == true ]; then
 		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
-		
 		if [ ! -e "$Output_User_Data" ]; then mkdir -p "$Output_User_Data"; fi
-		
 		if ! "$Tool_SevenZip_bin" x -aoa "$Archive_User_Data" -o"$Output_User_Data/" &> /dev/null; then
 			_ERROR "_INSTALL_USER_DATA" "$Str_INSTALLAPP_Copy_uFiles_Err"; fi
 	fi
@@ -883,9 +860,6 @@ function _INSTALL_HELPERS_XFCE_USER() {
 	cp -rf "$Input_Helpers_Dir/." "$Output_Helpers_Dir"
 }
 
-### Helpers (XFCE) ###
-### -------------- ###
-
 function _INSTALL_HELPERS() {
 	if [ -e "$Input_Helpers_Dir" ]; then
 		if [ $Current_DE == "XFCE" ]; then
@@ -896,22 +870,9 @@ function _INSTALL_HELPERS() {
 ######### --------------------- #########
 ######### Install Desktop Icons #########
 
-function _INSTALL_DESKTOP_ICONS_TRUST_XFCE() {
-	for file in "${!Files_Desktop_Dir[@]}"; do
-		"$Tool_Gio_Trust_Xfce" -trust --silent "$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"
-	done
-}
-
 function _INSTALL_DESKTOP_ICONS() {
-	# Check input folder
 	if [ -e "$Input_Desktop_Dir" ]; then
-		# Copy Desktop files
 		cp -rf "$Input_Desktop_Dir/." "$Output_Desktop_Dir"
-		
-		# Trust Desktop files
-		#if [ "$Current_DE" == "XFCE" ]; then
-		#	_INSTALL_DESKTOP_ICONS_TRUST_XFCE; fi
-		
 	else _ERROR "_INSTALL_DESKTOP_ICONS" "Input_Desktop_Dir not found."; fi
 }
 
@@ -1035,13 +996,12 @@ $Header
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-######### Install application (SYSTEM MODE) #########
-######### --------------------------------- #########
+######### ------------------- #########
+######### Install application #########
 
 function _INSTALL_APPLICATION() {
 	if [ "$Install_Mode" == "System" ]; then _INSTALL_APP_SYSTEM; else _INSTALL_APP_USER; fi
 }
-
 
 ######### ------------------------ #########
 ######### Prepare uninstaller file #########
@@ -1081,30 +1041,6 @@ function _PREPARE_UNINSTALLER() {
 ######### ------------ #########
 ######### Post Install #########
 
-function _POST_INSTALL_UPDATE_MENU_LXQT() { ### WARNING! This function has been abandoned! ###
-	local panel_restarted=false
-	
-	while [ $panel_restarted == false ]; do
-		if killall lxqt-panel &> /dev/null; then
-			for ((post_install_update_menu_lxqt=0; post_install_update_menu_lxqt<10; post_install_update_menu_lxqt++)); do
-				if [ $MODE_SILENT == false ]; then
-					echo " Restarting LXQt Panel..."; fi
-				sleep 1s
-				if ! pidof lxqt-panel; then
-					if setsid lxqt-panel & disown &> /dev/null; then
-						local panel_restarted=true
-						post_install_update_menu_lxqt=10
-					fi
-				fi
-			done
-		else
-			if ! pidof lxqt-panel; then
-				setsid lxqt-panel & disown &> /dev/null
-			fi
-		fi
-	done
-}
-
 function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
 function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
 function _POST_INSTALL_UPDATE_MENU_XFCE() { xfce4-panel -r &> /dev/null; }
@@ -1119,13 +1055,6 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 
 function _POST_INSTALL() {
 	if [ $all_ok == true ]; then
-		# Restart taskbar
-
-		### WARNING! This can lead to a desktop crash, because the LXQt developers did not provide the ability to restart their panel normally...
-		#if [ "$Current_DE" == "LXQT" ]; then _POST_INSTALL_UPDATE_MENU_LXQT; fi
-		
-		# The installer is not designed to work with the specific structure of the OpenBox menu.
-		#if [ "$Current_DE" == "OPENBOX" ]; then _POST_INSTALL_UPDATE_MENU_OPENBOX; fi
 		
 		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
 		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
@@ -1276,10 +1205,6 @@ function _SET_LOCALE() {
 	fi
 }
 
-###### Set Locale ######
-####### Strings! #######
-######### ---- #########
-
 ######### ---- --------- ---- #########
 ######### -- END FUNCTIONS -- #########
 ######### ---- --------- ---- #########
@@ -1292,7 +1217,7 @@ _MAIN
 
 # MIT License
 #
-# Copyright (c) 2024 Chimbal
+# Copyright (c) 2025 Chimbal
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

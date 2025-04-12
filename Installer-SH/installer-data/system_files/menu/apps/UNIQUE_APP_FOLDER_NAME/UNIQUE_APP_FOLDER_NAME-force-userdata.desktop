@@ -18,7 +18,7 @@ TryExec=PATH_TO_FOLDER/run-force-userdata.sh
 Path=PATH_TO_FOLDER/program
 #StartupWMClass=
 
-Terminal=PROGRAM_EXE_RUN_IN_TERMINAL
+Terminal=true
 StartupNotify=false
 
 Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES

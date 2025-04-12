@@ -12,13 +12,13 @@ Name=PROGRAM_NAME_IN_MENU
 Comment=This is a sample application for Installer-SH.
 GenericName=
 
-Icon=PATH_TO_FOLDER/PROGRAM_ICON_IN_MENU
+Icon=PATH_TO_FOLDER/icon.png
 Exec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE
 TryExec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE
 Path=PATH_TO_FOLDER/program
 #StartupWMClass=
 
-Terminal=PROGRAM_EXE_RUN_IN_TERMINAL
+Terminal=true
 StartupNotify=false
 
 Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES

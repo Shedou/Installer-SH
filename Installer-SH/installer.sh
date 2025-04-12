@@ -59,7 +59,7 @@ function _INSTALLER_SETTINGS() {
 
 function _PACKAGE_SETTINGS() {
 
-Unique_App_Folder_Name="example-application-21" #=> UNIQUE_APP_FOLDER_NAME
+Unique_App_Folder_Name="example-application-22" #=> UNIQUE_APP_FOLDER_NAME
 
  # Unique name of the output directory.
  # WARNING! Do not use capital letters in this place!
@@ -97,14 +97,12 @@ fi
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application,
  # this functionality does not allow you to fully customize the menu files.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Example Application $ScriptVersion"   #=> MENU_DIRECTORY_NAME
-Menu_Directory_Icon="icon.png"                  #=> MENU_DIRECTORY_ICON
+Menu_Directory_Name="Example Application v$ScriptVersion"       #=> MENU_DIRECTORY_NAME
+Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
 
-Program_Executable_File="example-application"           #=> PROGRAM_EXECUTABLE_FILE
-Program_Name_In_Menu="Example Application $ScriptVersion"          #=> PROGRAM_NAME_IN_MENU
-Program_Icon_In_Menu="icon.png"                         #=> PROGRAM_ICON_IN_MENU
-Program_Exe_Run_In_Terminal="true"                      #=> PROGRAM_EXE_RUN_IN_TERMINAL
-Program_Install_Mode="$Install_Mode"                    #=> PROGRAM_INSTALL_MODE
+Program_Executable_File="example-application"                   #=> PROGRAM_EXECUTABLE_FILE
+Program_Name_In_Menu="Example Application $ScriptVersion"       #=> PROGRAM_NAME_IN_MENU
+Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
 Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNINSTALLER_FILE
 Program_Uninstaller_Icon="ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
@@ -767,8 +765,6 @@ function _PREPARE_INPUT_FILES() {
 			_PREPARE_INPUT_FILES_GREP "UNIQUE_APP_FOLDER_NAME" "$Unique_App_Folder_Name"
 			_PREPARE_INPUT_FILES_GREP "PROGRAM_NAME_IN_MENU" "$Program_Name_In_Menu"
 			_PREPARE_INPUT_FILES_GREP "PROGRAM_EXECUTABLE_FILE" "$Program_Executable_File"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_EXE_RUN_IN_TERMINAL" "$Program_Exe_Run_In_Terminal"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_ICON_IN_MENU" "$Program_Icon_In_Menu"
 			_PREPARE_INPUT_FILES_GREP "PROGRAM_INSTALL_MODE" "$Program_Install_Mode"
 			_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_FILE" "$Program_Uninstaller_File"
 			_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_ICON" "$Program_Uninstaller_Icon"

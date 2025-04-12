@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Icon=PATH_TO_FOLDER/PROGRAM_ICON_IN_MENU
+Icon=PATH_TO_FOLDER/icon.png
 Type=X-XFCE-Helper
 Name=PROGRAM_NAME_IN_MENU
 Name[ru]=PROGRAM_NAME_IN_MENU

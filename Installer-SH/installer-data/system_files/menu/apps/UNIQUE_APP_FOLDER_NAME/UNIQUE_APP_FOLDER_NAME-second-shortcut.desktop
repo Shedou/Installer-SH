@@ -12,13 +12,13 @@ Name=PROGRAM_NAME_IN_MENU - Second Shortcut!
 Comment=This is the second shortcut from the example, it is partly prepared manually.
 GenericName=
 
-Icon=PATH_TO_FOLDER/second-PROGRAM_ICON_IN_MENU
+Icon=PATH_TO_FOLDER/second-icon.png
 Exec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE 'Second shortcut file!' 'Second argument!'
 TryExec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE
 Path=PATH_TO_FOLDER/program
 #StartupWMClass=
 
-Terminal=PROGRAM_EXE_RUN_IN_TERMINAL
+Terminal=true
 StartupNotify=false
 
 Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES

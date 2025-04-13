@@ -59,7 +59,7 @@ function _INSTALLER_SETTINGS() {
 
 function _PACKAGE_SETTINGS() {
 
-Unique_App_Folder_Name="example-application-22" #=> UNIQUE_APP_FOLDER_NAME
+Unique_App_Folder_Name="installer-sh-22" #=> UNIQUE_APP_FOLDER_NAME
 
  # Unique name of the output directory.
  # WARNING! Do not use capital letters in this place!
@@ -71,7 +71,7 @@ Unique_App_Folder_Name="example-application-22" #=> UNIQUE_APP_FOLDER_NAME
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-Info_Name="Example Application"
+Info_Name="Installer-SH"
 Info_Version="v$ScriptVersion" # Change this value to the version of the application!
 Info_Release_Date="2025-04-xx"
 Info_Category="Other"
@@ -96,11 +96,11 @@ fi
  ### ------------------------ ###
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Example Application v$ScriptVersion"       #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="Installer-SH v$ScriptVersion"              #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
 
 Program_Executable_File="example-application"                   #=> PROGRAM_EXECUTABLE_FILE
-Program_Name_In_Menu="Example Application $ScriptVersion"       #=> PROGRAM_NAME_IN_MENU
+Program_Name_In_Menu="Installer-SH $ScriptVersion"              #=> PROGRAM_NAME_IN_MENU
 Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
 Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNINSTALLER_FILE
@@ -129,6 +129,35 @@ Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 ######### -- ------------ -- #########
 ######### -- END SETTINGS -- #########
 ######### -- ------------ -- #########
+
+######### ------------ #########
+######### Post Install #########
+
+function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
+function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
+function _POST_INSTALL_UPDATE_MENU_XFCE() { xfce4-panel -r &> /dev/null; }
+
+function _POST_INSTALL_UPDATE_MENU_KDE() {
+	if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null
+	elif type "kbuildsycoca6" &> /dev/null; then kbuildsycoca6 &> /dev/null
+	elif type "kbuildsycoca5" &> /dev/null; then kbuildsycoca5 &> /dev/null
+	elif type "kbuildsycoca4" &> /dev/null; then kbuildsycoca4 &> /dev/null
+	fi
+}
+
+function _POST_INSTALL() {
+	if [ $all_ok == true ]; then
+		
+		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
+		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
+		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+		
+		# Exit
+		if [ $MODE_SILENT == false ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
+		
+		if [ $MODE_DEBUG == true ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
+	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
+}
 
 ######### -------------------- #########
 ######### Check execute rights #########
@@ -246,8 +275,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	Font_Red=''; Font_Red_BG=''; Font_Green=''; Font_Green_BG=''; Font_Yellow=''; Font_Yellow_BG=''; Font_Blue=''; Font_Blue_BG=''
 	Font_Magenta=''; Font_Magenta_BG=''; Font_Cyan=''; Font_Cyan_BG=''
 	
-	all_ok=true
-	Locale_Use_Default=true # don't change!
+	all_ok=true; Locale_Use_Default=true # don't change!
 	Locale_Display="Default"
 	Current_Architecture="Unknown"
 	
@@ -1036,35 +1064,6 @@ function _PREPARE_UNINSTALLER() {
 		
 		if [ $MODE_DEBUG == true ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_UNINSTALLER ${Font_Reset_Color}${Font_Reset}"; fi
-}
-
-######### ------------ #########
-######### Post Install #########
-
-function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
-function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
-function _POST_INSTALL_UPDATE_MENU_XFCE() { xfce4-panel -r &> /dev/null; }
-
-function _POST_INSTALL_UPDATE_MENU_KDE() {
-	if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null
-	elif type "kbuildsycoca6" &> /dev/null; then kbuildsycoca6 &> /dev/null
-	elif type "kbuildsycoca5" &> /dev/null; then kbuildsycoca5 &> /dev/null
-	elif type "kbuildsycoca4" &> /dev/null; then kbuildsycoca4 &> /dev/null
-	fi
-}
-
-function _POST_INSTALL() {
-	if [ $all_ok == true ]; then
-		
-		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
-		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
-		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
-		
-		# Exit
-		if [ $MODE_SILENT == false ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
-		
-		if [ $MODE_DEBUG == true ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
 ######### ---- #########

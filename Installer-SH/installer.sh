@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
-# Versions... DON'T TOUCH THIS!
-ScriptVersion="2.2"; LocaleVersion="2.0"
+ScriptVersion="2.2"; LocaleVersion="2.0" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 
@@ -17,7 +16,7 @@ function _MAIN() {
 	_PACKAGE_SETTINGS
 	_INIT_GLOBAL_PATHS
 	_CECK_EXECUTE_RIGHTS
-	printf '\033[8;32;110t' # Resize terminal Window (110x32)
+	printf '\033[8;32;100t' # Resize terminal Window (100x32)
 	_CHECK_PORTSOFT
 	_CHECK_ERRORS
 	_PRINT_PACKAGE_INFO
@@ -83,7 +82,9 @@ Info_Licensing="Freeware - Open Source (MIT)
     Trialware - 30 days free, Proprietary (Other License Name)"
 Info_Developer="Chimbal"
 Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog"
-if [ $Locale_Use_Default == true ]; then # Use this description if there is no suitable localization file:
+if [ $Locale_Use_Default == true ]; then
+# Use this description if there is no suitable localization file.
+# WARNING! The maximum number of characters available for description is 100x11, it is not recommended to exceed this limit.
 Info_Description="\
   1) This universal installer (short description):
      - Suitable for installation on stand-alone PCs without Internet access.

@@ -10,16 +10,15 @@ function _MAIN() {
 	_INSTALLER_SETTINGS
 	_CHECK_SYSTEM
 	_SET_LOCALE
-	_CHECK_DEPENDENCIES_FIRST
+		_CHECK_DEPENDENCIES_FIRST # First important check before UI
 	_CHECK_SYSTEM_DE
 	_INIT_FONT_STYLES
 	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_PACKAGE_SETTINGS
 	_INIT_GLOBAL_PATHS
 	_CECK_EXECUTE_RIGHTS
-	_CHECK_DEPENDENCIES_LAST
+		_CHECK_DEPENDENCIES_LAST  # Last important check before UI
 	printf '\033[8;32;100t' # Resize terminal Window (100x32)
-	# _CHECK_ERRORS - удалить
 	_CHECK_PORTSOFT
 	_PRINT_PACKAGE_INFO
 	_CHECK_MD5
@@ -130,8 +129,15 @@ Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 }
 
 ######### -- ------------ -- #########
+######### -- ------------ -- #########
+######### -- ------------ -- #########
+######### -- ------------ -- #########
 ######### -- END SETTINGS -- #########
 ######### -- ------------ -- #########
+######### -- ------------ -- #########
+######### -- ------------ -- #########
+######### -- ------------ -- #########
+
 
 ######### ------------ #########
 ######### Post Install #########
@@ -162,58 +168,159 @@ function _POST_INSTALL() {
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-######### -------------------- #########
-######### Check execute rights #########
+######### ----------------------------- #########
+######### ----------------------------- #########
+######### ----------------------------- #########
+######### ----------------------------- #########
+######### BEFORE FIRST DEPENDENCY CHECK #########
 
-_CECK_EXECUTE_RIGHTS() {
-	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
-		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
+function _INIT_GLOBAL_VARIABLES() {
+	### --------------------------- ###
+	### Do not edit variables here! ###
+	### --------------------------- ###
+	
+	Font_Bold=""; Font_Dim=""; Font_Reset=""; Font_Reset_Color=''; Font_Reset_BG=''
+	Font_Black=''; Font_Black_BG=''; Font_DarkGray=''; Font_DarkGray_BG=''; Font_Gray=''; Font_Gray_BG=''; Font_White=''; Font_White_BG=''
+	Font_DarkRed=''; Font_DarkRed_BG=''; Font_DarkGreen=''; Font_DarkGreen_BG=''; Font_DarkYellow=''; Font_DarkYellow_BG=''; Font_DarkBlue=''; Font_DarkBlue_BG=''
+	Font_DarkMagenta=''; Font_DarkMagenta_BG=''; Font_DarkCyan=''; Font_DarkCyan_BG=''
+	Font_Red=''; Font_Red_BG=''; Font_Green=''; Font_Green_BG=''; Font_Yellow=''; Font_Yellow_BG=''; Font_Blue=''; Font_Blue_BG=''
+	Font_Magenta=''; Font_Magenta_BG=''; Font_Cyan=''; Font_Cyan_BG=''
+	
+	all_ok=true; Locale_Use_Default=true # don't change!
+	Locale_Display="Default"
+	Current_Architecture="Unknown"
+	
+	User_Name="$USER"
+	User_Home="$HOME"
+	User_Desktop_Dir="$User_Home/Desktop"
+	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
+		source "$User_Home/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
+	
+	MODE_DEBUG="false"; if [ "${Arguments[$1]}" == "-debug" ]; then MODE_DEBUG="true"; fi
+	MODE_SILENT="false"; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT="true"; fi
+	
+	Path_To_Script="$( dirname "$(readlink -f "$0")")"
+	Path_Installer_Data="$Path_To_Script/installer-data"
+	
+	List_Errors=""    # _ERROR "Title" "Message."
+	List_Warnings=""  # _WARNING "Title" "Message."
+	
+	Current_DE="UnknownDE"
+	                                # os-release (main)    example (Chimbalix 24.5+)  lsb-release
+	Current_OS_Name_Full="Unknown"  # PRETTY_NAME         "Chimbalix 24.5 Alphachi"   DISTRIB_DESCRIPTION
+	Current_OS_Name="Unknown"       # NAME                "Chimbalix"                 DISTRIB_ID
+	Current_OS_Name_ID="Unknown"    # ID                  "chimbalix"                 DISTRIB_ID
+	Current_OS_Version="Unknown"    # VERSION_ID          "24.5"                      DISTRIB_RELEASE
+	Current_OS_Codename="Unknown"   # VERSION_CODENAME    "alphachi"                  DISTRIB_CODENAME
+}
+
+# _INSTALLER_SETTINGS
+
+function _CHECK_SYSTEM_VERSION() {
+	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
+		Current_OS_Name_Full="$PRETTY_NAME"
+		Current_OS_Name="$NAME"
+		Current_OS_Name_ID="$ID"
+		Current_OS_Version="$VERSION_ID"
+		Current_OS_Codename="$VERSION_CODENAME"
+	elif [ -f "/etc/lsb-release" ]; then source "/etc/lsb-release"
+		Current_OS_Name_Full="$DISTRIB_DESCRIPTION"
+		Current_OS_Name="$DISTRIB_ID"
+		Current_OS_Name_ID="$DISTRIB_ID"
+		Current_OS_Version="$DISTRIB_RELEASE"
+		Current_OS_Codename="$DISTRIB_CODENAME"
+	else
+		if type uname &>/dev/null; then DistroVersion="$(uname -sr)"
+		else _ABORT "The name of the operating system / kernel is not defined!"; fi
 	fi
 }
+
+function _CHECK_SYSTEM() {
+	_CHECK_SYSTEM_VERSION
+	Current_Architecture="$(uname -m)"
+	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
+	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
+		if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
+		else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
+	fi
+}
+
+#_SET_LOCALE
 
 _CHECK_DEPENDENCIES_FIRST() {
 	echo ""
 }
 
-_CHECK_DEPENDENCIES_LAST() {
-	echo ""
-}
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### BEFORE LAST DEPENDENCY CHECK #########
 
-######### Check PortSoft #########
-######### -------------- #########
-
-function _CHECK_PORTSOFT() {
-	# Check PortSoft
-	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
-		source "$Tool_Prepare_Base"
-		_CLEAR_BACKGROUND
+function _CHECK_SYSTEM_DE() {
+	local check_de_raw=""
+	local check_de_err="0"
+	
+	if   [ $XDG_CURRENT_DESKTOP ]; then local check_de_raw="$(echo "$XDG_CURRENT_DESKTOP" | cut -d: -f 1)"
+	elif [ $XDG_SESSION_DESKTOP ]; then _WARNING "XDG_CURRENT_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$XDG_SESSION_DESKTOP"
+	elif [ $DESKTOP_SESSION ];     then _WARNING "XDG_SESSION_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$DESKTOP_SESSION"
+	else _WARNING "DESKTOP_SESSION" "$Str_CHECKSYSDE_NotFound"; fi
+	
+	# Normalize
+	### COSMIC - GNOME - KDE - LXDE - LXQT - MATE - RAZOR - ROX - TDE - UNITY - XFCE - EDE - CINNAMON - PANTHEON - DDE - ENDLESS - LEGACY - BUDGIE - OPENBOX - SWAY
+	if [ "$check_de_raw" == "COSMIC" ];            then local check_de_raw="COSMIC" # COSMIC Desktop
+	elif [ "$check_de_raw" == "GNOME" ];           then local check_de_raw="GNOME"  # GNOME Desktop
+	elif [ "$check_de_raw" == "GNOME-Classic" ];   then local check_de_raw="GNOME"  # GNOME Classic Desktop
+	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then local check_de_raw="GNOME"  # GNOME Flashback Desktop
+	elif [ "$check_de_raw" == "KDE" ];      then local check_de_raw="KDE"      # KDE Desktop
+	elif [ "$check_de_raw" == "LXDE" ];     then local check_de_raw="LXDE"     # LXDE Desktop
+	elif [ "$check_de_raw" == "LXQt" ];     then local check_de_raw="LXQT"     # LXQt Desktop
+	elif [ "$check_de_raw" == "MATE" ];     then local check_de_raw="MATE"     # MATE Desktop
+	elif [ "$check_de_raw" == "Razor" ];    then local check_de_raw="RAZOR"    # Razor-qt Desktop
+	elif [ "$check_de_raw" == "ROX" ];      then local check_de_raw="ROX"      # ROX Desktop
+	elif [ "$check_de_raw" == "TDE" ];      then local check_de_raw="TDE"      # Trinity Desktop
+	elif [ "$check_de_raw" == "Unity" ];    then local check_de_raw="UNITY"    # Unity Shell
+	elif [ "$check_de_raw" == "XFCE" ];     then local check_de_raw="XFCE"     # XFCE Desktop
+	elif [ "$check_de_raw" == "EDE" ];      then local check_de_raw="EDE"      # EDE Desktop
+	elif [ "$check_de_raw" == "Cinnamon" ]; then local check_de_raw="CINNAMON" # Cinnamon Desktop
+	elif [ "$check_de_raw" == "Pantheon" ]; then local check_de_raw="PANTHEON" # Pantheon Desktop
+	elif [ "$check_de_raw" == "DDE" ];      then local check_de_raw="DDE"      # Deepin Desktop
+	elif [ "$check_de_raw" == "Endless" ];  then local check_de_raw="ENDLESS"  # Endless OS desktop
+	elif [ "$check_de_raw" == "Old" ];      then local check_de_raw="LEGACY"   # Legacy menu systems
+	elif [ "$check_de_raw" == "plasma" ];   then local check_de_raw="KDE" ### Extra names
+	elif [ "$check_de_raw" == "xfce" ];     then local check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "xubuntu" ];  then local check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "lxde" ];     then local check_de_raw="LXDE"
+	elif [ "$check_de_raw" == "mate" ];     then local check_de_raw="MATE"
+	elif [ "$check_de_raw" == "ubuntu" ];   then local check_de_raw="GNOME"
+	elif [ "$check_de_raw" == "lxqt" ];     then local check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "Lubuntu" ];  then local check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "cinnamon" ];       then local check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "X-Cinnamon" ];     then local check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "budgie-desktop" ]; then local check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "Budgie" ];         then local check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "openbox" ];        then local check_de_raw="OPENBOX"
+	elif [ "$check_de_raw" == "sway" ];           then local check_de_raw="SWAY"
+	else local check_de_err="1"; fi
+	
+	if [ "$check_de_err" == "1" ]; then
+		_WARNING "$Str_CHECKSYSDE_DE_CHECK" "$Str_CHECKSYSDE_XDG_INFO_INCORRECT"
+		
+		if xfce4-session --version &>/dev/null;    then local check_de_raw="XFCE"
+		elif plasmashell --version &>/dev/null;    then local check_de_raw="KDE"
+		elif plasma-desktop --version &>/dev/null; then local check_de_raw="KDE"
+		elif gnome-shell --version &>/dev/null;    then local check_de_raw="GNOME"
+		fi
 	fi
-}
-
-######### ------------ #########
-######### Check Errors #########
-
-function _CHECK_ERRORS() {
-	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
-}
-
-######### ----------- #########
-######### Test colors #########
-
-function _TEST_COLORS() {
-	echo -e "\n${Font_Bold} -= TEST COLORS =-"
-	if [ "$Font_Styles_RGB" == true ]; then echo -e " RGB Mode"
-	else echo -e " 8-bit table Mode"; fi
-	echo -e "
- ${Font_Black}Font_Black ${Font_DarkGray}Font_DarkGray ${Font_Gray}Font_Gray ${Font_White}Font_White ${Font_Reset_Color}
-
- ${Font_DarkRed}DarkRed ${Font_DarkGreen}DarkGreen ${Font_DarkYellow}DarkYellow ${Font_DarkBlue}DarkBlue ${Font_DarkMagenta}DarkMagenta ${Font_DarkCyan}DarkCyan
- ${Font_Red}Red     ${Font_Green}Green     ${Font_Yellow}Yellow     ${Font_Blue}Blue     ${Font_Magenta}Magenta     ${Font_Cyan}Cyan
- ${Font_Reset_Color}
- ${Font_Black_BG} Black_BG ${Font_DarkGray_BG} DarkGray_BG ${Font_Black}${Font_Gray_BG} Gray_BG ${Font_White_BG} White_BG ${Font_Reset_BG} ${Font_Reset_Color}
- ${Font_DarkRed_BG} DRed_BG ${Font_DarkGreen_BG} DGreen_BG ${Font_DarkYellow_BG} DYellow_BG ${Font_DarkBlue_BG} DBlue_BG ${Font_DarkMagenta_BG} DMagenta_BG ${Font_DarkCyan_BG} DCyan_BG ${Font_Reset_BG}
- ${Font_Black}${Font_Red_BG} Red_BG  ${Font_Green_BG} Green_BG  ${Font_Yellow_BG} Yellow_BG  ${Font_Blue_BG} Blue_BG  ${Font_Magenta_BG} Magenta_BG  ${Font_Cyan_BG} Cyan_BG  ${Font_Reset_BG}${Font_Reset_Color}"
+	
+	# Extra checks
+	if [ "$check_de_raw" == "OPENBOX" ]; then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Openbox)" "$Str_CHECKSYSDE_DE_WEIRD_OPENBOX"; fi
+	if [ "$check_de_raw" == "SWAY" ];    then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Sway)" "$Str_CHECKSYSDE_DE_WEIRD_SWAY"; fi
+	if [ "$check_de_raw" == "LXQT" ];    then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (LXQt)" "$Str_CHECKSYSDE_DE_WEIRD_LXQT"; fi
+	if [ "$check_de_raw" == "BUDGIE" ];  then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Budgie)" "$Str_CHECKSYSDE_DE_WEIRD_BUDGIE"; fi
+	if [ "$check_de_raw" == "GNOME" ];   then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (GNOME)" "$Str_CHECKSYSDE_DE_WEIRD_GNOME"; fi
+	
+	Current_DE="$check_de_raw"
 }
 
 function _INIT_FONT_STYLES() {
@@ -268,51 +375,8 @@ function _INIT_FONT_STYLES() {
 	fi
 }
 
-######### ---------------- #########
-######### ---------------- #########
-######### ---------------- #########
-######### ---------------- #########
-######### Global variables #########
-
-function _INIT_GLOBAL_VARIABLES() {
-	### --------------------------- ###
-	### Do not edit variables here! ###
-	### --------------------------- ###
-	
-	Font_Bold=""; Font_Dim=""; Font_Reset=""; Font_Reset_Color=''; Font_Reset_BG=''
-	Font_Black=''; Font_Black_BG=''; Font_DarkGray=''; Font_DarkGray_BG=''; Font_Gray=''; Font_Gray_BG=''; Font_White=''; Font_White_BG=''
-	Font_DarkRed=''; Font_DarkRed_BG=''; Font_DarkGreen=''; Font_DarkGreen_BG=''; Font_DarkYellow=''; Font_DarkYellow_BG=''; Font_DarkBlue=''; Font_DarkBlue_BG=''
-	Font_DarkMagenta=''; Font_DarkMagenta_BG=''; Font_DarkCyan=''; Font_DarkCyan_BG=''
-	Font_Red=''; Font_Red_BG=''; Font_Green=''; Font_Green_BG=''; Font_Yellow=''; Font_Yellow_BG=''; Font_Blue=''; Font_Blue_BG=''
-	Font_Magenta=''; Font_Magenta_BG=''; Font_Cyan=''; Font_Cyan_BG=''
-	
-	all_ok=true; Locale_Use_Default=true # don't change!
-	Locale_Display="Default"
-	Current_Architecture="Unknown"
-	
-	User_Name="$USER"
-	User_Home="$HOME"
-	User_Desktop_Dir="$User_Home/Desktop"
-	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
-		source "$User_Home/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
-	
-	MODE_DEBUG="false"; if [ "${Arguments[$1]}" == "-debug" ]; then MODE_DEBUG="true"; fi
-	MODE_SILENT="false"; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT="true"; fi
-	
-	Path_To_Script="$( dirname "$(readlink -f "$0")")"
-	Path_Installer_Data="$Path_To_Script/installer-data"
-	
-	List_Errors=""    # _ERROR "Title" "Message."
-	List_Warnings=""  # _WARNING "Title" "Message."
-	
-	Current_DE="UnknownDE"
-	                                # os-release (main)    example (Chimbalix 24.5+)  lsb-release
-	Current_OS_Name_Full="Unknown"  # PRETTY_NAME         "Chimbalix 24.5 Alphachi"   DISTRIB_DESCRIPTION
-	Current_OS_Name="Unknown"       # NAME                "Chimbalix"                 DISTRIB_ID
-	Current_OS_Name_ID="Unknown"    # ID                  "chimbalix"                 DISTRIB_ID
-	Current_OS_Version="Unknown"    # VERSION_ID          "24.5"                      DISTRIB_RELEASE
-	Current_OS_Codename="Unknown"   # VERSION_CODENAME    "alphachi"                  DISTRIB_CODENAME
-}
+#_CLEAR_BACKGROUND
+#_PACKAGE_SETTINGS
 
 function _INIT_GLOBAL_PATHS() {
 	### --------------------------- ###
@@ -388,11 +452,58 @@ function _INIT_GLOBAL_PATHS() {
 	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
 }
 
-######### Global variables #########
-######### ---------------- #########
-######### ---------------- #########
-######### ---------------- #########
-######### ---------------- #########
+_CECK_EXECUTE_RIGHTS() {
+	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
+		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
+	fi
+}
+
+_CHECK_DEPENDENCIES_LAST() {
+	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+	echo ""
+}
+
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+
+
+######### Check PortSoft #########
+######### -------------- #########
+
+function _CHECK_PORTSOFT() {
+	# Check PortSoft
+	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
+		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
+		source "$Tool_Prepare_Base"
+		_CLEAR_BACKGROUND
+	fi
+}
+
+######### ----------- #########
+######### Test colors #########
+
+function _TEST_COLORS() {
+	echo -e "\n${Font_Bold} -= TEST COLORS =-"
+	if [ "$Font_Styles_RGB" == true ]; then echo -e " RGB Mode"
+	else echo -e " 8-bit table Mode"; fi
+	echo -e "
+ ${Font_Black}Font_Black ${Font_DarkGray}Font_DarkGray ${Font_Gray}Font_Gray ${Font_White}Font_White ${Font_Reset_Color}
+
+ ${Font_DarkRed}DarkRed ${Font_DarkGreen}DarkGreen ${Font_DarkYellow}DarkYellow ${Font_DarkBlue}DarkBlue ${Font_DarkMagenta}DarkMagenta ${Font_DarkCyan}DarkCyan
+ ${Font_Red}Red     ${Font_Green}Green     ${Font_Yellow}Yellow     ${Font_Blue}Blue     ${Font_Magenta}Magenta     ${Font_Cyan}Cyan
+ ${Font_Reset_Color}
+ ${Font_Black_BG} Black_BG ${Font_DarkGray_BG} DarkGray_BG ${Font_Black}${Font_Gray_BG} Gray_BG ${Font_White_BG} White_BG ${Font_Reset_BG} ${Font_Reset_Color}
+ ${Font_DarkRed_BG} DRed_BG ${Font_DarkGreen_BG} DGreen_BG ${Font_DarkYellow_BG} DYellow_BG ${Font_DarkBlue_BG} DBlue_BG ${Font_DarkMagenta_BG} DMagenta_BG ${Font_DarkCyan_BG} DCyan_BG ${Font_Reset_BG}
+ ${Font_Black}${Font_Red_BG} Red_BG  ${Font_Green_BG} Green_BG  ${Font_Yellow_BG} Yellow_BG  ${Font_Blue_BG} Blue_BG  ${Font_Magenta_BG} Magenta_BG  ${Font_Cyan_BG} Cyan_BG  ${Font_Reset_BG}${Font_Reset_Color}"
+}
 
 ######### -------------- #########
 ######### Base functions #########
@@ -489,105 +600,6 @@ function _WARNING() {
 	if [ ! -z "$1" ]; then local warn_first="$1"; fi
 	if [ ! -z "$2" ]; then local warn_second="$2"; fi
 	List_Warnings="${List_Warnings}\n   $warn_first: $warn_second"
-}
-
-######### ------------ #########
-######### Check System #########
-
-function _CHECK_SYSTEM_VERSION() {
-	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
-		Current_OS_Name_Full="$PRETTY_NAME"
-		Current_OS_Name="$NAME"
-		Current_OS_Name_ID="$ID"
-		Current_OS_Version="$VERSION_ID"
-		Current_OS_Codename="$VERSION_CODENAME"
-	elif [ -f "/etc/lsb-release" ]; then source "/etc/lsb-release"
-		Current_OS_Name_Full="$DISTRIB_DESCRIPTION"
-		Current_OS_Name="$DISTRIB_ID"
-		Current_OS_Name_ID="$DISTRIB_ID"
-		Current_OS_Version="$DISTRIB_RELEASE"
-		Current_OS_Codename="$DISTRIB_CODENAME"
-	else
-		if type uname &>/dev/null; then DistroVersion="$(uname -sr)"
-		else _ABORT "The name of the operating system / kernel is not defined!"; fi
-	fi
-}
-
-function _CHECK_SYSTEM_DE() {
-	local check_de_raw=""
-	local check_de_err="0"
-	
-	if   [ $XDG_CURRENT_DESKTOP ]; then local check_de_raw="$(echo "$XDG_CURRENT_DESKTOP" | cut -d: -f 1)"
-	elif [ $XDG_SESSION_DESKTOP ]; then _WARNING "XDG_CURRENT_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$XDG_SESSION_DESKTOP"
-	elif [ $DESKTOP_SESSION ];     then _WARNING "XDG_SESSION_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$DESKTOP_SESSION"
-	else _WARNING "DESKTOP_SESSION" "$Str_CHECKSYSDE_NotFound"; fi
-	
-	# Normalize
-	### COSMIC - GNOME - KDE - LXDE - LXQT - MATE - RAZOR - ROX - TDE - UNITY - XFCE - EDE - CINNAMON - PANTHEON - DDE - ENDLESS - LEGACY - BUDGIE - OPENBOX - SWAY
-	if [ "$check_de_raw" == "COSMIC" ];            then local check_de_raw="COSMIC" # COSMIC Desktop
-	elif [ "$check_de_raw" == "GNOME" ];           then local check_de_raw="GNOME"  # GNOME Desktop
-	elif [ "$check_de_raw" == "GNOME-Classic" ];   then local check_de_raw="GNOME"  # GNOME Classic Desktop
-	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then local check_de_raw="GNOME"  # GNOME Flashback Desktop
-	elif [ "$check_de_raw" == "KDE" ];      then local check_de_raw="KDE"      # KDE Desktop
-	elif [ "$check_de_raw" == "LXDE" ];     then local check_de_raw="LXDE"     # LXDE Desktop
-	elif [ "$check_de_raw" == "LXQt" ];     then local check_de_raw="LXQT"     # LXQt Desktop
-	elif [ "$check_de_raw" == "MATE" ];     then local check_de_raw="MATE"     # MATE Desktop
-	elif [ "$check_de_raw" == "Razor" ];    then local check_de_raw="RAZOR"    # Razor-qt Desktop
-	elif [ "$check_de_raw" == "ROX" ];      then local check_de_raw="ROX"      # ROX Desktop
-	elif [ "$check_de_raw" == "TDE" ];      then local check_de_raw="TDE"      # Trinity Desktop
-	elif [ "$check_de_raw" == "Unity" ];    then local check_de_raw="UNITY"    # Unity Shell
-	elif [ "$check_de_raw" == "XFCE" ];     then local check_de_raw="XFCE"     # XFCE Desktop
-	elif [ "$check_de_raw" == "EDE" ];      then local check_de_raw="EDE"      # EDE Desktop
-	elif [ "$check_de_raw" == "Cinnamon" ]; then local check_de_raw="CINNAMON" # Cinnamon Desktop
-	elif [ "$check_de_raw" == "Pantheon" ]; then local check_de_raw="PANTHEON" # Pantheon Desktop
-	elif [ "$check_de_raw" == "DDE" ];      then local check_de_raw="DDE"      # Deepin Desktop
-	elif [ "$check_de_raw" == "Endless" ];  then local check_de_raw="ENDLESS"  # Endless OS desktop
-	elif [ "$check_de_raw" == "Old" ];      then local check_de_raw="LEGACY"   # Legacy menu systems
-	elif [ "$check_de_raw" == "plasma" ];   then local check_de_raw="KDE" ### Extra names
-	elif [ "$check_de_raw" == "xfce" ];     then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "xubuntu" ];  then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "lxde" ];     then local check_de_raw="LXDE"
-	elif [ "$check_de_raw" == "mate" ];     then local check_de_raw="MATE"
-	elif [ "$check_de_raw" == "ubuntu" ];   then local check_de_raw="GNOME"
-	elif [ "$check_de_raw" == "lxqt" ];     then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "Lubuntu" ];  then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "cinnamon" ];       then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "X-Cinnamon" ];     then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "budgie-desktop" ]; then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "Budgie" ];         then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "openbox" ];        then local check_de_raw="OPENBOX"
-	elif [ "$check_de_raw" == "sway" ];           then local check_de_raw="SWAY"
-	else local check_de_err="1"; fi
-	
-	if [ "$check_de_err" == "1" ]; then
-		_WARNING "$Str_CHECKSYSDE_DE_CHECK" "$Str_CHECKSYSDE_XDG_INFO_INCORRECT"
-		
-		if xfce4-session --version &>/dev/null;    then local check_de_raw="XFCE"
-		elif plasmashell --version &>/dev/null;    then local check_de_raw="KDE"
-		elif plasma-desktop --version &>/dev/null; then local check_de_raw="KDE"
-		elif gnome-shell --version &>/dev/null;    then local check_de_raw="GNOME"
-		fi
-	fi
-	
-	# Extra checks
-	if [ "$check_de_raw" == "OPENBOX" ]; then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Openbox)" "$Str_CHECKSYSDE_DE_WEIRD_OPENBOX"; fi
-	if [ "$check_de_raw" == "SWAY" ];    then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Sway)" "$Str_CHECKSYSDE_DE_WEIRD_SWAY"; fi
-	if [ "$check_de_raw" == "LXQT" ];    then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (LXQt)" "$Str_CHECKSYSDE_DE_WEIRD_LXQT"; fi
-	if [ "$check_de_raw" == "BUDGIE" ];  then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (Budgie)" "$Str_CHECKSYSDE_DE_WEIRD_BUDGIE"; fi
-	if [ "$check_de_raw" == "GNOME" ];   then _WARNING "$Str_CHECKSYSDE_DE_WEIRD (GNOME)" "$Str_CHECKSYSDE_DE_WEIRD_GNOME"; fi
-	
-	Current_DE="$check_de_raw"
-}
-
-function _CHECK_SYSTEM() {
-	_CHECK_SYSTEM_VERSION
-	_CHECK_SYSTEM_DEPENDENCIES
-	Current_Architecture="$(uname -m)"
-	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
-	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
-		if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
-		else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
-	fi
 }
 
 ######### ------------------------- #########

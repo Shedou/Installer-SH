@@ -10,15 +10,17 @@ function _MAIN() {
 	_INSTALLER_SETTINGS
 	_CHECK_SYSTEM
 	_SET_LOCALE
+	_CHECK_DEPENDENCIES_FIRST
 	_CHECK_SYSTEM_DE
 	_INIT_FONT_STYLES
 	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_PACKAGE_SETTINGS
 	_INIT_GLOBAL_PATHS
 	_CECK_EXECUTE_RIGHTS
+	_CHECK_DEPENDENCIES_LAST
 	printf '\033[8;32;100t' # Resize terminal Window (100x32)
+	# _CHECK_ERRORS - удалить
 	_CHECK_PORTSOFT
-	_CHECK_ERRORS
 	_PRINT_PACKAGE_INFO
 	_CHECK_MD5
 	_PRINT_INSTALL_SETTINGS # Last confirm stage
@@ -154,9 +156,9 @@ function _POST_INSTALL() {
 		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
 		
 		# Exit
-		if [ $MODE_SILENT == false ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
+		if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
 		
-		if [ $MODE_DEBUG == true ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -167,6 +169,14 @@ _CECK_EXECUTE_RIGHTS() {
 	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
 		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
 	fi
+}
+
+_CHECK_DEPENDENCIES_FIRST() {
+	echo ""
+}
+
+_CHECK_DEPENDENCIES_LAST() {
+	echo ""
 }
 
 ######### Check PortSoft #########
@@ -286,8 +296,8 @@ function _INIT_GLOBAL_VARIABLES() {
 	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
 		source "$User_Home/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
-	MODE_DEBUG=false
-	MODE_SILENT=false; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT=true; fi
+	MODE_DEBUG="false"; if [ "${Arguments[$1]}" == "-debug" ]; then MODE_DEBUG="true"; fi
+	MODE_SILENT="false"; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT="true"; fi
 	
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
@@ -320,6 +330,8 @@ function _INIT_GLOBAL_PATHS() {
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	Archive_User_Data="$Path_Installer_Data/user_files.7z"
+	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/program_files.7z\" not found."; fi
+	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/system_files.7z\" not found."; fi
 	if [ ! -e "$Archive_User_Data" ] && [ $Install_User_Data == true ]; then
 		Install_User_Data=false; _WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."; fi # Extra check
 	
@@ -414,53 +426,69 @@ function _CREATE_TEMP() {
 	fi
 }
 
+# Функция экстренного завершения работы
 function _ABORT() {
 	_CLEAR_BACKGROUND
 	
+	# Инициализация базовых переменных если ошибка произошла до загрузки локализации.
 	if [ -z "$Header" ];             then local Header=" -= OPERATING SYSTEM NOT SUPPORTED? =-\n"; fi
 	if [ -z "$Str_ABORT_Msg" ];      then local Str_ABORT_Msg="Exit code -"; fi
 	if [ -z "$Str_ABORT_Exit" ];     then local Str_ABORT_Exit="Press Enter or close the window to exit."; fi
 	if [ -z "$Str_ABORT_Errors" ];   then local Str_ABORT_Errors="Errors:"; fi
 	if [ -z "$Str_ABORT_Warnings" ]; then local Str_ABORT_Warnings="Warnings:"; fi
 	
+	# Стандартное сообщение об ошибке если аргументы не были поданы при вызове функции
 	local abort_message="${Font_Red}message not set...${Font_Reset_Color}"
+	# Проверка наличия первого аргумента, если аргумент есть - стандартное сообщение перезаписывается новым
 	if [ ! -z "$1" ]; then local abort_message="$1"; fi
 	
-	echo -e "\
+	# Расширенная проверка ошибок
+	if [ "$abort_message" == "funcerr" ] && [ ! -z "$2" ] && [ ! -z "$3" ]; then
+		## Ошибка функции: _ABORT "funcerr" "имя функции" "код ошибки"
+		echo -e "\
+ $Header
+  Error in function: $2
+  Error code: $3
+  
+  $Str_ABORT_Exit"
+	else
+		## Общее сообщение об ошибке
+		echo -e "\
 $Header
   $Str_ABORT_Msg $abort_message"
+	fi
 	
+	# Вывод списка ошибок при наличии
 	if [ "$List_Errors" != "" ]; then echo -e "
   ${Font_Bold}${Font_Red}- $Str_ABORT_Errors${Font_Reset_Color}${Font_Reset} $List_Errors"; fi
-	
+	# Вывод списка предупреждений при наличии
 	if [ "$List_Warnings" != "" ]; then echo -e "
   ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
 	
-	echo -e "
-  $Str_ABORT_Exit
-  $Temp_Dirt"
+	_CLEAR_TEMP # Очистка временных файлов
 	
-	_CLEAR_TEMP
+	echo -e "  $Str_ABORT_Exit" # "Нажмите Enter или закройте окно для выхода"...
 	
-	read pause; clear; exit 1 # Double clear resets styles before going to the system terminal window.
+	# Пауза, очистка и выход.
+	read pause; clear; exit 1 # Double clear resets styles before going to the system terminal window
 }
 
+# Функция добавления ошибок в список
 function _ERROR() {
-	local err_first="Empty error title"
-	local err_second="empty error description."
+	local err_first="Empty Error Title"
+	local err_second="No description..."
 	if [ ! -z "$1" ]; then local err_first="$1"; fi
 	if [ ! -z "$2" ]; then local err_second="$2"; fi
-	
-	List_Errors="${List_Errors}\n    $err_first - $err_second"
+	List_Errors="${List_Errors}\n   $err_first: $err_second"
 }
 
+# Функция добавления предупреждений в список
 function _WARNING() {
-	local warn_first="Empty warning title"
-	local warn_second="empty warning description."
+	local warn_first="Empty Warning Title"
+	local warn_second="No description."
 	if [ ! -z "$1" ]; then local warn_first="$1"; fi
 	if [ ! -z "$2" ]; then local warn_second="$2"; fi
-	
-	List_Warnings="${List_Warnings}\n    $warn_first - $warn_second"
+	List_Warnings="${List_Warnings}\n   $warn_first: $warn_second"
 }
 
 ######### ------------ #########
@@ -553,6 +581,7 @@ function _CHECK_SYSTEM_DE() {
 
 function _CHECK_SYSTEM() {
 	_CHECK_SYSTEM_VERSION
+	_CHECK_SYSTEM_DEPENDENCIES
 	Current_Architecture="$(uname -m)"
 	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
@@ -565,7 +594,7 @@ function _CHECK_SYSTEM() {
 ######### Print package information #########
 
 function _PRINT_PACKAGE_INFO() {
-if [ $MODE_SILENT == false ]; then
+if [ "$MODE_SILENT" == "false" ]; then
 	if [ $all_ok == true ]; then all_ok=false
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -586,10 +615,10 @@ $Info_Description
  -${Font_Bold}${Font_Green}$Str_PACKAGEINFO_InstallMode${Font_Reset_Color} $Install_Mode${Font_Reset}"
 	
 	if [ "$List_Errors" != "" ]; then echo -e "
-  ${Font_Bold}${Font_Red}- $Str_ABORT_Errors${Font_Reset_Color}${Font_Reset} $List_Errors"; fi
+ ${Font_Bold}${Font_Red}- $Str_ABORT_Errors${Font_Reset_Color}${Font_Reset} $List_Errors"; fi
 	
 	if [ "$List_Warnings" != "" ]; then echo -e "
-  ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
+ ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
 	
 	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi
 	
@@ -598,7 +627,7 @@ $Info_Description
 		if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then all_ok=true
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 		
-		if [ $MODE_DEBUG == true ]; then echo "_PRINT_PACKAGE_INFO - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_PACKAGE_INFO ${Font_Reset_Color}${Font_Reset}"; fi
 fi
 }
@@ -606,9 +635,10 @@ fi
 ######### -------------------------------- #########
 ######### Check and compare MD5 of archive #########
 
+EXIT_CODE_CHECK_MD5_COMPARE="255"
 function _CHECK_MD5_COMPARE() {
-	MD5_ProgramFiles_Error=false; MD5_SystemFiles_Error=false; MD5_UserFiles_Error=false
-	MD5_Warning=false;
+	EXIT_CODE_CHECK_MD5_COMPARE="0"
+	MD5_ProgramFiles_Error=false; MD5_SystemFiles_Error=false; MD5_UserFiles_Error=false; MD5_Warning=false
 	MD5_Program_Files_Hash=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
 	MD5_System_Files_Hash=`md5sum "$Archive_System_Files" | awk '{print $1}'`
 	
@@ -616,83 +646,90 @@ function _CHECK_MD5_COMPARE() {
 	if [ "$MD5_System_Files_Hash" != "$Archive_MD5_System_Files_Hash" ]; then MD5_SystemFiles_Error=true; fi
 	if [ $Install_User_Data == true ]; then
 		MD5_User_Data_Hash=`md5sum "$Archive_User_Data" | awk '{print $1}'`
-		if [ "$MD5_User_Data_Hash" != "$Archive_MD5_User_Data_Hash" ]; then MD5_UserFiles_Error=true; fi; fi
+		if [ "$MD5_User_Data_Hash" != "$Archive_MD5_User_Data_Hash" ]; then MD5_UserFiles_Error=true; fi
+	fi
 	
 	if [ $MD5_ProgramFiles_Error == true ] || [ $MD5_SystemFiles_Error == true ] || [ $MD5_UserFiles_Error == true ]; then MD5_Warning=true; fi
+	if [ "$EXIT_CODE_CHECK_MD5_COMPARE" != "0" ]; then _ABORT "funcerr" "_CHECK_MD5_COMPARE" "$EXIT_CODE_CHECK_MD5_COMPARE"; fi
+}
+
+function _CHECK_MD5_PRINT_GOOD() {
+	_CLEAR_BACKGROUND
+	echo -e "\
+$Header
+ ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
+	
+	echo -e "
+  ${Font_Green}The integrity of the installation archive has been successfully verified
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Program_Files_Hash\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_System_Files_Hash\""
+	
+	if [ $Install_User_Data == true ]; then echo -e "\
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
+	
+	echo -e "${Font_Reset_Color}
+  ${Font_Bold}$Str_CHECKMD5PRINT_Enter_To_Continue${Font_Reset}"
+	
+	read pause
+}
+
+function _CHECK_MD5_PRINT_WARNING() {
+	_CLEAR_BACKGROUND
+	echo -e "\
+$Header
+ ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
+	echo -e "\
+
+  $Str_ATTENTION ${Font_Bold}${Font_DarkRed}$Str_CHECKMD5PRINT_Hash_Not_Match${Font_Reset_Color}
+  ${Font_Red}$Str_CHECKMD5PRINT_Hash_Not_Match2${Font_Reset_Color}${Font_Reset}"
+	if [ $MD5_ProgramFiles_Error == true ]; then
+		echo -e "\
+
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_pHash${Font_Reset} \"$Archive_MD5_Program_Files_Hash\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}     \"$MD5_Program_Files_Hash\""; fi
+	if [ $MD5_SystemFiles_Error == true ]; then
+		echo -e "\
+
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_sHash${Font_Reset} \"$Archive_MD5_System_Files_Hash\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_System_Files_Hash\""; fi
+	if [ $MD5_UserFiles_Error == true ]; then
+		echo -e "\
+
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_uHash${Font_Reset} \"$Archive_MD5_User_Data_Hash\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
+	echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
+	read errors_confirm
+	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then all_ok=true
+	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
 
 function _CHECK_MD5_PRINT() {
 	_CLEAR_BACKGROUND
 	echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
-	
-	if [ $MD5_Warning == true ]; then
-		echo -e "\
-
-  $Str_ATTENTION ${Font_Bold}${Font_DarkRed}$Str_CHECKMD5PRINT_Hash_Not_Match${Font_Reset_Color}
-  ${Font_Red}$Str_CHECKMD5PRINT_Hash_Not_Match2${Font_Reset_Color}${Font_Reset}"
-		if [ $MD5_ProgramFiles_Error == true ]; then
-			echo -e "\
-
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_pHash${Font_Reset} \"$Archive_MD5_Program_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}     \"$MD5_Program_Files_Hash\""; fi
-		if [ $MD5_SystemFiles_Error == true ]; then
-			echo -e "\
-
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_sHash${Font_Reset} \"$Archive_MD5_System_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_System_Files_Hash\""; fi
-		if [ $MD5_UserFiles_Error == true ]; then
-			echo -e "\
-
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_uHash${Font_Reset} \"$Archive_MD5_User_Data_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
-		echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
-		read errors_confirm
-    	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then all_ok=true
-		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-	else
-		all_ok=true
-		echo -e "
-  ${Font_Green}The integrity of the installation archive has been successfully verified
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Program_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_System_Files_Hash\""
-		if [ $Install_User_Data == true ]; then echo -e "\
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
-		echo -e "${Font_Reset_Color}
-  ${Font_Bold}$Str_CHECKMD5PRINT_Enter_To_Continue${Font_Reset}"
-		read pause
-	fi
-}
-
-function _CHECK_MD5() {
-if [ $MODE_SILENT == false ]; then
-	if [ $all_ok == true ]; then all_ok=false
-		_CLEAR_BACKGROUND
-		echo -e "\
-$Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKMD5_Head${Font_Reset_Color}${Font_Reset}
   $Str_CHECKMD5_Sub_Head
    $Str_CHECKMD5_Sub_Head2"
-		
-		_CHECK_MD5_COMPARE
+}
+
+function _CHECK_MD5() {
+	if [ "$MODE_SILENT" == "true" ]; then _CHECK_MD5_COMPARE
+		if [ $MD5_Warning == true ]; then _CHECK_MD5_PRINT_WARNING; fi
+	else
 		_CHECK_MD5_PRINT
+		_CHECK_MD5_COMPARE
+		if [ $MD5_Warning == true ]; then _CHECK_MD5_PRINT_WARNING
+		else _CHECK_MD5_PRINT_GOOD; fi
 		
-		all_ok=true
-		
-	if [ $MODE_DEBUG == true ]; then echo "_CHECK_MD5 - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _CHECK_MD5 ${Font_Reset_Color}${Font_Reset}"; fi
-else
-	_CHECK_MD5_COMPARE
-	if [ $MD5_Warning == true ]; then _CHECK_MD5_PRINT; fi
-fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_MD5"; read pause; fi
+	fi
 }
 
 ######### --------------------------- #########
 ######### Print installation settings #########
 
 function _PRINT_INSTALL_SETTINGS() {
-if [ $MODE_SILENT == false ]; then
+if [ "$MODE_SILENT" == "false" ]; then
 	if [ $all_ok == true ]; then all_ok=false
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -745,7 +782,7 @@ $Header
 		if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then all_ok=true
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	
-		if [ $MODE_DEBUG == true ]; then echo "_PRINT_INSTALL_SETTINGS - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_INSTALL_SETTINGS ${Font_Reset_Color}${Font_Reset}"; fi
 fi
 }
@@ -816,7 +853,7 @@ function _PREPARE_INPUT_FILES() {
 		Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
 		all_ok=true
 		
-		if [ $MODE_DEBUG == true ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_INPUT_FILES ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -852,7 +889,7 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 			all_ok=true
 		fi
 		
-		if [ $MODE_DEBUG == true ]; then echo "_CHECK_OUTPUTS - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _CHECK_OUTPUTS ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -862,12 +899,12 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 function _INSTALL_USER_DATA() {
 	# Copy user data
 	if [ $Install_User_Data == true ]; then
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
 		if [ ! -e "$Output_User_Data" ]; then mkdir -p "$Output_User_Data"; fi
 		if ! "$Tool_SevenZip_bin" x -aoa "$Archive_User_Data" -o"$Output_User_Data/" &> /dev/null; then
 			_ERROR "_INSTALL_USER_DATA" "$Str_INSTALLAPP_Copy_uFiles_Err"; fi
 	fi
-	if [ $MODE_DEBUG == true ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
 }
 
 ######### --------------- #########
@@ -910,19 +947,19 @@ function _INSTALL_DESKTOP_ICONS() {
 
 function _INSTALL_APP_USER() {
 	if [ $all_ok == true ]; then all_ok=false
-		if [ $MODE_SILENT == false ]; then
+		if [ "$MODE_SILENT" == "false" ]; then
 			_CLEAR_BACKGROUND
 			echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
 		
 		# Check Output Folder
 		if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
 		else if ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 		
 		if ! "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
 			echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
@@ -933,7 +970,7 @@ $Header
 			else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
 		fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
 		
 		# Check Bin folder
 		if [ ! -e "$Output_Bin_Dir" ]; then mkdir "$Output_Bin_Dir"; fi
@@ -960,7 +997,7 @@ $Header
 		
 		all_ok=true
 		
-		if [ $MODE_DEBUG == true ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -969,19 +1006,19 @@ $Header
 
 function _INSTALL_APP_SYSTEM() {
 	if [ $all_ok == true ]; then all_ok=false
-		if [ $MODE_SILENT == false ]; then
+		if [ "$MODE_SILENT" == "false" ]; then
 			_CLEAR_BACKGROUND
 			echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
 		
 		# Check Output Folder
 		if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
 		else if ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 		
 		if ! sudo "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
 			echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
@@ -992,7 +1029,7 @@ $Header
 			else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
 		fi
 		
-		if [ $MODE_SILENT == false ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
+		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
 		
 		echo " $Str_INSTALLAPP_Set_Rights"
 		sudo chmod -R $Out_App_Folder_Permissions "$Output_Install_Dir"
@@ -1021,7 +1058,7 @@ $Header
 		
 		all_ok=true
 		
-		if [ $MODE_DEBUG == true ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -1063,7 +1100,7 @@ function _PREPARE_UNINSTALLER() {
 		if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
 		if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
 		
-		if [ $MODE_DEBUG == true ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
 	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_UNINSTALLER ${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -1193,7 +1230,7 @@ function _SET_LOCALE() {
 	
 	_SET_LOCALE_DEFAULT
 	
-	if [ $MODE_SILENT == true ]; then Locale_Display="-silent"
+	if [ "$MODE_SILENT" == "true" ]; then Locale_Display="-silent"
 	else
 		if [ -e "$Locale_File" ]; then
 			if [ $(grep Locale_Version "$Locale_File") == "Locale_Version=\"$LocaleVersion\"" ]; then

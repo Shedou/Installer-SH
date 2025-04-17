@@ -8,12 +8,12 @@ Arguments=("$@")
 function _MAIN() {
 	_INIT_GLOBAL_VARIABLES
 	_INSTALLER_SETTINGS
+		_CHECK_DEPENDENCIES_FIRST # First important check before UI
 	_CHECK_SYSTEM
+	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_INIT_FONT_STYLES
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
-		_CHECK_DEPENDENCIES_FIRST # First important check before UI
-	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_INIT_GLOBAL_PATHS
 	_CECK_EXECUTE_RIGHTS
 		_CHECK_DEPENDENCIES_LAST  # Last important check before UI
@@ -210,6 +210,16 @@ function _INIT_GLOBAL_VARIABLES() {
 
 # _INSTALLER_SETTINGS
 
+_CHECK_DEPENDENCIES_FIRST() {
+	echo ""
+}
+
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### BEFORE LAST DEPENDENCY CHECK #########
+
 function _CHECK_SYSTEM_VERSION() {
 	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
 		Current_OS_Name_Full="$PRETTY_NAME"
@@ -358,17 +368,6 @@ function _CHECK_SYSTEM_DE() {
 	
 	Current_DE="$check_de_raw"
 }
-
-_CHECK_DEPENDENCIES_FIRST() {
-	echo ""
-}
-
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### BEFORE LAST DEPENDENCY CHECK #########
-
 
 #_CLEAR_BACKGROUND
 #_PACKAGE_SETTINGS

@@ -9,12 +9,11 @@ function _MAIN() {
 	_INIT_GLOBAL_VARIABLES
 	_INSTALLER_SETTINGS
 	_CHECK_SYSTEM
-	_SET_LOCALE
-		_CHECK_DEPENDENCIES_FIRST # First important check before UI
-	_CHECK_SYSTEM_DE
 	_INIT_FONT_STYLES
+	_SET_LOCALE
+	_CHECK_SYSTEM_DE
+		_CHECK_DEPENDENCIES_FIRST # First important check before UI
 	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
-	_PACKAGE_SETTINGS
 	_INIT_GLOBAL_PATHS
 	_CECK_EXECUTE_RIGHTS
 		_CHECK_DEPENDENCIES_LAST  # Last important check before UI
@@ -55,17 +54,13 @@ function _INSTALLER_SETTINGS() {
 	
 	Debug_Test_Colors=false       # Test colors (for debugging purposes)
 	Font_Styles_RGB=false         # Disabled for compatibility with older distributions, can be enabled manually.
-}
-
-function _PACKAGE_SETTINGS() {
-
-Unique_App_Folder_Name="installer-sh-22" #=> UNIQUE_APP_FOLDER_NAME
-
- # Unique name of the output directory.
- # WARNING! Do not use capital letters in this place!
- # WARNING! This name is also used as a template for "bin" files in the "/usr/bin" directory.
- # good: ex-app-16, exapp-16.
- # BAD: Ex-app-16, ExApp-16.
+	
+	Unique_App_Folder_Name="installer-sh-22" #=> UNIQUE_APP_FOLDER_NAME
+	# Unique name of the output directory.
+	# WARNING! Do not use capital letters in this place!
+	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" directory.
+	# good: ex-app-16, exapp-16.
+	# BAD: Ex-app-16, ExApp-16.
 
 ######### - ------------------- - #########
 ######### - Package Information - #########
@@ -83,15 +78,14 @@ Info_Licensing="Freeware - Open Source (MIT)
     Trialware - 30 days free, Proprietary (Other License Name)"
 Info_Developer="Chimbal"
 Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog"
-if [ $Locale_Use_Default == true ]; then
+
 # Use this description if there is no suitable localization file.
 # WARNING! The maximum number of characters available for description is 100x11, it is not recommended to exceed this limit.
-Info_Description="\
+Info_Description_Default="\
   1) This universal installer (short description):
      - Suitable for installation on stand-alone PCs without Internet access.
      - Stores installation files in a 7-zip archive (good compression and fast unpacking).
   2) Check the current \"installer.sh\" file to configure the installation package."
-fi
 
  ### ------------------------ ###
  ### Basic Menu File Settings ###
@@ -123,9 +117,6 @@ Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
 Archive_MD5_Program_Files_Hash=""
 Archive_MD5_System_Files_Hash=""
 Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
-
- # Header
- Header="${Font_DarkYellow}${Font_Bold}-=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-${Font_Reset}${Font_Reset_Color}\n"
 }
 
 ######### -- ------------ -- #########
@@ -139,8 +130,8 @@ Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
 ######### -- ------------ -- #########
 
 
-######### ------------ #########
-######### Post Install #########
+######### ------------------------- #########
+######### Post Install (LAST STAGE) #########
 
 function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
 function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
@@ -188,7 +179,10 @@ function _INIT_GLOBAL_VARIABLES() {
 	
 	all_ok=true; Locale_Use_Default=true # don't change!
 	Locale_Display="Default"
+	Info_Description="TO BE REPLACED BY LOCALE IF PRESENT, DONT CHANGE THIS"
 	Current_Architecture="Unknown"
+	# Header Text (unformated)
+	Header="-=: Installer-SH v$ScriptVersion) - Lang: NOT INITIALIZED :=-"
 	
 	User_Name="$USER"
 	User_Home="$HOME"
@@ -245,17 +239,59 @@ function _CHECK_SYSTEM() {
 	fi
 }
 
-#_SET_LOCALE
-
-_CHECK_DEPENDENCIES_FIRST() {
-	echo ""
+function _INIT_FONT_STYLES() {
+	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
+	# '\e[38;2;128;128;255m'
+	#     fg m  R   G   B
+	# \e - escape code, [38 - foreground, [48 - background
+	#
+	### Old distributions do not support the RGB method, you need to make crutches...
+	# '\033[38;5;165m'
+	# 165m - 8 bit color number
+	
+	Font_Bold="\e[1m"
+	Font_Dim="\e[2m"
+	Font_Reset="\e[22m"
+	Font_Reset_Color='\e[38;5;255m'
+	Font_Reset_BG='\e[48;5;16m'
+	
+	Font_Black='\e[38;5;233m'; Font_Black_BG='\e[48;5;233m'
+	Font_DarkGray='\e[38;5;240m'; Font_DarkGray_BG='\e[48;5;240m'
+	Font_Gray='\e[38;5;248m'; Font_Gray_BG='\e[48;5;248m'
+	Font_White='\e[38;5;255m'; Font_White_BG='\e[48;5;255m'
+	
+	if [ "$Font_Styles_RGB" == true ]; then
+		Font_DarkRed='\e[38;2;200;0;0m'; Font_DarkRed_BG='\e[48;2;200;0;0m'
+		Font_DarkGreen='\e[38;2;0;180;0m'; Font_DarkGreen_BG='\e[48;2;0;180;0m'
+		Font_DarkYellow='\e[38;2;180;146;0m'; Font_DarkYellow_BG='\e[48;2;180;146;0m'
+		Font_DarkBlue='\e[38;2;72;72;230m'; Font_DarkBlue_BG='\e[48;2;72;72;230m'
+		Font_DarkMagenta='\e[38;2;200;0;200m'; Font_DarkMagenta_BG='\e[48;2;200;0;200m'
+		Font_DarkCyan='\e[38;2;40;180;160m'; Font_DarkCyan_BG='\e[48;2;40;180;160m'
+		
+		Font_Red='\e[38;2;255;96;96m'; Font_Red_BG='\e[48;2;255;96;96m'
+		Font_Green='\e[38;2;128;255;128m'; Font_Green_BG='\e[48;2;128;255;128m'
+		Font_Yellow='\e[38;2;245;245;64m'; Font_Yellow_BG='\e[48;2;245;245;64m'
+		Font_Blue='\e[38;2;160;160;255m'; Font_Blue_BG='\e[48;2;160;160;255m'
+		Font_Magenta='\e[38;2;255;96;255m'; Font_Magenta_BG='\e[48;2;255;96;255m'
+		Font_Cyan='\e[38;2;90;255;240m'; Font_Cyan_BG='\e[48;2;90;255;240m'
+	else # For compatibility with older distributions...
+		Font_DarkRed='\e[38;5;160m'; Font_DarkRed_BG='\e[48;5;160m'
+		Font_DarkGreen='\e[38;5;34m'; Font_DarkGreen_BG='\e[48;5;34m'
+		Font_DarkYellow='\e[38;5;178m'; Font_DarkYellow_BG='\e[48;5;178m'
+		Font_DarkBlue='\e[38;5;63m'; Font_DarkBlue_BG='\e[48;5;63m'
+		Font_DarkMagenta='\e[38;5;164m'; Font_DarkMagenta_BG='\e[48;5;164m'
+		Font_DarkCyan='\e[38;5;37m'; Font_DarkCyan_BG='\e[48;5;37m'
+		
+		Font_Red='\e[38;5;210m'; Font_Red_BG='\e[48;5;210m'
+		Font_Green='\e[38;5;82m'; Font_Green_BG='\e[48;5;82m'
+		Font_Yellow='\e[38;5;226m'; Font_Yellow_BG='\e[48;5;226m'
+		Font_Blue='\e[38;5;111m'; Font_Blue_BG='\e[48;5;111m'
+		Font_Magenta='\e[38;5;213m'; Font_Magenta_BG='\e[48;5;213m'
+		Font_Cyan='\e[38;5;51m'; Font_Cyan_BG='\e[48;5;51m'
+	fi
 }
 
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### ---------------------------- #########
-######### BEFORE LAST DEPENDENCY CHECK #########
+#_SET_LOCALE
 
 function _CHECK_SYSTEM_DE() {
 	local check_de_raw=""
@@ -323,57 +359,16 @@ function _CHECK_SYSTEM_DE() {
 	Current_DE="$check_de_raw"
 }
 
-function _INIT_FONT_STYLES() {
-	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
-	# '\e[38;2;128;128;255m'
-	#     fg m  R   G   B
-	# \e - escape code, [38 - foreground, [48 - background
-	#
-	### Old distributions do not support the RGB method, you need to make crutches...
-	# '\033[38;5;165m'
-	# 165m - 8 bit color number
-	
-	Font_Bold="\e[1m"
-	Font_Dim="\e[2m"
-	Font_Reset="\e[22m"
-	Font_Reset_Color='\e[38;5;255m'
-	Font_Reset_BG='\e[48;5;16m'
-	
-	Font_Black='\e[38;5;233m'; Font_Black_BG='\e[48;5;233m'
-	Font_DarkGray='\e[38;5;240m'; Font_DarkGray_BG='\e[48;5;240m'
-	Font_Gray='\e[38;5;248m'; Font_Gray_BG='\e[48;5;248m'
-	Font_White='\e[38;5;255m'; Font_White_BG='\e[48;5;255m'
-	
-	if [ "$Font_Styles_RGB" == true ]; then
-		Font_DarkRed='\e[38;2;200;0;0m'; Font_DarkRed_BG='\e[48;2;200;0;0m'
-		Font_DarkGreen='\e[38;2;0;180;0m'; Font_DarkGreen_BG='\e[48;2;0;180;0m'
-		Font_DarkYellow='\e[38;2;180;146;0m'; Font_DarkYellow_BG='\e[48;2;180;146;0m'
-		Font_DarkBlue='\e[38;2;72;72;230m'; Font_DarkBlue_BG='\e[48;2;72;72;230m'
-		Font_DarkMagenta='\e[38;2;200;0;200m'; Font_DarkMagenta_BG='\e[48;2;200;0;200m'
-		Font_DarkCyan='\e[38;2;40;180;160m'; Font_DarkCyan_BG='\e[48;2;40;180;160m'
-		
-		Font_Red='\e[38;2;255;96;96m'; Font_Red_BG='\e[48;2;255;96;96m'
-		Font_Green='\e[38;2;128;255;128m'; Font_Green_BG='\e[48;2;128;255;128m'
-		Font_Yellow='\e[38;2;245;245;64m'; Font_Yellow_BG='\e[48;2;245;245;64m'
-		Font_Blue='\e[38;2;160;160;255m'; Font_Blue_BG='\e[48;2;160;160;255m'
-		Font_Magenta='\e[38;2;255;96;255m'; Font_Magenta_BG='\e[48;2;255;96;255m'
-		Font_Cyan='\e[38;2;90;255;240m'; Font_Cyan_BG='\e[48;2;90;255;240m'
-	else # For compatibility with older distributions...
-		Font_DarkRed='\e[38;5;160m'; Font_DarkRed_BG='\e[48;5;160m'
-		Font_DarkGreen='\e[38;5;34m'; Font_DarkGreen_BG='\e[48;5;34m'
-		Font_DarkYellow='\e[38;5;178m'; Font_DarkYellow_BG='\e[48;5;178m'
-		Font_DarkBlue='\e[38;5;63m'; Font_DarkBlue_BG='\e[48;5;63m'
-		Font_DarkMagenta='\e[38;5;164m'; Font_DarkMagenta_BG='\e[48;5;164m'
-		Font_DarkCyan='\e[38;5;37m'; Font_DarkCyan_BG='\e[48;5;37m'
-		
-		Font_Red='\e[38;5;210m'; Font_Red_BG='\e[48;5;210m'
-		Font_Green='\e[38;5;82m'; Font_Green_BG='\e[48;5;82m'
-		Font_Yellow='\e[38;5;226m'; Font_Yellow_BG='\e[48;5;226m'
-		Font_Blue='\e[38;5;111m'; Font_Blue_BG='\e[48;5;111m'
-		Font_Magenta='\e[38;5;213m'; Font_Magenta_BG='\e[48;5;213m'
-		Font_Cyan='\e[38;5;51m'; Font_Cyan_BG='\e[48;5;51m'
-	fi
+_CHECK_DEPENDENCIES_FIRST() {
+	echo ""
 }
+
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### ---------------------------- #########
+######### BEFORE LAST DEPENDENCY CHECK #########
+
 
 #_CLEAR_BACKGROUND
 #_PACKAGE_SETTINGS
@@ -609,6 +604,11 @@ function _PRINT_PACKAGE_INFO() {
 if [ "$MODE_SILENT" == "false" ]; then
 	if [ $all_ok == true ]; then all_ok=false
 		_CLEAR_BACKGROUND
+		
+		if [ $Locale_Use_Default == true ]; then
+			Info_Description="$Info_Description_Default"
+		fi
+		
 		echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_PACKAGEINFO_Head${Font_Reset_Color}${Font_Reset}
@@ -1241,9 +1241,7 @@ function _SET_LOCALE() {
 	local Locale_File="$Path_To_Script/locales/$Language"
 	
 	_SET_LOCALE_DEFAULT
-	
-	if [ "$MODE_SILENT" == "true" ]; then Locale_Display="-silent"
-	else
+	if [ "$MODE_SILENT" == "false" ]; then
 		if [ -e "$Locale_File" ]; then
 			if [ $(grep Locale_Version "$Locale_File") == "Locale_Version=\"$LocaleVersion\"" ]; then
 				Locale_Use_Default=false
@@ -1251,7 +1249,10 @@ function _SET_LOCALE() {
 				source "$Locale_File"
 			fi
 		fi
-	fi
+	else Locale_Display="-silent"; fi
+	
+	Header="-=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-"
+	Header="${Font_DarkYellow}${Font_Bold}${Header}${Font_Reset}${Font_Reset_Color}\n"
 }
 
 ######### ---- --------- ---- #########

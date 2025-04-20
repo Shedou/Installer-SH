@@ -10,7 +10,7 @@ function _MAIN() {
 	_INSTALLER_SETTINGS
 		_CHECK_DEPENDENCIES_FIRST # First important check before UI
 	_CHECK_SYSTEM
-	_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
+		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_INIT_FONT_STYLES
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
@@ -103,7 +103,7 @@ Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNIN
 Program_Uninstaller_Icon="ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
 
  # Additional menu categories that will include the main application shortcuts.
-Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
+Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
  # -=== Chimbalix 24.4+ main categories:
  # chi-ai  chi-accessories  chi-accessories-fm  chi-view  chi-admin  chi-info  chi-info-bench  chi-info-help
  # chi-dev  chi-dev-other  chi-dev-ide  chi-edit  chi-edit-audiovideo  chi-edit-image  chi-edit-text  chi-games
@@ -314,39 +314,39 @@ function _CHECK_SYSTEM_DE() {
 	
 	# Normalize
 	### COSMIC - GNOME - KDE - LXDE - LXQT - MATE - RAZOR - ROX - TDE - UNITY - XFCE - EDE - CINNAMON - PANTHEON - DDE - ENDLESS - LEGACY - BUDGIE - OPENBOX - SWAY
-	if [ "$check_de_raw" == "COSMIC" ];            then local check_de_raw="COSMIC" # COSMIC Desktop
-	elif [ "$check_de_raw" == "GNOME" ];           then local check_de_raw="GNOME"  # GNOME Desktop
-	elif [ "$check_de_raw" == "GNOME-Classic" ];   then local check_de_raw="GNOME"  # GNOME Classic Desktop
-	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then local check_de_raw="GNOME"  # GNOME Flashback Desktop
-	elif [ "$check_de_raw" == "KDE" ];      then local check_de_raw="KDE"      # KDE Desktop
-	elif [ "$check_de_raw" == "LXDE" ];     then local check_de_raw="LXDE"     # LXDE Desktop
-	elif [ "$check_de_raw" == "LXQt" ];     then local check_de_raw="LXQT"     # LXQt Desktop
-	elif [ "$check_de_raw" == "MATE" ];     then local check_de_raw="MATE"     # MATE Desktop
-	elif [ "$check_de_raw" == "Razor" ];    then local check_de_raw="RAZOR"    # Razor-qt Desktop
-	elif [ "$check_de_raw" == "ROX" ];      then local check_de_raw="ROX"      # ROX Desktop
-	elif [ "$check_de_raw" == "TDE" ];      then local check_de_raw="TDE"      # Trinity Desktop
-	elif [ "$check_de_raw" == "Unity" ];    then local check_de_raw="UNITY"    # Unity Shell
-	elif [ "$check_de_raw" == "XFCE" ];     then local check_de_raw="XFCE"     # XFCE Desktop
-	elif [ "$check_de_raw" == "EDE" ];      then local check_de_raw="EDE"      # EDE Desktop
-	elif [ "$check_de_raw" == "Cinnamon" ]; then local check_de_raw="CINNAMON" # Cinnamon Desktop
-	elif [ "$check_de_raw" == "Pantheon" ]; then local check_de_raw="PANTHEON" # Pantheon Desktop
-	elif [ "$check_de_raw" == "DDE" ];      then local check_de_raw="DDE"      # Deepin Desktop
-	elif [ "$check_de_raw" == "Endless" ];  then local check_de_raw="ENDLESS"  # Endless OS desktop
-	elif [ "$check_de_raw" == "Old" ];      then local check_de_raw="LEGACY"   # Legacy menu systems
-	elif [ "$check_de_raw" == "plasma" ];   then local check_de_raw="KDE" ### Extra names
-	elif [ "$check_de_raw" == "xfce" ];     then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "xubuntu" ];  then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "lxde" ];     then local check_de_raw="LXDE"
-	elif [ "$check_de_raw" == "mate" ];     then local check_de_raw="MATE"
-	elif [ "$check_de_raw" == "ubuntu" ];   then local check_de_raw="GNOME"
-	elif [ "$check_de_raw" == "lxqt" ];     then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "Lubuntu" ];  then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "cinnamon" ];       then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "X-Cinnamon" ];     then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "budgie-desktop" ]; then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "Budgie" ];         then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "openbox" ];        then local check_de_raw="OPENBOX"
-	elif [ "$check_de_raw" == "sway" ];           then local check_de_raw="SWAY"
+	if [ "$check_de_raw" == "COSMIC" ];            then local check_de_raw="COSMIC"   # COSMIC Desktop
+	elif [ "$check_de_raw" == "GNOME" ];           then local check_de_raw="GNOME"    # GNOME Desktop
+	elif [ "$check_de_raw" == "GNOME-Classic" ];   then local check_de_raw="GNOME"    # GNOME Classic Desktop
+	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then local check_de_raw="GNOME"    # GNOME Flashback Desktop
+	elif [ "$check_de_raw" == "KDE" ];             then local check_de_raw="KDE"      # KDE Desktop
+	elif [ "$check_de_raw" == "LXDE" ];            then local check_de_raw="LXDE"     # LXDE Desktop
+	elif [ "$check_de_raw" == "LXQt" ];            then local check_de_raw="LXQT"     # LXQt Desktop
+	elif [ "$check_de_raw" == "MATE" ];            then local check_de_raw="MATE"     # MATE Desktop
+	elif [ "$check_de_raw" == "Razor" ];           then local check_de_raw="RAZOR"    # Razor-qt Desktop
+	elif [ "$check_de_raw" == "ROX" ];             then local check_de_raw="ROX"      # ROX Desktop
+	elif [ "$check_de_raw" == "TDE" ];             then local check_de_raw="TDE"      # Trinity Desktop
+	elif [ "$check_de_raw" == "Unity" ];           then local check_de_raw="UNITY"    # Unity Shell
+	elif [ "$check_de_raw" == "XFCE" ];            then local check_de_raw="XFCE"     # XFCE Desktop
+	elif [ "$check_de_raw" == "EDE" ];             then local check_de_raw="EDE"      # EDE Desktop
+	elif [ "$check_de_raw" == "Cinnamon" ];        then local check_de_raw="CINNAMON" # Cinnamon Desktop
+	elif [ "$check_de_raw" == "Pantheon" ];        then local check_de_raw="PANTHEON" # Pantheon Desktop
+	elif [ "$check_de_raw" == "DDE" ];             then local check_de_raw="DDE"      # Deepin Desktop
+	elif [ "$check_de_raw" == "Endless" ];         then local check_de_raw="ENDLESS"  # Endless OS desktop
+	elif [ "$check_de_raw" == "Old" ];             then local check_de_raw="LEGACY"   # Legacy menu systems
+	elif [ "$check_de_raw" == "plasma" ];          then local check_de_raw="KDE" ### Extra names
+	elif [ "$check_de_raw" == "xfce" ];            then local check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "xubuntu" ];         then local check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "lxde" ];            then local check_de_raw="LXDE"
+	elif [ "$check_de_raw" == "mate" ];            then local check_de_raw="MATE"
+	elif [ "$check_de_raw" == "ubuntu" ];          then local check_de_raw="GNOME"
+	elif [ "$check_de_raw" == "lxqt" ];            then local check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "Lubuntu" ];         then local check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "cinnamon" ];        then local check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "X-Cinnamon" ];      then local check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "budgie-desktop" ];  then local check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "Budgie" ];          then local check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "openbox" ];         then local check_de_raw="OPENBOX"
+	elif [ "$check_de_raw" == "sway" ];            then local check_de_raw="SWAY"
 	else local check_de_err="1"; fi
 	
 	if [ "$check_de_err" == "1" ]; then
@@ -370,7 +370,6 @@ function _CHECK_SYSTEM_DE() {
 }
 
 #_CLEAR_BACKGROUND
-#_PACKAGE_SETTINGS
 
 function _INIT_GLOBAL_PATHS() {
 	### --------------------------- ###

@@ -8,15 +8,14 @@ Arguments=("$@")
 function _MAIN() {
 	_INIT_GLOBAL_VARIABLES
 	_INSTALLER_SETTINGS
-		_CHECK_DEPENDENCIES_FIRST # First important check before UI
+		_IMPORTANT_CHECK_FIRST # First important check before UI
 	_CHECK_SYSTEM
 		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_INIT_FONT_STYLES
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
 	_INIT_GLOBAL_PATHS
-	_CECK_EXECUTE_RIGHTS
-		_CHECK_DEPENDENCIES_LAST  # Last important check before UI
+		_IMPORTANT_CHECK_LAST  # Last important check before UI
 	printf '\033[8;32;100t' # Resize terminal Window (100x32)
 	_CHECK_PORTSOFT
 	_PRINT_PACKAGE_INFO
@@ -210,7 +209,7 @@ function _INIT_GLOBAL_VARIABLES() {
 
 # _INSTALLER_SETTINGS
 
-_CHECK_DEPENDENCIES_FIRST() {
+_IMPORTANT_CHECK_FIRST() {
 	echo ""
 }
 
@@ -376,11 +375,8 @@ function _INIT_GLOBAL_PATHS() {
 	### Do not edit variables here! ###
 	### --------------------------- ###
 	
-	if [ "$Tools_Architecture" == "x86" ]; then
-		Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"
-	else
-		Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
-	fi
+	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"
+	else Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"; fi
 	
 	Tool_Prepare_Base="$Path_Installer_Data/tools/prepare-portsoft-menu.sh"
 	
@@ -445,15 +441,11 @@ function _INIT_GLOBAL_PATHS() {
 	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
 }
 
-_CECK_EXECUTE_RIGHTS() {
+_IMPORTANT_CHECK_LAST() {
 	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
 		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
 	fi
-}
-
-_CHECK_DEPENDENCIES_LAST() {
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
-	echo ""
 }
 
 ######### -------------- #########

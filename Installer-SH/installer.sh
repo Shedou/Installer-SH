@@ -178,7 +178,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	Info_Description="TO BE REPLACED BY LOCALE IF PRESENT, DONT CHANGE THIS"
 	Current_Architecture="Unknown"
 	# Header Text (unformated)
-	Header="-=: Installer-SH v$ScriptVersion) - Lang: NOT INITIALIZED :=-"
+	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
 	User_Name="$USER"
 	User_Home="$HOME"
@@ -207,7 +207,23 @@ function _INIT_GLOBAL_VARIABLES() {
 # _INSTALLER_SETTINGS
 
 _IMPORTANT_CHECK_FIRST() {
-	echo ""
+	if ! type "uname" &> /dev/null; then _ABORT "command not found 'uname'"; fi
+	if ! type "dirname" &> /dev/null; then _ABORT "command not found 'dirname'"; fi
+	if ! type "clear" &> /dev/null; then _ABORT "command not found 'clear'"; fi
+	if ! type "readlink" &> /dev/null; then _ABORT "command not found 'readlink'"; fi
+	if ! type "cut" &> /dev/null; then _ABORT "command not found 'cut'"; fi
+	if ! type "rm" &> /dev/null; then _ABORT "command not found 'rm'"; fi
+	if ! type "cp" &> /dev/null; then _ABORT "command not found 'cp'"; fi
+	if ! type "mkdir" &> /dev/null; then _ABORT "command not found 'mkdir'"; fi
+	if ! type "touch" &> /dev/null; then _ABORT "command not found 'touch'"; fi
+	if ! type "awk" &> /dev/null; then _ABORT "command not found 'awk'"; fi
+	if ! type "find" &> /dev/null; then _ABORT "command not found 'find'"; fi
+	if ! type "grep" &> /dev/null; then _ABORT "command not found 'grep'"; fi
+	if ! type "sed" &> /dev/null; then _ABORT "command not found 'sed'"; fi
+	if ! type "xargs" &> /dev/null; then _ABORT "command not found 'xargs'"; fi
+	if ! type "sudo" &> /dev/null; then _ABORT "command not found 'sudo'"; fi
+	if ! type "chown" &> /dev/null; then _ABORT "command not found 'chown'"; fi
+	if ! type "chmod" &> /dev/null; then _ABORT "command not found 'chmod'"; fi
 }
 
 ######### ---------------------------- #########

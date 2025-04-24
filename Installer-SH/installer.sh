@@ -590,11 +590,13 @@ function _WARNING() {
 ######### ------------------------- #########
 ######### Print package information #########
 function _PRINT_PACKAGE_INFO() {
-if [ "$MODE_SILENT" == "false" ]; then # Пропустить данную функцию если включен тихий режим
+if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию если включен тихий режим
 	_CLEAR_BACKGROUND
 	
-	if [ $Locale_Use_Default == true ]; then Info_Description="$Info_Description_Default"; fi # Установка описания из настроек при стандартной локализации
+	# Установка описания из настроек при стандартной локализации
+	if [ $Locale_Use_Default == true ]; then Info_Description="$Info_Description_Default"; fi
 	
+	# Вывод описания
 	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_PACKAGEINFO_Head${Font_Reset_Color}${Font_Reset}
@@ -618,8 +620,10 @@ $Info_Description
 	# Вывод списка предупреждений при наличии
 	if [ "$List_Warnings" != "" ]; then echo -e "\n ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
 	
-	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi # Вывод тестовой таблицы цветовой палитры если указано в настройках
+	# Вывод тестовой таблицы цветовой палитры если указано в настройках
+	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi
 	
+	# Запрос подтверждения на продолжение
 	echo -e "\n $Str_PACKAGEINFO_Confirm"
 	read package_info_confirm
 	if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then all_ok=true
@@ -632,9 +636,7 @@ fi
 ######### -------------------------------- #########
 ######### Check and compare MD5 of archive #########
 
-EXIT_CODE_CHECK_MD5_COMPARE="255"
 function _CHECK_MD5_COMPARE() {
-	EXIT_CODE_CHECK_MD5_COMPARE="0"
 	MD5_ProgramFiles_Error=false; MD5_SystemFiles_Error=false; MD5_UserFiles_Error=false; MD5_Warning=false
 	MD5_Program_Files_Hash=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
 	MD5_System_Files_Hash=`md5sum "$Archive_System_Files" | awk '{print $1}'`
@@ -647,7 +649,6 @@ function _CHECK_MD5_COMPARE() {
 	fi
 	
 	if [ $MD5_ProgramFiles_Error == true ] || [ $MD5_SystemFiles_Error == true ] || [ $MD5_UserFiles_Error == true ]; then MD5_Warning=true; fi
-	if [ "$EXIT_CODE_CHECK_MD5_COMPARE" != "0" ]; then _ABORT "funcerr" "_CHECK_MD5_COMPARE" "$EXIT_CODE_CHECK_MD5_COMPARE"; fi
 }
 
 function _CHECK_MD5_PRINT_GOOD() {

@@ -188,6 +188,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	
 	MODE_DEBUG="false"; if [ "${Arguments[$1]}" == "-debug" ]; then MODE_DEBUG="true"; fi
 	MODE_SILENT="false"; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT="true"; fi
+	MODE_TARPACK="false"; if [ "${Arguments[$1]}" == "-tarpack" ]; then MODE_TARPACK="true"; fi
 	
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
@@ -206,7 +207,21 @@ function _INIT_GLOBAL_VARIABLES() {
 
 # _INSTALLER_SETTINGS
 
+_TAR_PACK() {
+	cd ..
+	TargetFile="$Path_To_Script.tar"
+	InputDirName="$(basename "$Path_To_Script")"
+	if [ ! -e "$TargetFile" ]; then 
+		tar --owner=ish --group=ish -cf "$TargetFile" "$InputDirName"
+		_ABORT "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
+	else
+		_ABORT "File already exists!\n\n $TargetFile\n\n !!! WARNING !!!"
+	fi
+}
+
 _IMPORTANT_CHECK_FIRST() {
+	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
+	
 	String_CMD_N_F="Command not found, unable to continue:"
 	if ! type "uname" &> /dev/null; then    _ABORT "$String_CMD_N_F 'uname'"; fi
 	if ! type "dirname" &> /dev/null; then  _ABORT "$String_CMD_N_F 'dirname'"; fi

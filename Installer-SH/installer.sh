@@ -544,7 +544,7 @@ function _CLEAR_TEMP() {
 				if ! rm -rf "$Temp_Dir"; then _ABORT "Error clearinG temporary directory...\n   ($Temp_Dir)"; fi
 			else _ABORT "$clear_temp_test != $Temp_Test"; fi
 		fi
-	fi
+	else _ABORT "_CLEAR_TEMP: Temp_Dir variable not found"; fi
 }
 
 function _CREATE_TEMP() {
@@ -554,7 +554,7 @@ function _CREATE_TEMP() {
 		if [ "$create_temp_test" == "$Temp_Test" ]; then
 			if ! mkdir -p "$Temp_Dir"; then _ABORT "Error Creating temporary directory...\n   ($Temp_Dir)"; fi
 		else _ABORT "$create_temp_test != $Temp_Test"; fi
-	fi
+	else _ABORT "_CREATE_TEMP: Temp_Dir variable not found"; fi
 }
 
 # Функция экстренного завершения работы

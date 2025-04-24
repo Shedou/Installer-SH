@@ -207,23 +207,24 @@ function _INIT_GLOBAL_VARIABLES() {
 # _INSTALLER_SETTINGS
 
 _IMPORTANT_CHECK_FIRST() {
-	if ! type "uname" &> /dev/null; then _ABORT "$Str_CHECKFIRST_Cmd_not_found 'uname'"; fi
-	if ! type "dirname" &> /dev/null; then _ABORT "command not found 'dirname'"; fi
-	if ! type "clear" &> /dev/null; then _ABORT "command not found 'clear'"; fi
-	if ! type "readlink" &> /dev/null; then _ABORT "command not found 'readlink'"; fi
-	if ! type "cut" &> /dev/null; then _ABORT "command not found 'cut'"; fi
-	if ! type "rm" &> /dev/null; then _ABORT "command not found 'rm'"; fi
-	if ! type "cp" &> /dev/null; then _ABORT "command not found 'cp'"; fi
-	if ! type "mkdir" &> /dev/null; then _ABORT "command not found 'mkdir'"; fi
-	if ! type "touch" &> /dev/null; then _ABORT "command not found 'touch'"; fi
-	if ! type "awk" &> /dev/null; then _ABORT "command not found 'awk'"; fi
-	if ! type "find" &> /dev/null; then _ABORT "command not found 'find'"; fi
-	if ! type "grep" &> /dev/null; then _ABORT "command not found 'grep'"; fi
-	if ! type "sed" &> /dev/null; then _ABORT "command not found 'sed'"; fi
-	if ! type "xargs" &> /dev/null; then _ABORT "command not found 'xargs'"; fi
-	if ! type "sudo" &> /dev/null; then _ABORT "command not found 'sudo'"; fi
-	if ! type "chown" &> /dev/null; then _ABORT "command not found 'chown'"; fi
-	if ! type "chmod" &> /dev/null; then _ABORT "command not found 'chmod'"; fi
+	String_CMD_N_F="Command not found, unable to continue:"
+	if ! type "uname" &> /dev/null; then    _ABORT "$String_CMD_N_F 'uname'"; fi
+	if ! type "dirname" &> /dev/null; then  _ABORT "$String_CMD_N_F 'dirname'"; fi
+	if ! type "clear" &> /dev/null; then    _ABORT "$String_CMD_N_F 'clear'"; fi
+	if ! type "readlink" &> /dev/null; then _ABORT "$String_CMD_N_F 'readlink'"; fi
+	if ! type "cut" &> /dev/null; then      _ABORT "$String_CMD_N_F 'cut'"; fi
+	if ! type "rm" &> /dev/null; then       _ABORT "$String_CMD_N_F 'rm'"; fi
+	if ! type "cp" &> /dev/null; then       _ABORT "$String_CMD_N_F 'cp'"; fi
+	if ! type "mkdir" &> /dev/null; then    _ABORT "$String_CMD_N_F 'mkdir'"; fi
+	if ! type "touch" &> /dev/null; then    _ABORT "$String_CMD_N_F 'touch'"; fi
+	if ! type "awk" &> /dev/null; then      _ABORT "$String_CMD_N_F 'awk'"; fi
+	if ! type "find" &> /dev/null; then     _ABORT "$String_CMD_N_F 'find'"; fi
+	if ! type "grep" &> /dev/null; then     _ABORT "$String_CMD_N_F 'grep'"; fi
+	if ! type "sed" &> /dev/null; then      _ABORT "$String_CMD_N_F 'sed'"; fi
+	if ! type "xargs" &> /dev/null; then    _ABORT "$String_CMD_N_F 'xargs'"; fi
+	if ! type "sudo" &> /dev/null; then     _ABORT "$String_CMD_N_F 'sudo'"; fi
+	if ! type "chown" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chown'"; fi
+	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
 }
 
 ######### ---------------------------- #########
@@ -1226,7 +1227,8 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKSYSDE_DE_WEIRD_BUDGIE="New shortcuts may not appear in the menu..."
 	Str_CHECKSYSDE_DE_WEIRD_GNOME="The menu doesn't match XDG specifications very well...\n    Re-login to the system if new shortcuts do not appear in the menu!"
 	
-	Str_CHECKFIRST_Cmd_not_found="Command not found, unable to continue:"
+	Str_CHECKLAST_Cmd_not_found="Command not found, unable to continue:"
+	Str_CHECKLAST_File_not_found="File not found, unable to continue:"
 	
 	Str_CHECK_ERRORS_ARCH="Attention!"
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"

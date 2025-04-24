@@ -117,7 +117,8 @@ Str_CHECKSYSDE_DE_WEIRD_LXQT="Перезайдите в систему, если
 Str_CHECKSYSDE_DE_WEIRD_BUDGIE="New shortcuts may not appear in the menu..."
 Str_CHECKSYSDE_DE_WEIRD_GNOME="Меню не соответствует спецификациям XDG в полной мере...\n    Перезайдите в систему, если новые ярлыки не появились в меню!"
 
-Str_CHECKFIRST_Cmd_not_found="Команда не найдена, продолжить работу невозможно:"
+Str_CHECKLAST_Cmd_not_found="Команда не найдена, продолжить работу невозможно:"
+Str_CHECKLAST_File_not_found="Файл не найден, продолжить работу невозможно:"
 
 Str_CHECK_ERRORS_ARCH="Внимание!"
 Str_CHECK_ERRORS_ARCH_WARN="Архитектура системы ($Current_Architecture) не соответствует выбранной архитектуре инструментов ($Tools_Architecture)!"

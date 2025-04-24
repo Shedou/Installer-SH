@@ -161,6 +161,8 @@ function _POST_INSTALL() {
 ######### BEFORE FIRST DEPENDENCY CHECK #########
 
 function _INIT_GLOBAL_VARIABLES() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	### --------------------------- ###
 	### Do not edit variables here! ###
 	### --------------------------- ###
@@ -207,6 +209,8 @@ function _INIT_GLOBAL_VARIABLES() {
 # _INSTALLER_SETTINGS
 
 _TAR_PACK() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	cd ..
 	TargetFile="$Path_To_Script.tar"
 	InputDirName="$(basename "$Path_To_Script")"
@@ -219,6 +223,8 @@ _TAR_PACK() {
 }
 
 _IMPORTANT_CHECK_FIRST() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
 	
 	String_CMD_N_F="Command not found, unable to continue:"
@@ -248,6 +254,8 @@ _IMPORTANT_CHECK_FIRST() {
 ######### BEFORE LAST DEPENDENCY CHECK #########
 
 function _CHECK_SYSTEM_VERSION() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
 		Current_OS_Name_Full="$PRETTY_NAME"
 		Current_OS_Name="$NAME"
@@ -267,6 +275,8 @@ function _CHECK_SYSTEM_VERSION() {
 }
 
 function _CHECK_SYSTEM() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	_CHECK_SYSTEM_VERSION
 	Current_Architecture="$(uname -m)"
 	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
@@ -277,6 +287,8 @@ function _CHECK_SYSTEM() {
 }
 
 function _INIT_FONT_STYLES() {
+	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
 	# '\e[38;2;128;128;255m'
 	#     fg m  R   G   B
@@ -331,6 +343,8 @@ function _INIT_FONT_STYLES() {
 #_SET_LOCALE
 
 function _CHECK_SYSTEM_DE() {
+	# Здесь можно использовать локализацию
+	
 	local check_de_raw=""
 	local check_de_err="0"
 	
@@ -466,18 +480,23 @@ function _INIT_GLOBAL_PATHS() {
 }
 
 _IMPORTANT_CHECK_LAST() {
+	# Здесь можно использовать локализацию
+	
+	# Проверка наличия 7-Zip в каталоге инструментов и установка прав на запуск при необходимости
 	if [ -e "$Tool_SevenZip_bin" ]; then
 		if ! [[ -x "$Tool_SevenZip_bin" ]]; then
 			if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error"; fi
 		fi
-	else _ABORT "Tool_SevenZip_bin not found"; fi
+	else _ABORT "$Tool_SevenZip_bin not found"; fi
 	
+	# Проверка наличия скрипта подготовки PortSoft директории в каталоге инструментов и установка прав на запуск при необходимости
 	if [ -e "$Tool_Prepare_Base" ]; then
 		if ! [[ -x "$Tool_Prepare_Base" ]]; then
 			if ! chmod +x "$Tool_Prepare_Base"; then _ABORT "chmod Tool_Prepare_Base error"; fi
 		fi
-	else _ABORT "Tool_Prepare_Base not found"; fi
+	else _ABORT "$Tool_Prepare_Base not found"; fi
 	
+	# Проверка наличия архивов с файлами приложения
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/program_files.7z\" not found."; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
 	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
@@ -511,6 +530,8 @@ _IMPORTANT_CHECK_LAST() {
 ######### Test colors #########
 
 function _TEST_COLORS() {
+	# Здесь можно использовать локализацию
+	
 	echo -e "\n${Font_Bold} -= TEST COLORS =-"
 	if [ "$Font_Styles_RGB" == "true" ]; then echo -e " RGB Mode"
 	else echo -e " 8-bit table Mode"; fi
@@ -537,6 +558,8 @@ function _CLEAR_BACKGROUND() {
 }
 
 function _CLEAR_TEMP() {
+	# Здесь нежелательно использовать локализацию
+	
 	if [ ! -z "$Temp_Dir" ]; then
 		if [ -e "$Temp_Dir" ]; then
 			local clear_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
@@ -548,6 +571,8 @@ function _CLEAR_TEMP() {
 }
 
 function _CREATE_TEMP() {
+	# Здесь нежелательно использовать локализацию
+	
 	if [ ! -z "$Temp_Dir" ]; then
 		_CLEAR_TEMP
 		local create_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
@@ -559,6 +584,8 @@ function _CREATE_TEMP() {
 
 # Функция экстренного завершения работы
 function _ABORT() {
+	# Здесь нежелательно использовать локализацию
+	
 	_CLEAR_BACKGROUND
 	
 	# Инициализация базовых переменных если ошибка произошла до загрузки локализации.
@@ -626,6 +653,8 @@ function _WARNING() {
 ######### Print package information #########
 function _PRINT_PACKAGE_INFO() {
 if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию если включен тихий режим
+	# Здесь можно использовать локализацию
+	
 	_CLEAR_BACKGROUND
 	
 	# Установка описания из настроек при стандартной локализации
@@ -689,7 +718,10 @@ function _CHECK_MD5_COMPARE() {
 }
 
 function _CHECK_MD5_PRINT_GOOD() {
+	# Здесь можно использовать локализацию
+	
 	_CLEAR_BACKGROUND
+	
 	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
@@ -709,7 +741,10 @@ $Header
 }
 
 function _CHECK_MD5_PRINT_WARNING() {
+	# Здесь можно использовать локализацию
+	
 	_CLEAR_BACKGROUND
+	
 	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
@@ -740,7 +775,10 @@ $Header
 }
 
 function _CHECK_MD5_PRINT() {
+	# Здесь можно использовать локализацию
+	
 	_CLEAR_BACKGROUND
+	
 	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKMD5_Head${Font_Reset_Color}${Font_Reset}
@@ -768,7 +806,10 @@ function _CHECK_MD5() {
 function _PRINT_INSTALL_SETTINGS() {
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
+	# Здесь можно использовать локализацию
+	
 	_CLEAR_BACKGROUND
+	
 	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_PRINTINSTALLSETTINGS_Head (${Font_Yellow}$Install_Mode${Font_Cyan}):${Font_Reset_Color}${Font_Reset}
@@ -827,6 +868,8 @@ fi
 ######### Prepare Input Files #########
 
 function _PREPARE_INPUT_FILES_GREP() {
+	# Здесь можно использовать локализацию
+	
 	local prepare_text="/tmp/ish"
 	local prepare_path="/tmp/ish"
 	local prepare_error="false"
@@ -844,6 +887,8 @@ function _PREPARE_INPUT_FILES_GREP() {
 }
 
 function _PREPARE_INPUT_FILES() {
+	# Здесь можно использовать локализацию
+	
 	if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
 		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
 	
@@ -901,6 +946,8 @@ function _PREPARE_INPUT_FILES() {
 ######### Check outputs #########
 
 function _CHECK_OUTPUTS() {
+	# Здесь можно использовать локализацию
+	
 	local check_outputs_error="false"
 	local arr_files_sorted=()
 	
@@ -934,6 +981,8 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 ######### Install USER DATA #########
 
 function _INSTALL_USER_DATA() {
+	# Здесь можно использовать локализацию
+	
 	# Copy user data
 	if [ "$Install_User_Data" == "true" ]; then
 		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
@@ -964,6 +1013,8 @@ function _INSTALL_HELPERS_XFCE_USER() {
 }
 
 function _INSTALL_HELPERS() {
+	# Здесь можно использовать локализацию
+	
 	if [ -e "$Input_Helpers_Dir" ]; then
 		if [ $Current_DE == "XFCE" ]; then
 			if [ "$Install_Mode" == "System" ]; then _INSTALL_HELPERS_XFCE_SYSTEM; else _INSTALL_HELPERS_XFCE_USER; fi; fi
@@ -974,6 +1025,8 @@ function _INSTALL_HELPERS() {
 ######### Install Desktop Icons #########
 
 function _INSTALL_DESKTOP_ICONS() {
+	# Здесь можно использовать локализацию
+	
 	if [ -e "$Input_Desktop_Dir" ]; then
 		cp -rf "$Input_Desktop_Dir/." "$Output_Desktop_Dir"
 	else _ERROR "_INSTALL_DESKTOP_ICONS" "Input_Desktop_Dir not found."; fi
@@ -983,6 +1036,8 @@ function _INSTALL_DESKTOP_ICONS() {
 ######### Install application (USER MODE) #########
 
 function _INSTALL_APP_USER() {
+	# Здесь можно использовать локализацию
+	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -1038,6 +1093,8 @@ $Header
 ######### Install application (SYSTEM MODE) #########
 
 function _INSTALL_APP_SYSTEM() {
+	# Здесь можно использовать локализацию
+	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -1103,6 +1160,8 @@ function _INSTALL_APPLICATION() {
 ######### Prepare uninstaller file #########
 
 function _PREPARE_UNINSTALLER_SYSTEM() {
+	# Здесь можно использовать локализацию
+	
 	if [ -e "$Output_Uninstaller" ]; then
 		sudo chmod 755 "$Output_Uninstaller"
 		sudo chown $Out_App_Folder_Owner "$Output_Uninstaller"
@@ -1115,6 +1174,8 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 }
 
 function _PREPARE_UNINSTALLER_USER() {
+	# Здесь можно использовать локализацию
+	
 	if [ -e "$Output_Uninstaller" ]; then
 		chmod 744 "$Output_Uninstaller"
 	

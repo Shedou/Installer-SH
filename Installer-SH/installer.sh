@@ -15,8 +15,8 @@ function _MAIN() {
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
 	_INIT_GLOBAL_PATHS
-		_IMPORTANT_CHECK_LAST  # Last important check before UI
 	printf '\033[8;32;100t' # Resize terminal Window (100x32)
+		_IMPORTANT_CHECK_LAST  # Last important check before UI
 	_PRINT_PACKAGE_INFO
 	_CHECK_MD5
 	_PRINT_INSTALL_SETTINGS # Last confirm stage
@@ -1215,10 +1215,10 @@ function _SET_LOCALE_DEFAULT() {
 	Str_BASEINFO_Head="Installing basic components:"
 	Str_BASEINFO_Warning="Attention! Your system requires preparation, the following basic components must be installed:"
 	Str_BASEINFO_PortSoft="PortSoft directory:"
-	Str_BASEINFO_PortSoft_Full="The base directory for placing programs,\n   since version 0.3 it can be located in the root of the file system or in the user's home directory."
+	Str_BASEINFO_PortSoft_Full="Basic directory for placing programs, developed for the Chimbalix distribution."
 	Str_BASEINFO_MenuApps="Stable \"Applications\" menu category:"
 	Str_BASEINFO_MenuApps_Full="Stable \"Applications\" category in the menu for placing shortcuts to installed programs."
-	Str_BASEINFO_Attention="Attention! The above components will be installed according to the current installation mode.\n  AFTER CONFIRMATION, THIS ACTION CANNOT BE CANCELLED!\n  For proper operation, your distribution must support the XDG standard!\n  The menu must also support subcategories!\n  You may also need to Log Out to refresh the menu after installation."
+	Str_BASEINFO_Attention="Attention! The components will be installed according to the current installation mode.\n  AFTER CONFIRMATION, THIS ACTION CANNOT BE CANCELLED!\n  For proper operation, your distribution must support the XDG standard!\n  The menu must also support subcategories!\n  You may also need to Log Out to refresh the menu after installation."
 	Str_BASEINFO_Confirm="Start the installation process? Enter \"y\" or \"yes\" to confirm."
 	Str_BASE_COMPLETE="Done, depending on the distribution the menu may not appear until you log in again.\n Press \"Enter\" to continue."
 	

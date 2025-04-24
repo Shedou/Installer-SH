@@ -207,7 +207,7 @@ function _INIT_GLOBAL_VARIABLES() {
 # _INSTALLER_SETTINGS
 
 _IMPORTANT_CHECK_FIRST() {
-	if ! type "uname" &> /dev/null; then _ABORT "command not found 'uname'"; fi
+	if ! type "uname" &> /dev/null; then _ABORT "$Str_CHECKFIRST_Cmd_not_found 'uname'"; fi
 	if ! type "dirname" &> /dev/null; then _ABORT "command not found 'dirname'"; fi
 	if ! type "clear" &> /dev/null; then _ABORT "command not found 'clear'"; fi
 	if ! type "readlink" &> /dev/null; then _ABORT "command not found 'readlink'"; fi
@@ -1225,6 +1225,8 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKSYSDE_DE_WEIRD_LXQT="Re-login to the system if new shortcuts do not appear in the menu!"
 	Str_CHECKSYSDE_DE_WEIRD_BUDGIE="New shortcuts may not appear in the menu..."
 	Str_CHECKSYSDE_DE_WEIRD_GNOME="The menu doesn't match XDG specifications very well...\n    Re-login to the system if new shortcuts do not appear in the menu!"
+	
+	Str_CHECKFIRST_Cmd_not_found="Command not found, unable to continue:"
 	
 	Str_CHECK_ERRORS_ARCH="Attention!"
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"

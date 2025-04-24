@@ -508,11 +508,6 @@ _IMPORTANT_CHECK_LAST() {
 	
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
 	
-	# Проверка наличия важных каталогов
-	if [ ! -e "$Output_Menu_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "$Output_Menu_Files NOT FOUND!"; fi
-	if [ ! -e "$Output_Menu_DDir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "$Output_Menu_DDir NOT FOUND!"; fi
-	if [ ! -e "$Output_Menu_Apps" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "$Output_Menu_Apps NOT FOUND!"; fi
-	
 	# Check PortSoft
 	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
 		source "$Tool_Prepare_Base"

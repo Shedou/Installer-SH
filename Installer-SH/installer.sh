@@ -112,9 +112,9 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
  # Archives MD5 Hash
-Archive_MD5_Hash_ProgramFiles=""
-Archive_MD5_Hash_SystemFiles=""
-Archive_MD5_Hash_UserData="" # Not used if Install_User_Data="false"
+Archive_MD5_Hash_ProgramFiles="5e57215cfefa44e8af6517930ceed713"
+Archive_MD5_Hash_SystemFiles="804f6c04757f6e3865a77a59be15d2ea"
+Archive_MD5_Hash_UserData="4c16d30f7d05a952f3c6942b66405cd5" # Not used if Install_User_Data="false"
 }
 
 ######### -- ------------ -- #########
@@ -727,7 +727,7 @@ $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKMD5PRINT_Head${Font_Reset_Color}${Font_Reset}"
 	
 	echo -e "
-  ${Font_Green}The integrity of the installation archive has been successfully verified
+  ${Font_Green}$Str_CHECKMD5PRINT_Verified
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Hash_ProgramFiles\"
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_Hash_SystemFiles\""
 	
@@ -1252,6 +1252,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKMD5PRINT_Real_uHash="Real MD5 hash of \"User Files\":"
 	Str_CHECKMD5PRINT_yes_To_Continue="Enter \"y\" or \"yes\" to continue installation (not recommended):"
 	Str_CHECKMD5PRINT_Enter_To_Continue="Press Enter to continue."
+	Str_CHECKMD5PRINT_Verified="The integrity of the installation archive has been successfully verified"
 	
 	Str_CHECKMD5_Head="Checking archives integrity:"
 	Str_CHECKMD5_Sub_Head="Checking the integrity of the installation archives, please wait..."
@@ -1280,7 +1281,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKOUTPUTS_Head="Checking output directories:"
 	Str_CHECKOUTPUTS_Already_Present="Folders|Files already present"
 	Str_CHECKOUTPUTS_Attention="Continue installation and overwrite directories/files?"
-	Str_CHECKOUTPUTS_Attention2="Please make a backup copy of your data, if any, in the above directories."
+	Str_CHECKOUTPUTS_Attention2="Please make a backup copy of your data in the above directories."
 	Str_CHECKOUTPUTS_Confirm="Enter \"y\" or \"yes\" to continue."
 	
 	Str_INSTALLAPP_Head="Installing..."

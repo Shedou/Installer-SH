@@ -113,9 +113,9 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
  # Archives MD5 Hash
-Archive_MD5_Program_Files_Hash=""
-Archive_MD5_System_Files_Hash=""
-Archive_MD5_User_Data_Hash="" # Not used if "Install_User_Data=false"
+Archive_MD5_Hash_ProgramFiles=""
+Archive_MD5_Hash_SystemFiles=""
+Archive_MD5_Hash_UserData="" # Not used if "Install_User_Data=false"
 }
 
 ######### -- ------------ -- #########
@@ -637,18 +637,20 @@ fi
 ######### Check and compare MD5 of archive #########
 
 function _CHECK_MD5_COMPARE() {
-	MD5_ProgramFiles_Error=false; MD5_SystemFiles_Error=false; MD5_UserFiles_Error=false; MD5_Warning=false
-	MD5_Program_Files_Hash=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
-	MD5_System_Files_Hash=`md5sum "$Archive_System_Files" | awk '{print $1}'`
+	MD5_Error_ProgramFiles="false"
+	MD5_Error_SystemFiles="false"
+	MD5_Error_UserFiles="false"
+	MD5_Warning="false"
 	
-	if [ "$MD5_Program_Files_Hash" != "$Archive_MD5_Program_Files_Hash" ]; then MD5_ProgramFiles_Error=true; fi
-	if [ "$MD5_System_Files_Hash" != "$Archive_MD5_System_Files_Hash" ]; then MD5_SystemFiles_Error=true; fi
-	if [ $Install_User_Data == true ]; then
-		MD5_User_Data_Hash=`md5sum "$Archive_User_Data" | awk '{print $1}'`
-		if [ "$MD5_User_Data_Hash" != "$Archive_MD5_User_Data_Hash" ]; then MD5_UserFiles_Error=true; fi
-	fi
+	MD5_Hash_ProgramFiles=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
+	MD5_Hash_SystemFiles=`md5sum "$Archive_System_Files" | awk '{print $1}'`
 	
-	if [ $MD5_ProgramFiles_Error == true ] || [ $MD5_SystemFiles_Error == true ] || [ $MD5_UserFiles_Error == true ]; then MD5_Warning=true; fi
+	if [ "$MD5_Hash_ProgramFiles" != "$Archive_MD5_Hash_ProgramFiles" ]; then MD5_Error_ProgramFiles="true"; fi
+	if [ "$MD5_Hash_SystemFiles" != "$Archive_MD5_Hash_SystemFiles" ]; then MD5_Error_SystemFiles="true"; fi
+	if [ "$Install_User_Data" == "true" ]; then MD5_Hash_UserData=`md5sum "$Archive_User_Data" | awk '{print $1}'`
+		if [ "$MD5_Hash_UserData" != "$Archive_MD5_Hash_UserData" ]; then MD5_Error_UserFiles="true"; fi; fi
+	
+	if [ "$MD5_Error_ProgramFiles" == "true" ] || [ "$MD5_Error_SystemFiles" == "true" ] || [ "$MD5_Error_UserFiles" == "true" ]; then MD5_Warning="true"; fi
 }
 
 function _CHECK_MD5_PRINT_GOOD() {
@@ -659,11 +661,11 @@ $Header
 	
 	echo -e "
   ${Font_Green}The integrity of the installation archive has been successfully verified
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Program_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_System_Files_Hash\""
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Hash_ProgramFiles\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_Hash_SystemFiles\""
 	
-	if [ $Install_User_Data == true ]; then echo -e "\
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
+	if [ "$Install_User_Data" == "true" ]; then echo -e "\
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_Hash_UserData\""; fi
 	
 	echo -e "${Font_Reset_Color}
   ${Font_Bold}$Str_CHECKMD5PRINT_Enter_To_Continue${Font_Reset}"
@@ -680,24 +682,25 @@ $Header
 
   $Str_ATTENTION ${Font_Bold}${Font_DarkRed}$Str_CHECKMD5PRINT_Hash_Not_Match${Font_Reset_Color}
   ${Font_Red}$Str_CHECKMD5PRINT_Hash_Not_Match2${Font_Reset_Color}${Font_Reset}"
-	if [ $MD5_ProgramFiles_Error == true ]; then
+	if [ "$MD5_Error_ProgramFiles" == "true" ]; then
 		echo -e "\
 
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_pHash${Font_Reset} \"$Archive_MD5_Program_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}     \"$MD5_Program_Files_Hash\""; fi
-	if [ $MD5_SystemFiles_Error == true ]; then
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_pHash${Font_Reset} \"$Archive_MD5_Hash_ProgramFiles\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}     \"$MD5_Hash_ProgramFiles\""; fi
+	if [ "$MD5_Error_SystemFiles" == "true" ]; then
 		echo -e "\
 
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_sHash${Font_Reset} \"$Archive_MD5_System_Files_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_System_Files_Hash\""; fi
-	if [ $MD5_UserFiles_Error == true ]; then
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_sHash${Font_Reset} \"$Archive_MD5_Hash_SystemFiles\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_Hash_SystemFiles\""; fi
+	if [ "$MD5_Error_UserFiles" == "true" ]; then
 		echo -e "\
 
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_uHash${Font_Reset} \"$Archive_MD5_User_Data_Hash\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_User_Data_Hash\""; fi
+   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_uHash${Font_Reset} \"$Archive_MD5_Hash_UserData\"
+   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_Hash_UserData\""; fi
+	
 	echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
 	read errors_confirm
-	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then all_ok=true
+	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then all_ok="true"
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -711,12 +714,13 @@ $Header
 }
 
 function _CHECK_MD5() {
+	# Только проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
 	if [ "$MODE_SILENT" == "true" ]; then _CHECK_MD5_COMPARE
-		if [ $MD5_Warning == true ]; then _CHECK_MD5_PRINT_WARNING; fi
+		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING; fi
 	else
 		_CHECK_MD5_PRINT
 		_CHECK_MD5_COMPARE
-		if [ $MD5_Warning == true ]; then _CHECK_MD5_PRINT_WARNING
+		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING
 		else _CHECK_MD5_PRINT_GOOD; fi
 		
 		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_MD5"; read pause; fi

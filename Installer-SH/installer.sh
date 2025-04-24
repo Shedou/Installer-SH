@@ -841,14 +841,14 @@ function _PREPARE_INPUT_FILES() {
 	
 	for file in "${!Files_Bin_Dir[@]}"; do local arr_0[$file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
 	
-	if [ $Install_Helpers == true ]; then 
-		if [ $Current_DE == "XFCE" ]; then
+	if [ "$Install_Helpers" == "true" ]; then 
+		if [ "$Current_DE" == "XFCE" ]; then
 			local Files_Helpers_Dir=( $(ls "$Input_Helpers_Dir") )
 			for file in "${!Files_Helpers_Dir[@]}"; do local arr_1[$file]="$Output_Helpers_Dir/${Files_Helpers_Dir[$file]}"; done
 		fi
 	fi
 	
-	if [ $Install_Desktop_Icons == true ]; then 
+	if [ "$Install_Desktop_Icons" == "true" ]; then 
 		local Files_Desktop_Dir=( $(ls "$Input_Desktop_Dir") )
 		for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[$file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
 	fi
@@ -858,7 +858,6 @@ function _PREPARE_INPUT_FILES() {
 	for file in "${!Files_Menu_Apps[@]}"; do local arr_5[$file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
 	
 	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
-	all_ok=true
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
 }
@@ -867,36 +866,33 @@ function _PREPARE_INPUT_FILES() {
 ######### Check outputs #########
 
 function _CHECK_OUTPUTS() {
-	if [ $all_ok == true ]; then all_ok=false
-		local check_outputs_error=false
-		local arr_files_sorted=()
-		
-		for file in "${!Output_Files_All[@]}"; do
-			if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[$file]="${Output_Files_All[$file]}"; local check_outputs_error=true; fi
-		done
-		
-		if [ $check_outputs_error == true ]; then
-			clear
-			echo -e "\
+	local check_outputs_error="false"
+	local arr_files_sorted=()
+	
+	for file in "${!Output_Files_All[@]}"; do
+		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[$file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
+	done
+	
+	if [ "$check_outputs_error" == "true" ]; then
+		clear
+		echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKOUTPUTS_Head${Font_Reset_Color}${Font_Reset}"
-			echo -e "
+		echo -e "
   $Str_ATTENTION! $Str_CHECKOUTPUTS_Already_Present
 $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"; done)"
-			echo -e "
+		echo -e "
    $Str_CHECKOUTPUTS_Attention
    ${Font_Yellow}$Str_CHECKOUTPUTS_Attention2${Font_Reset_Color}
 
  $Str_CHECKOUTPUTS_Confirm"
-			read install_confirm
-			if [ "$install_confirm" == "y" ] || [ "$install_confirm" == "yes" ]; then all_ok=true
-			else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-		else
-			all_ok=true
-		fi
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _CHECK_OUTPUTS ${Font_Reset_Color}${Font_Reset}"; fi
+		read install_confirm
+		if [ "$install_confirm" == "y" ] || [ "$install_confirm" == "yes" ]; then :
+		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
+	else :
+	fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS"; read pause; fi
 }
 
 ######### ----------------- #########
@@ -904,7 +900,7 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 
 function _INSTALL_USER_DATA() {
 	# Copy user data
-	if [ $Install_User_Data == true ]; then
+	if [ "$Install_User_Data" == "true" ]; then
 		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
 		if [ ! -e "$Output_User_Data" ]; then mkdir -p "$Output_User_Data"; fi
 		if ! "$Tool_SevenZip_bin" x -aoa "$Archive_User_Data" -o"$Output_User_Data/" &> /dev/null; then
@@ -952,120 +948,112 @@ function _INSTALL_DESKTOP_ICONS() {
 ######### Install application (USER MODE) #########
 
 function _INSTALL_APP_USER() {
-	if [ $all_ok == true ]; then all_ok=false
-		if [ "$MODE_SILENT" == "false" ]; then
-			_CLEAR_BACKGROUND
-			echo -e "\
+	if [ "$MODE_SILENT" == "false" ]; then
+		_CLEAR_BACKGROUND
+		echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
-		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
-		
-		# Check Output Folder
-		if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
-		else if ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
-		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
-		
-		if ! "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
-			echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
-			echo " $Str_INSTALLAPP_Unpack_Err2"
-			echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
-			read confirm_unpack
-			if [ "$confirm_unpack" == "y" ] || [ "$confirm_unpack" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
-			else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
-		fi
-		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
-		
-		# Check Bin folder
-		if [ ! -e "$Output_Bin_Dir" ]; then mkdir "$Output_Bin_Dir"; fi
-		
-		# Copy Bin files
-		cp -rf "$Input_Bin_Dir/." "$Output_Bin_Dir"
-		
-		# Сopy Menu files
-		cp -rf "$Input_Menu_Files_Dir/." "$Output_Menu_Files"
-		cp -rf "$Input_Menu_Desktop_Dir/." "$Output_Menu_DDir"
-		cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
-		
-		# Install Helpers
-		if [ $Install_Helpers == true ]; then
-			_INSTALL_HELPERS; fi
-		
-		# Install Desktop files
-		if [ $Install_Desktop_Icons == true ]; then
-			_INSTALL_DESKTOP_ICONS; fi
-		
-		# Copy user data
-		if [ $Install_User_Data == true ]; then
-			_INSTALL_USER_DATA; fi
-		
-		all_ok=true
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
+	
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+	
+	# Check Output Folder
+	if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
+	else if ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
+	
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
+	
+	if ! "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
+		echo " $Str_INSTALLAPP_Unpack_Err2"
+		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
+		read confirm_unpack
+		if [ "$confirm_unpack" == "y" ] || [ "$confirm_unpack" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
+		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
+	fi
+	
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
+	
+	# Check Bin folder
+	if [ ! -e "$Output_Bin_Dir" ]; then mkdir "$Output_Bin_Dir"; fi
+	
+	# Copy Bin files
+	cp -rf "$Input_Bin_Dir/." "$Output_Bin_Dir"
+	
+	# Сopy Menu files
+	cp -rf "$Input_Menu_Files_Dir/." "$Output_Menu_Files"
+	cp -rf "$Input_Menu_Desktop_Dir/." "$Output_Menu_DDir"
+	cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
+	
+	# Install Helpers
+	if [ $Install_Helpers == true ]; then
+		_INSTALL_HELPERS; fi
+	
+	# Install Desktop files
+	if [ $Install_Desktop_Icons == true ]; then
+		_INSTALL_DESKTOP_ICONS; fi
+	
+	# Copy user data
+	if [ $Install_User_Data == true ]; then
+		_INSTALL_USER_DATA; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
 }
 
 ######### --------------------------------- #########
 ######### Install application (SYSTEM MODE) #########
 
 function _INSTALL_APP_SYSTEM() {
-	if [ $all_ok == true ]; then all_ok=false
-		if [ "$MODE_SILENT" == "false" ]; then
-			_CLEAR_BACKGROUND
-			echo -e "\
+	if [ "$MODE_SILENT" == "false" ]; then
+		_CLEAR_BACKGROUND
+		echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
 		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
-		
-		# Check Output Folder
-		if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
-		else if ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
-		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
-		
-		if ! sudo "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
-			echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
-			echo " $Str_INSTALLAPP_Unpack_Err2"
-			echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
-			read confirm_error_unpacking
-			if [ "$confirm_error_unpacking" == "y" ] || [ "$confirm_error_unpacking" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
-			else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
-		fi
-		
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
-		
-		echo " $Str_INSTALLAPP_Set_Rights"
-		sudo chmod -R $Out_App_Folder_Permissions "$Output_Install_Dir"
-		sudo chown -R $Out_App_Folder_Owner "$Output_Install_Dir"
-		
-		# Copy Bin files
-		sudo cp -rf "$Input_Bin_Dir/." "$Output_Bin_Dir"
-		
-		# Сopy Menu files
-		sudo cp -rf "$Input_Menu_Files_Dir/." "$Output_Menu_Files"
-		sudo cp -rf "$Input_Menu_Desktop_Dir/." "$Output_Menu_DDir"
-		sudo cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
-		
-		# Install Helpers
-		_INSTALL_HELPERS
-		
-		# Install Desktop files
-		if [ $Install_Desktop_Icons == true ]; then
-			_INSTALL_DESKTOP_ICONS; fi
-		
-		# Copy user data
-		if [ $Install_User_Data == true ]; then
-			_WARNING "Install_User_Data" "In \"System\" mode this does not work!"
-			#_INSTALL_USER_DATA
-		fi
-		
-		all_ok=true
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _INSTALL_APP ${Font_Reset_Color}${Font_Reset}"; fi
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+	
+	# Check Output Folder
+	if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
+	else if ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
+	
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
+	
+	if ! sudo "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
+		echo " $Str_INSTALLAPP_Unpack_Err2"
+		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
+		read confirm_error_unpacking
+		if [ "$confirm_error_unpacking" == "y" ] || [ "$confirm_error_unpacking" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
+		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
+	fi
+	
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
+	
+	echo " $Str_INSTALLAPP_Set_Rights"
+	sudo chmod -R $Out_App_Folder_Permissions "$Output_Install_Dir"
+	sudo chown -R $Out_App_Folder_Owner "$Output_Install_Dir"
+	
+	# Copy Bin files
+	sudo cp -rf "$Input_Bin_Dir/." "$Output_Bin_Dir"
+	
+	# Сopy Menu files
+	sudo cp -rf "$Input_Menu_Files_Dir/." "$Output_Menu_Files"
+	sudo cp -rf "$Input_Menu_Desktop_Dir/." "$Output_Menu_DDir"
+	sudo cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
+	
+	# Install Helpers
+	_INSTALL_HELPERS
+	
+	# Install Desktop files
+	if [ $Install_Desktop_Icons == true ]; then
+		_INSTALL_DESKTOP_ICONS; fi
+	
+	# Copy user data
+	if [ $Install_User_Data == true ]; then
+		_WARNING "Install_User_Data" "In \"System\" mode this does not work!"
+		#_INSTALL_USER_DATA
+	fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
 }
 
 ######### ------------------- #########
@@ -1102,12 +1090,10 @@ function _PREPARE_UNINSTALLER_USER() {
 }
 
 function _PREPARE_UNINSTALLER() {
-	if [ $all_ok == true ]; then
-		if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
-		if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_UNINSTALLER ${Font_Reset_Color}${Font_Reset}"; fi
+	if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
+	if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
 }
 
 ######### ---- #########
@@ -1238,7 +1224,7 @@ function _SET_LOCALE() {
 	if [ "$MODE_SILENT" == "false" ]; then
 		if [ -e "$Locale_File" ]; then
 			if [ $(grep Locale_Version "$Locale_File") == "Locale_Version=\"$LocaleVersion\"" ]; then
-				Locale_Use_Default=false
+				Locale_Use_Default="false"
 				Locale_Display="$Language"
 				source "$Locale_File"
 			fi

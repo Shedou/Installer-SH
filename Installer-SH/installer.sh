@@ -34,12 +34,12 @@ function _MAIN() {
 ######### ---- -------- ---- #########
 
 function _INSTALLER_SETTINGS() {
-	Tools_Architecture="x86_64"   # x86_64, x86
-	Program_Architecture="script" # x86_64, x86, script, other
+	Tools_Architecture="x86_64"     # x86_64, x86
+	Program_Architecture="script"   # x86_64, x86, script, other
 	
-	Install_Mode="User"           # "System" / "User", In "User" mode, root rights are not required.
-	Install_Desktop_Icons=true    # Place icons on the desktop (only for current user).
-	Install_Helpers=false         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
+	Install_Mode="User"             # "System" / "User", In "User" mode, root rights are not required.
+	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
+	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
 	# Copy data to the "userdata" directory.
 	#  For example:
@@ -49,10 +49,10 @@ function _INSTALLER_SETTINGS() {
 	# This can help avoid application version conflicts, but requires special preparation.
 	# Do not use for applications installed in "System" mode!
 	# Please see the example before using this function - "installer-data/program_files/run-force-userdata.sh", and configure the system files accordingly.
-	Install_User_Data=true
+	Install_User_Data="true"
 	
-	Debug_Test_Colors=false       # Test colors (for debugging purposes)
-	Font_Styles_RGB=false         # Disabled for compatibility with older distributions, can be enabled manually.
+	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
+	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
 	Unique_App_Folder_Name="installer-sh-22" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
@@ -115,7 +115,7 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # Archives MD5 Hash
 Archive_MD5_Hash_ProgramFiles=""
 Archive_MD5_Hash_SystemFiles=""
-Archive_MD5_Hash_UserData="" # Not used if "Install_User_Data=false"
+Archive_MD5_Hash_UserData="" # Not used if Install_User_Data="false"
 }
 
 ######### -- ------------ -- #########
@@ -173,7 +173,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	Font_Red=''; Font_Red_BG=''; Font_Green=''; Font_Green_BG=''; Font_Yellow=''; Font_Yellow_BG=''; Font_Blue=''; Font_Blue_BG=''
 	Font_Magenta=''; Font_Magenta_BG=''; Font_Cyan=''; Font_Cyan_BG=''
 	
-	Locale_Use_Default=true # don't change!
+	Locale_Use_Default="true" # don't change!
 	Locale_Display="Default"
 	Info_Description="TO BE REPLACED BY LOCALE IF PRESENT, DONT CHANGE THIS"
 	Current_Architecture="Unknown"
@@ -383,7 +383,9 @@ function _INIT_GLOBAL_PATHS() {
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/program_files.7z\" not found."; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/system_files.7z\" not found."; fi
 	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
-		Install_User_Data=false; _WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."; fi # Extra check
+		Install_User_Data="false"
+		_WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
+	fi # Extra check
 	
 	# Application installation directory.
 	Out_PortSoft_System="/portsoft"

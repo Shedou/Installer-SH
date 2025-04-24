@@ -35,4 +35,8 @@ TAR extract:
 
 TAR pack:
 
+> `installer.sh -tarpack`
+
+Or
+
 > `tar --owner=ish --group=ish -cf Installer-SH.tar Installer-SH`

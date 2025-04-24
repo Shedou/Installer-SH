@@ -501,7 +501,7 @@ _IMPORTANT_CHECK_LAST() {
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
 	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
 		Install_User_Data="false"
-		_WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
+		_WARNING "_INIT_GLOBAL_PATHS" "$Str_CHECKLAST_no_userdata"
 	fi # Extra check
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
@@ -1310,6 +1310,7 @@ function _SET_LOCALE_DEFAULT() {
 	
 	Str_CHECKLAST_Cmd_not_found="Command not found, unable to continue:"
 	Str_CHECKLAST_File_not_found="File not found, unable to continue:"
+	Str_CHECKLAST_no_userdata="Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
 	
 	Str_CHECK_ERRORS_ARCH="Attention!"
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"

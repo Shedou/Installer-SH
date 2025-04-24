@@ -120,6 +120,7 @@ Str_CHECKSYSDE_DE_WEIRD_GNOME="Меню не соответствует спец
 
 Str_CHECKLAST_Cmd_not_found="Команда не найдена, продолжить работу невозможно:"
 Str_CHECKLAST_File_not_found="Файл не найден, продолжить работу невозможно:"
+Str_CHECKLAST_no_userdata="Archive_User_Data не найден, Install_User_Data отключен.\n Пожалуйста, исправьте настройки в соответствии с приложением."
 
 Str_CHECK_ERRORS_ARCH="Внимание!"
 Str_CHECK_ERRORS_ARCH_WARN="Архитектура системы ($Current_Architecture) не соответствует выбранной архитектуре инструментов ($Tools_Architecture)!"

@@ -145,17 +145,14 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 }
 
 function _POST_INSTALL() {
-	if [ $all_ok == true ]; then
-		
-		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
-		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
-		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
-		
-		# Exit
-		if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _POST_INSTALL ${Font_Reset_Color}${Font_Reset}"; fi
+	if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
+	if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
+	if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+	
+	# Exit
+	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
 }
 
 ######### ----------------------------- #########
@@ -269,7 +266,7 @@ function _INIT_FONT_STYLES() {
 	Font_Gray='\e[38;5;248m'; Font_Gray_BG='\e[48;5;248m'
 	Font_White='\e[38;5;255m'; Font_White_BG='\e[48;5;255m'
 	
-	if [ "$Font_Styles_RGB" == true ]; then
+	if [ "$Font_Styles_RGB" == "true" ]; then
 		Font_DarkRed='\e[38;2;200;0;0m'; Font_DarkRed_BG='\e[48;2;200;0;0m'
 		Font_DarkGreen='\e[38;2;0;180;0m'; Font_DarkGreen_BG='\e[48;2;0;180;0m'
 		Font_DarkYellow='\e[38;2;180;146;0m'; Font_DarkYellow_BG='\e[48;2;180;146;0m'
@@ -385,7 +382,7 @@ function _INIT_GLOBAL_PATHS() {
 	Archive_User_Data="$Path_Installer_Data/user_files.7z"
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/program_files.7z\" not found."; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/system_files.7z\" not found."; fi
-	if [ ! -e "$Archive_User_Data" ] && [ $Install_User_Data == true ]; then
+	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
 		Install_User_Data=false; _WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."; fi # Extra check
 	
 	# Application installation directory.
@@ -477,7 +474,7 @@ function _CHECK_PORTSOFT() {
 
 function _TEST_COLORS() {
 	echo -e "\n${Font_Bold} -= TEST COLORS =-"
-	if [ "$Font_Styles_RGB" == true ]; then echo -e " RGB Mode"
+	if [ "$Font_Styles_RGB" == "true" ]; then echo -e " RGB Mode"
 	else echo -e " 8-bit table Mode"; fi
 	echo -e "
  ${Font_Black}Font_Black ${Font_DarkGray}Font_DarkGray ${Font_Gray}Font_Gray ${Font_White}Font_White ${Font_Reset_Color}
@@ -594,7 +591,7 @@ if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию е�
 	_CLEAR_BACKGROUND
 	
 	# Установка описания из настроек при стандартной локализации
-	if [ $Locale_Use_Default == true ]; then Info_Description="$Info_Description_Default"; fi
+	if [ "$Locale_Use_Default" == "true" ]; then Info_Description="$Info_Description_Default"; fi
 	
 	# Вывод описания
 	echo -e "\
@@ -621,7 +618,7 @@ $Info_Description
 	if [ "$List_Warnings" != "" ]; then echo -e "\n ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
 	
 	# Вывод тестовой таблицы цветовой палитры если указано в настройках
-	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi
+	if [ "$Debug_Test_Colors" == "true" ]; then _TEST_COLORS; fi
 	
 	# Запрос подтверждения на продолжение
 	echo -e "\n $Str_PACKAGEINFO_Confirm"
@@ -751,18 +748,18 @@ $Header
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Bin_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Bin_Dir"
 		
-	if [ $Install_Helpers == true ]; then
+	if [ "$Install_Helpers" == "true" ]; then
 		if [ $Current_DE == "XFCE" ]; then
 			echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Helpers_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Helpers_Dir"; fi; fi
 
-	if [ $Install_Desktop_Icons == true ]; then
+	if [ "$Install_Desktop_Icons" == "true" ]; then
 		echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Desktop_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Desktop_Dir"; fi
 
-	if [ $Install_User_Data == true ]; then
+	if [ "$Install_User_Data" == "true" ]; then
 		echo -e "
  -$Str_ATTENTION! ${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Copy_uData_To${Font_Reset_Color}${Font_Reset}
    $Output_User_Data
@@ -985,15 +982,15 @@ $Header
 	cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
 	
 	# Install Helpers
-	if [ $Install_Helpers == true ]; then
+	if [ "$Install_Helpers" == "true" ]; then
 		_INSTALL_HELPERS; fi
 	
 	# Install Desktop files
-	if [ $Install_Desktop_Icons == true ]; then
+	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
 	
 	# Copy user data
-	if [ $Install_User_Data == true ]; then
+	if [ "$Install_User_Data" == "true" ]; then
 		_INSTALL_USER_DATA; fi
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
@@ -1021,6 +1018,7 @@ $Header
 		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
 		echo " $Str_INSTALLAPP_Unpack_Err2"
 		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
+		
 		read confirm_error_unpacking
 		if [ "$confirm_error_unpacking" == "y" ] || [ "$confirm_error_unpacking" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
 		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
@@ -1044,11 +1042,11 @@ $Header
 	_INSTALL_HELPERS
 	
 	# Install Desktop files
-	if [ $Install_Desktop_Icons == true ]; then
+	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
 	
 	# Copy user data
-	if [ $Install_User_Data == true ]; then
+	if [ "$Install_User_Data" == "true" ]; then
 		_WARNING "Install_User_Data" "In \"System\" mode this does not work!"
 		#_INSTALL_USER_DATA
 	fi

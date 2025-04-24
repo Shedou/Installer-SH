@@ -132,9 +132,9 @@ Archive_MD5_Hash_UserData="" # Not used if Install_User_Data="false"
 ######### ------------------------- #########
 ######### Post Install (LAST STAGE) #########
 
-function _POST_INSTALL_UPDATE_MENU_OPENBOX() { openbox --restart &> /dev/null; }
-function _POST_INSTALL_UPDATE_MENU_LXDE() { lxpanelctl restart &> /dev/null; }
-function _POST_INSTALL_UPDATE_MENU_XFCE() { xfce4-panel -r &> /dev/null; }
+function _POST_INSTALL_UPDATE_MENU_OPENBOX() { if type "openbox" &> /dev/null; then openbox --restart &> /dev/null; fi; }
+function _POST_INSTALL_UPDATE_MENU_LXDE() { if type "lxpanelctl" &> /dev/null; then lxpanelctl restart &> /dev/null; fi; }
+function _POST_INSTALL_UPDATE_MENU_XFCE() { if type "xfce4-panel" &> /dev/null; then xfce4-panel -r &> /dev/null; fi; }
 
 function _POST_INSTALL_UPDATE_MENU_KDE() {
 	if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null

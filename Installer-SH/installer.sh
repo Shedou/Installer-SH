@@ -17,7 +17,6 @@ function _MAIN() {
 	_INIT_GLOBAL_PATHS
 		_IMPORTANT_CHECK_LAST  # Last important check before UI
 	printf '\033[8;32;100t' # Resize terminal Window (100x32)
-	_CHECK_PORTSOFT
 	_PRINT_PACKAGE_INFO
 	_CHECK_MD5
 	_PRINT_INSTALL_SETTINGS # Last confirm stage
@@ -489,31 +488,24 @@ _IMPORTANT_CHECK_LAST() {
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
 	
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
-}
-
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-######### -------------- #########
-
-
-######### Check PortSoft #########
-######### -------------- #########
-
-function _CHECK_PORTSOFT() {
+	
 	# Check PortSoft
 	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-		if ! [[ -x "$Tool_Prepare_Base" ]]; then chmod +x "$Tool_Prepare_Base"; fi
 		source "$Tool_Prepare_Base"
 		_CLEAR_BACKGROUND
 	fi
 }
+
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
+######### -------------- #########
 
 ######### ----------- #########
 ######### Test colors #########

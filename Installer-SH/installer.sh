@@ -626,7 +626,7 @@ $Info_Description
 	# Запрос подтверждения на продолжение
 	echo -e "\n $Str_PACKAGEINFO_Confirm"
 	read package_info_confirm
-	if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then all_ok=true
+	if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read pause; fi
@@ -700,7 +700,7 @@ $Header
 	
 	echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
 	read errors_confirm
-	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then all_ok="true"
+	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
 
@@ -714,7 +714,7 @@ $Header
 }
 
 function _CHECK_MD5() {
-	# Только проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
+	# Проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
 	if [ "$MODE_SILENT" == "true" ]; then _CHECK_MD5_COMPARE
 		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING; fi
 	else
@@ -731,10 +731,10 @@ function _CHECK_MD5() {
 ######### Print installation settings #########
 
 function _PRINT_INSTALL_SETTINGS() {
-if [ "$MODE_SILENT" == "false" ]; then
-	if [ $all_ok == true ]; then all_ok=false
-		_CLEAR_BACKGROUND
-		echo -e "\
+if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
+else
+	_CLEAR_BACKGROUND
+	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_PRINTINSTALLSETTINGS_Head (${Font_Yellow}$Install_Mode${Font_Cyan}):${Font_Reset_Color}${Font_Reset}
 
@@ -751,41 +751,40 @@ $Header
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Bin_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Bin_Dir"
 		
-		if [ $Install_Helpers == true ]; then
-			if [ $Current_DE == "XFCE" ]; then
-				echo -e "
+	if [ $Install_Helpers == true ]; then
+		if [ $Current_DE == "XFCE" ]; then
+			echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Helpers_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Helpers_Dir"; fi; fi
 
-		if [ $Install_Desktop_Icons == true ]; then
-			echo -e "
+	if [ $Install_Desktop_Icons == true ]; then
+		echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Desktop_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Desktop_Dir"; fi
 
-		if [ $Install_User_Data == true ]; then
-			echo -e "
+	if [ $Install_User_Data == true ]; then
+		echo -e "
  -$Str_ATTENTION! ${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Copy_uData_To${Font_Reset_Color}${Font_Reset}
    $Output_User_Data
     $Str_PRINTINSTALLSETTINGS_Copy_uData_To2
     $Str_PRINTINSTALLSETTINGS_Copy_uData_To3
     $Str_PRINTINSTALLSETTINGS_Copy_uData_To4"; fi
 	
-		if [ "$Install_Mode" == "System" ]; then
-			echo -e "
+	if [ "$Install_Mode" == "System" ]; then
+		echo -e "
  -$Str_ATTENTION! ${Font_Bold}${Font_Yellow}$Str_PRINTINSTALLSETTINGS_System_Mode
    $Str_PRINTINSTALLSETTINGS_System_Mode2${Font_Reset_Color}${Font_Reset}"; fi
 		
-		echo -e "
+	echo -e "
  $Str_PRINTINSTALLSETTINGS_Before_Install
 
  $Str_PRINTINSTALLSETTINGS_Confirm"
-		read install_settings_confirm
 	
-		if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then all_ok=true
-		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-	
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_INSTALL_SETTINGS ${Font_Reset_Color}${Font_Reset}"; fi
+	read install_settings_confirm
+	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then :
+	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
+
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read pause; fi
 fi
 }
 
@@ -793,70 +792,75 @@ fi
 ######### Prepare Input Files #########
 
 function _PREPARE_INPUT_FILES_GREP() {
-	local prepare_text="/tmp/ish"; local prepare_path="/tmp/ish"; local prepare_error=false
+	local prepare_text="/tmp/ish"
+	local prepare_path="/tmp/ish"
+	local prepare_error="false"
 	
-	if [ ! -z "$1" ] && [ ! -z "$2" ]; then local prepare_text="$1"; local prepare_path="$2"
-	else local prepare_error=true; _WARNING "PREPARE_INPUT_FILES_GREP" "not enough arguments for the function to work."; fi
+	if [ ! -z "$1" ] && [ ! -z "$2" ]; then
+		local prepare_text="$1"
+		local prepare_path="$2"
+	else
+		local prepare_error="true"
+		_WARNING "PREPARE_INPUT_FILES_GREP" "not enough arguments for the function to work."
+	fi
 	
-	if [ $prepare_error == false ]; then 
+	if [ "$prepare_error" == "false" ]; then 
 		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null; fi
 }
 
 function _PREPARE_INPUT_FILES() {
-	if [ $all_ok == true ]; then all_ok=false
-		if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
-			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
-		
-		for file in "$Temp_Dir"/*; do
-			_PREPARE_INPUT_FILES_GREP "PATH_TO_FOLDER" "$Output_Install_Dir"
-			_PREPARE_INPUT_FILES_GREP "UNIQUE_APP_FOLDER_NAME" "$Unique_App_Folder_Name"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_NAME_IN_MENU" "$Program_Name_In_Menu"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_EXECUTABLE_FILE" "$Program_Executable_File"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_INSTALL_MODE" "$Program_Install_Mode"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_FILE" "$Program_Uninstaller_File"
-			_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_ICON" "$Program_Uninstaller_Icon"
-			_PREPARE_INPUT_FILES_GREP "ADDITIONAL_CATEGORIES" "$Additional_Categories"
-			_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_NAME" "$Menu_Directory_Name"
-			_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
-		done
-		
-		local All_Renamed=false
-		
-		while [ $All_Renamed == false ]; do
-			if find "$Temp_Dir/" -name "UNIQUE_APP_FOLDER_NAME*" | sed -e "p;s~UNIQUE_APP_FOLDER_NAME~$Unique_App_Folder_Name~" | xargs -n2 mv &> /dev/null; then
-				local All_Renamed=true
-			fi
-		done
-		
-		local Files_Bin_Dir=( $(ls "$Input_Bin_Dir") )
-		local Files_Menu=( $(ls "$Input_Menu_Files_Dir") )
-		local Files_Menu_Dir=( $(ls "$Input_Menu_Desktop_Dir") )
-		local Files_Menu_Apps=( $(ls "$Input_Menu_Apps_Dir") )
-		local arr_0=(); local arr_1=(); local arr_2=(); local arr_3=(); local arr_4=(); local arr_5=()
-		
-		for file in "${!Files_Bin_Dir[@]}"; do local arr_0[$file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
-		
-		if [ $Install_Helpers == true ]; then 
-			if [ $Current_DE == "XFCE" ]; then
-				local Files_Helpers_Dir=( $(ls "$Input_Helpers_Dir") )
-				for file in "${!Files_Helpers_Dir[@]}"; do local arr_1[$file]="$Output_Helpers_Dir/${Files_Helpers_Dir[$file]}"; done
-			fi
+	if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
+		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
+	
+	for file in "$Temp_Dir"/*; do
+		_PREPARE_INPUT_FILES_GREP "PATH_TO_FOLDER" "$Output_Install_Dir"
+		_PREPARE_INPUT_FILES_GREP "UNIQUE_APP_FOLDER_NAME" "$Unique_App_Folder_Name"
+		_PREPARE_INPUT_FILES_GREP "PROGRAM_NAME_IN_MENU" "$Program_Name_In_Menu"
+		_PREPARE_INPUT_FILES_GREP "PROGRAM_EXECUTABLE_FILE" "$Program_Executable_File"
+		_PREPARE_INPUT_FILES_GREP "PROGRAM_INSTALL_MODE" "$Program_Install_Mode"
+		_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_FILE" "$Program_Uninstaller_File"
+		_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_ICON" "$Program_Uninstaller_Icon"
+		_PREPARE_INPUT_FILES_GREP "ADDITIONAL_CATEGORIES" "$Additional_Categories"
+		_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_NAME" "$Menu_Directory_Name"
+		_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
+	done
+	
+	local All_Renamed="false"
+	
+	while [ "$All_Renamed" == "false" ]; do
+		if find "$Temp_Dir/" -name "UNIQUE_APP_FOLDER_NAME*" | sed -e "p;s~UNIQUE_APP_FOLDER_NAME~$Unique_App_Folder_Name~" | xargs -n2 mv &> /dev/null; then
+			local All_Renamed="true"
 		fi
-		
-		if [ $Install_Desktop_Icons == true ]; then 
-			local Files_Desktop_Dir=( $(ls "$Input_Desktop_Dir") )
-			for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[$file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
+	done
+	
+	local Files_Bin_Dir=( $(ls "$Input_Bin_Dir") )
+	local Files_Menu=( $(ls "$Input_Menu_Files_Dir") )
+	local Files_Menu_Dir=( $(ls "$Input_Menu_Desktop_Dir") )
+	local Files_Menu_Apps=( $(ls "$Input_Menu_Apps_Dir") )
+	local arr_0=(); local arr_1=(); local arr_2=(); local arr_3=(); local arr_4=(); local arr_5=()
+	
+	for file in "${!Files_Bin_Dir[@]}"; do local arr_0[$file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
+	
+	if [ $Install_Helpers == true ]; then 
+		if [ $Current_DE == "XFCE" ]; then
+			local Files_Helpers_Dir=( $(ls "$Input_Helpers_Dir") )
+			for file in "${!Files_Helpers_Dir[@]}"; do local arr_1[$file]="$Output_Helpers_Dir/${Files_Helpers_Dir[$file]}"; done
 		fi
-		
-		for file in "${!Files_Menu[@]}"; do local arr_3[$file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
-		for file in "${!Files_Menu_Dir[@]}"; do local arr_4[$file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
-		for file in "${!Files_Menu_Apps[@]}"; do local arr_5[$file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
-		
-		Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
-		all_ok=true
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PREPARE_INPUT_FILES ${Font_Reset_Color}${Font_Reset}"; fi
+	fi
+	
+	if [ $Install_Desktop_Icons == true ]; then 
+		local Files_Desktop_Dir=( $(ls "$Input_Desktop_Dir") )
+		for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[$file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
+	fi
+	
+	for file in "${!Files_Menu[@]}"; do local arr_3[$file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
+	for file in "${!Files_Menu_Dir[@]}"; do local arr_4[$file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
+	for file in "${!Files_Menu_Apps[@]}"; do local arr_5[$file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
+	
+	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
+	all_ok=true
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
 }
 
 ######### ------------- #########

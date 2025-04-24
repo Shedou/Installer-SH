@@ -563,7 +563,7 @@ $Header
 	
 	_CLEAR_TEMP # Очистка временных файлов
 	
-	echo -e "  $Str_ABORT_Exit" # "Нажмите Enter или закройте окно для выхода"...
+	echo -e "\n  $Str_ABORT_Exit" # "Нажмите Enter или закройте окно для выхода"...
 	
 	# Пауза, очистка и выход.
 	read pause; clear; exit 1 # Double clear resets styles before going to the system terminal window
@@ -589,17 +589,13 @@ function _WARNING() {
 
 ######### ------------------------- #########
 ######### Print package information #########
-
 function _PRINT_PACKAGE_INFO() {
-if [ "$MODE_SILENT" == "false" ]; then
-	if [ $all_ok == true ]; then all_ok=false
-		_CLEAR_BACKGROUND
-		
-		if [ $Locale_Use_Default == true ]; then
-			Info_Description="$Info_Description_Default"
-		fi
-		
-		echo -e "\
+if [ "$MODE_SILENT" == "false" ]; then # Пропустить данную функцию если включен тихий режим
+	_CLEAR_BACKGROUND
+	
+	if [ $Locale_Use_Default == true ]; then Info_Description="$Info_Description_Default"; fi # Установка описания из настроек при стандартной локализации
+	
+	echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_PACKAGEINFO_Head${Font_Reset_Color}${Font_Reset}
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Name${Font_Reset_Color} $Info_Name${Font_Reset} ($Info_Version, $Program_Architecture)
@@ -616,21 +612,20 @@ $Info_Description
  -${Font_Bold}${Font_Green}$Str_PACKAGEINFO_CurrentOS${Font_Reset_Color} $Current_OS_Name_Full ($Current_DE)${Font_Reset}
  -${Font_Bold}${Font_Green}$Str_PACKAGEINFO_InstallMode${Font_Reset_Color} $Install_Mode${Font_Reset}"
 	
-	if [ "$List_Errors" != "" ]; then echo -e "
- ${Font_Bold}${Font_Red}- $Str_ABORT_Errors${Font_Reset_Color}${Font_Reset} $List_Errors"; fi
+	# Вывод списка ошибок при наличии
+	if [ "$List_Errors" != "" ]; then echo -e "\n ${Font_Bold}${Font_Red}- $Str_ABORT_Errors${Font_Reset_Color}${Font_Reset} $List_Errors"; fi
 	
-	if [ "$List_Warnings" != "" ]; then echo -e "
- ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
+	# Вывод списка предупреждений при наличии
+	if [ "$List_Warnings" != "" ]; then echo -e "\n ${Font_Bold}${Font_Yellow}- $Str_ABORT_Warnings${Font_Reset_Color}${Font_Reset} $List_Warnings"; fi
 	
-	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi
+	if [ "$Debug_Test_Colors" == true ]; then _TEST_COLORS; fi # Вывод тестовой таблицы цветовой палитры если указано в настройках
 	
-		echo -e "\n $Str_PACKAGEINFO_Confirm"
-		read package_info_confirm
-		if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then all_ok=true
-		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_PACKAGE_INFO ${Font_Reset_Color}${Font_Reset}"; fi
+	echo -e "\n $Str_PACKAGEINFO_Confirm"
+	read package_info_confirm
+	if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then all_ok=true
+	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read pause; fi
 fi
 }
 

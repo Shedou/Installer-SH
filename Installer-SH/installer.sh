@@ -572,7 +572,7 @@ function _CLEAR_TEMP() {
 				if ! rm -rf "$Temp_Dir"; then _ABORT "Error clearinG temporary directory...\n   ($Temp_Dir)"; fi
 			else _ABORT "$clear_temp_test != $Temp_Test"; fi
 		fi
-	else _ABORT "_CLEAR_TEMP: Temp_Dir variable not found"; fi
+	fi
 }
 
 function _CREATE_TEMP() {

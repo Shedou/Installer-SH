@@ -412,12 +412,6 @@ function _INIT_GLOBAL_PATHS() {
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	Archive_User_Data="$Path_Installer_Data/user_files.7z"
-	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/program_files.7z\" not found."; fi
-	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_INIT_GLOBAL_PATHS" "File \"installer-data/system_files.7z\" not found."; fi
-	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
-		Install_User_Data="false"
-		_WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
-	fi # Extra check
 	
 	# Application installation directory.
 	Out_PortSoft_System="/portsoft"
@@ -473,9 +467,27 @@ function _INIT_GLOBAL_PATHS() {
 }
 
 _IMPORTANT_CHECK_LAST() {
-	if ! [[ -x "$Tool_SevenZip_bin" ]]; then
-		if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error."; fi
-	fi
+	if [ -e "$Tool_SevenZip_bin" ]; then
+		if ! [[ -x "$Tool_SevenZip_bin" ]]; then
+			if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error"; fi
+		fi
+	else _ABORT "Tool_SevenZip_bin not found"; fi
+	
+	if [ -e "$Tool_Prepare_Base" ]; then
+		if ! [[ -x "$Tool_Prepare_Base" ]]; then
+			if ! chmod +x "$Tool_Prepare_Base"; then _ABORT "chmod Tool_Prepare_Base error"; fi
+		fi
+	else _ABORT "Tool_Prepare_Base not found"; fi
+	
+	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/program_files.7z\" not found."; fi
+	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
+	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
+		Install_User_Data="false"
+		_WARNING "_INIT_GLOBAL_PATHS" "Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
+	fi # Extra check
+	
+	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
+	
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
 }
 

@@ -1,6 +1,6 @@
 # Locale file for Installer-SH
 
-Locale_Version="2.0"
+Locale_Version="2.1"
 Current_Locale="RU Русский"
 
 # Localization:
@@ -17,8 +17,6 @@ Str_WARNING="${Font_Bold}${Font_Yellow}ПРЕДУПРЕЖДЕНИЕ${Font_Reset_
 
 Str_Interrupted_By_User="Прервано пользователем"
 Str_Complete_Install="Процесс установки успешно завершен."
-
-Str_Error_All_Ok="Условие "all_ok" не пройдено в функции:"
 
 Str_ABORT_Msg="Код выхода -"
 Str_ABORT_Exit="Нажмите Enter или закройте окно, чтобы выйти."

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
-ScriptVersion="2.2"; LocaleVersion="2.0" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.2"; LocaleVersion="2.1" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 
@@ -152,7 +152,7 @@ function _POST_INSTALL() {
 	# Exit
 	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL - all_ok = $all_ok"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL"; read pause; fi
 }
 
 ######### ----------------------------- #########
@@ -173,7 +173,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	Font_Red=''; Font_Red_BG=''; Font_Green=''; Font_Green_BG=''; Font_Yellow=''; Font_Yellow_BG=''; Font_Blue=''; Font_Blue_BG=''
 	Font_Magenta=''; Font_Magenta_BG=''; Font_Cyan=''; Font_Cyan_BG=''
 	
-	all_ok=true; Locale_Use_Default=true # don't change!
+	Locale_Use_Default=true # don't change!
 	Locale_Display="Default"
 	Info_Description="TO BE REPLACED BY LOCALE IF PRESENT, DONT CHANGE THIS"
 	Current_Architecture="Unknown"
@@ -856,7 +856,7 @@ function _PREPARE_INPUT_FILES() {
 	
 	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES - all_ok = $all_ok"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES"; read pause; fi
 }
 
 ######### ------------- #########
@@ -903,7 +903,7 @@ function _INSTALL_USER_DATA() {
 		if ! "$Tool_SevenZip_bin" x -aoa "$Archive_User_Data" -o"$Output_User_Data/" &> /dev/null; then
 			_ERROR "_INSTALL_USER_DATA" "$Str_INSTALLAPP_Copy_uFiles_Err"; fi
 	fi
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP - all_ok = $all_ok"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
 }
 
 ######### --------------- #########
@@ -1091,7 +1091,7 @@ function _PREPARE_UNINSTALLER() {
 	if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
 	if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER - all_ok = $all_ok"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER"; read pause; fi
 }
 
 ######### ---- #########
@@ -1107,8 +1107,6 @@ function _SET_LOCALE_DEFAULT() {
 	
 	Str_Interrupted_By_User="Interrupted by user"
 	Str_Complete_Install="The installation process has been completed successfully."
-	
-	Str_Error_All_Ok="The \"all_ok\" condition was not passed in the function:"
 	
 	Str_ABORT_Msg="Exit code -"
 	Str_ABORT_Exit="Press Enter or close the window to exit."

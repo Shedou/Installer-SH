@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
-ScriptVersion="2.2"; LocaleVersion="2.1" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.3"; LocaleVersion="2.1" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 
@@ -53,19 +53,32 @@ function _INSTALLER_SETTINGS() {
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
-	Unique_App_Folder_Name="installer-sh-22" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-23" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" directory.
 	# good: ex-app-16, exapp-16.
 	# BAD: Ex-app-16, ExApp-16.
+	
+	# Application installation directory. Don't touch it if you don't know why you need it!
+	# If used incorrectly, it may lead to bad consequences!
+	Out_PortSoft_User="$User_Home/portsoft"
+	Out_Install_Dir_User="$Out_PortSoft_User/$Program_Architecture/$Unique_App_Folder_Name"
+	
+	Out_PortSoft_System="/portsoft"
+	Out_Install_Dir_System="$Out_PortSoft_System/$Program_Architecture/$Unique_App_Folder_Name"
+	
+	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
+	Out_App_Folder_Permissions=755  # Only for "System" mode.
 
 ######### - ------------------- - #########
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
+AppVersion="2.3" # Application version (numbers only)
+
 Info_Name="Installer-SH"
-Info_Version="v$ScriptVersion" # Change this value to the version of the application!
+Info_Version="v$AppVersion"
 Info_Release_Date="2025-04-xx"
 Info_Category="Other"
 Info_Platform="Linux"
@@ -90,10 +103,10 @@ Info_Description_Default="\
  ### ------------------------ ###
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Installer-SH v$ScriptVersion"              #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="Installer-SH v$AppVersion"                 #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
 
-Program_Name_In_Menu="Installer-SH $ScriptVersion"              #=> PROGRAM_NAME_IN_MENU
+Program_Name_In_Menu="Installer-SH $AppVersion"                 #=> PROGRAM_NAME_IN_MENU
 Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
 Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNINSTALLER_FILE
@@ -424,16 +437,6 @@ function _INIT_GLOBAL_PATHS() {
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	Archive_User_Data="$Path_Installer_Data/user_files.7z"
-	
-	# Application installation directory.
-	Out_PortSoft_System="/portsoft"
-	Out_PortSoft_User="$User_Home/portsoft"
-	
-	Out_Install_Dir_System="$Out_PortSoft_System/$Program_Architecture/$Unique_App_Folder_Name"
-	Out_Install_Dir_User="$Out_PortSoft_User/$Program_Architecture/$Unique_App_Folder_Name"
-	
-	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
-	Out_App_Folder_Permissions=755  # Only for "System" mode.
 	
 	Temp_Dir="/tmp/installer-sh/$Unique_App_Folder_Name""_$RANDOM""_$RANDOM" # TEMP Directory
 	

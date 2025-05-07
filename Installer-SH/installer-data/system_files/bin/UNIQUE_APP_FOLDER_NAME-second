@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec "PATH_TO_FOLDER/run-force-userdata.sh" "Forced userdata folder!" "$@"
+exec "PATH_TO_FOLDER/launcher-two" "Second App Terminal!" "$@"

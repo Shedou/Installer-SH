@@ -9,12 +9,12 @@ NoDisplay=false
 Hidden=false
 
 Name=PROGRAM_NAME_IN_MENU
-Comment=This is a sample application for Installer-SH.
+Comment=
 GenericName=
 
 Icon=PATH_TO_FOLDER/icon.png
-Exec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE
-TryExec=PATH_TO_FOLDER/program/PROGRAM_EXECUTABLE_FILE
+Exec=PATH_TO_FOLDER/launcher
+TryExec=PATH_TO_FOLDER/launcher
 Path=PATH_TO_FOLDER/program
 #StartupWMClass=
 
@@ -34,11 +34,12 @@ Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES
 # - ------------- - #
 # - Actions Begin - #
 
-#Actions=Act;
+Actions=OpenFolder;
 
-#[Desktop Action Act]
-#Name=Acttion Template
-#Exec=thunar
+[Desktop Action OpenFolder]
+Name=Open folder
+Name[ru]=Открыть каталог
+Exec=PATH_TO_FOLDER/open-folder
 
 # -  Actions End  - #
 # - ------------- - #

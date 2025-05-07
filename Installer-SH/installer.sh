@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
-ScriptVersion="2.3"; LocaleVersion="2.1" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.3"; LocaleVersion="2.2" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 
@@ -843,10 +843,7 @@ $Header
 	if [ "$Install_User_Data" == "true" ]; then
 		echo -e "
  -$Str_ATTENTION! ${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Copy_uData_To${Font_Reset_Color}${Font_Reset}
-   $Output_User_Data
-    $Str_PRINTINSTALLSETTINGS_Copy_uData_To2
-    $Str_PRINTINSTALLSETTINGS_Copy_uData_To3
-    $Str_PRINTINSTALLSETTINGS_Copy_uData_To4"; fi
+   $Output_User_Data"; fi
 	
 	if [ "$Install_Mode" == "System" ]; then
 		echo -e "
@@ -1266,9 +1263,6 @@ function _SET_LOCALE_DEFAULT() {
 	Str_PRINTINSTALLSETTINGS_Menu_Dirs="Menu files will be installed to:"
 	Str_PRINTINSTALLSETTINGS_Bin_Dir="Bin files will be installed to:"
 	Str_PRINTINSTALLSETTINGS_Copy_uData_To="User data will be installed in:"
-	Str_PRINTINSTALLSETTINGS_Copy_uData_To2="This is an experimental feature."
-	Str_PRINTINSTALLSETTINGS_Copy_uData_To3="This avoids conflicts between different versions of the application."
-	Str_PRINTINSTALLSETTINGS_Copy_uData_To4="This is not intended for applications that are installed in system mode."
 	Str_PRINTINSTALLSETTINGS_System_Mode="Use \"System\" mode only when installing software for all users!"
 	Str_PRINTINSTALLSETTINGS_System_Mode2="Root rights are required to perform the installation!"
 	Str_PRINTINSTALLSETTINGS_Before_Install="Please close all important applications before installation."

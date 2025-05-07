@@ -1,6 +1,6 @@
 # Locale file for Installer-SH
 
-Locale_Version="2.1"
+Locale_Version="2.2"
 Current_Locale="RU Русский"
 
 # Localization:
@@ -74,10 +74,7 @@ Str_PRINTINSTALLSETTINGS_Temp_Dir="Временный каталог:"
 Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Каталог установки приложения:"
 Str_PRINTINSTALLSETTINGS_Menu_Dirs="Файлы меню будут установлены в:"
 Str_PRINTINSTALLSETTINGS_Bin_Dir="Файлы \"bin\" будут установлены в:"
-Str_PRINTINSTALLSETTINGS_Copy_uData_To="Данные пользователя будут установлены в:"
-Str_PRINTINSTALLSETTINGS_Copy_uData_To2="Это экспериментальная функция."
-Str_PRINTINSTALLSETTINGS_Copy_uData_To3="Это позволяет избежать конфликтов между разными версиями приложения."
-Str_PRINTINSTALLSETTINGS_Copy_uData_To4="Это не предназначено для приложений, устанавливаемых в системном режиме."
+Str_PRINTINSTALLSETTINGS_Copy_uData_To="Пользовательские данные будут установлены в:"
 Str_PRINTINSTALLSETTINGS_System_Mode="Используйте режим \"System\" только при установке ПО для всех пользователей!"
 Str_PRINTINSTALLSETTINGS_System_Mode2="Для установки требуются права root!"
 Str_PRINTINSTALLSETTINGS_Before_Install="Перед установкой закройте все важные приложения."

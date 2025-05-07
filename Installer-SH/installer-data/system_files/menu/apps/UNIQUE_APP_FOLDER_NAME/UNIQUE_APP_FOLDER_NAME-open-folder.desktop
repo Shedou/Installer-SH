@@ -8,20 +8,20 @@ Encoding=UTF-8
 NoDisplay=false
 Hidden=false
 
-Name=PROGRAM_NAME_IN_MENU - Open UserData Folder!
+Name=PROGRAM_NAME_IN_MENU - Open Folder
 Comment=
 GenericName=
 
-Icon=PATH_TO_FOLDER/open-userdata-folder-icon.png
-Exec=PATH_TO_FOLDER/open-userdata-folder.sh
-TryExec=PATH_TO_FOLDER/open-userdata-folder.sh
+Icon=PATH_TO_FOLDER/icon-open-folder.png
+Exec=PATH_TO_FOLDER/open-folder
+TryExec=PATH_TO_FOLDER/open-folder
 Path=PATH_TO_FOLDER
 #StartupWMClass=
 
-Terminal=true
+Terminal=false
 StartupNotify=false
 
-Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES
+Categories=UNIQUE_APP_FOLDER_NAME
 #Keywords=
 #MimeType=
 

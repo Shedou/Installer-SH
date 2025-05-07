@@ -7,14 +7,12 @@
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
 
-#export PWD="$Path_To_Script/program"
 export PATH="$PATH:$Path_To_Script/program"
-
 export HOME="$Path_To_Script/userdata"
 
-export XDG_DATA_HOME="$Path_To_Script/userdata/.local/share"
-export XDG_STATE_HOME="$Path_To_Script/userdata/.local/state"
-export XDG_CONFIG_HOME="$Path_To_Script/userdata/.config"
-export XDG_CACHE_HOME="$Path_To_Script/userdata/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
 
-"$Path_To_Script/program/example-application" "$@"
+"$Path_To_Script/program/application-one" "$@"

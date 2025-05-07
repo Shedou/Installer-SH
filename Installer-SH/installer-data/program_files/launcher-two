@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Script version 1.0
+# This can help avoid application version conflicts, but requires special preparation.
+# WARNING! This is not intended for applications that are installed in system mode.
+# WARNING! This is an experimental feature.
+#
+
+Path_To_Script="$( dirname "$(readlink -f "$0")")"
+
+export PATH="$PATH:$Path_To_Script/program-two"
+export HOME="$Path_To_Script/userdata-two"
+
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+"$Path_To_Script/program-two/application-two" "$@"

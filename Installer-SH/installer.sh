@@ -93,7 +93,6 @@ Info_Description_Default="\
 Menu_Directory_Name="Installer-SH v$ScriptVersion"              #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
 
-Program_Executable_File="example-application"                   #=> PROGRAM_EXECUTABLE_FILE
 Program_Name_In_Menu="Installer-SH $ScriptVersion"              #=> PROGRAM_NAME_IN_MENU
 Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
@@ -896,7 +895,6 @@ function _PREPARE_INPUT_FILES() {
 		_PREPARE_INPUT_FILES_GREP "PATH_TO_FOLDER" "$Output_Install_Dir"
 		_PREPARE_INPUT_FILES_GREP "UNIQUE_APP_FOLDER_NAME" "$Unique_App_Folder_Name"
 		_PREPARE_INPUT_FILES_GREP "PROGRAM_NAME_IN_MENU" "$Program_Name_In_Menu"
-		_PREPARE_INPUT_FILES_GREP "PROGRAM_EXECUTABLE_FILE" "$Program_Executable_File"
 		_PREPARE_INPUT_FILES_GREP "PROGRAM_INSTALL_MODE" "$Program_Install_Mode"
 		_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_FILE" "$Program_Uninstaller_File"
 		_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_ICON" "$Program_Uninstaller_Icon"

@@ -42,8 +42,8 @@ function _INSTALLER_SETTINGS() {
 	
 	# Copy data to the "userdata" directory.
 	#  For example:
-	#   Install path:  /home/USER/portsoft/script/example-application-20
-	#   UserData path: /home/USER/portsoft/script/example-application-20/userdata
+	#   Install path:  /home/USER/portsoft/script/installer-sh-23
+	#   UserData path: /home/USER/portsoft/script/installer-sh-23/userdata
 	#
 	# This can help avoid application version conflicts, but requires special preparation.
 	# Do not use for applications installed in "System" mode!
@@ -62,11 +62,11 @@ function _INSTALLER_SETTINGS() {
 	
 	# Application installation directory. Don't touch it if you don't know why you need it!
 	# If used incorrectly, it may lead to bad consequences!
-	Out_PortSoft_User="$User_Home/portsoft"
-	Out_Install_Dir_User="$Out_PortSoft_User/$Program_Architecture/$Unique_App_Folder_Name"
+	Install_Path_User="$User_Home/portsoft"
+	Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
 	
-	Out_PortSoft_System="/portsoft"
-	Out_Install_Dir_System="$Out_PortSoft_System/$Program_Architecture/$Unique_App_Folder_Name"
+	Install_Path_System="/portsoft"
+	Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 	
 	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
 	Out_App_Folder_Permissions=755  # Only for "System" mode.
@@ -464,17 +464,17 @@ function _INIT_GLOBAL_PATHS() {
 	
 	# The "PATH_TO_FOLDER" variable points to the application installation directory without the trailing slash (Output_Install_Dir), for example "/portsoft/x86_64/example_application".
 	Output_Install_Dir="/tmp/ish"; Output_Bin_Dir="/tmp/ish"; Output_Helpers_Dir="/tmp/ish"; Output_Desktop_Dir="$Out_User_Desktop_Dir"
-	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_User_Data="$Out_Install_Dir_User/userdata"
+	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_User_Data="$Install_Path_User_Full/userdata"
 	Output_PortSoft="/tmp/ish"
 	
 	if [ "$Install_Mode" == "System" ]; then
-		Output_Install_Dir="$Out_Install_Dir_System"; Output_Bin_Dir="$Out_System_Bin_Dir"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
+		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Out_System_Bin_Dir"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
 		Output_Menu_Files="$Out_System_Menu_Files"; Output_Menu_DDir="$Out_System_Menu_DDir"; Output_Menu_Apps="$Out_System_Menu_Apps"
-		Output_PortSoft="$Out_PortSoft_System"
+		Output_PortSoft="$Install_Path_System"
 	else
-		Output_Install_Dir="$Out_Install_Dir_User"; Output_Bin_Dir="$Out_User_Bin_Dir"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
+		Output_Install_Dir="$Install_Path_User_Full"; Output_Bin_Dir="$Out_User_Bin_Dir"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
 		Output_Menu_Files="$Out_User_Menu_Files"; Output_Menu_DDir="$Out_User_Menu_DDir"; Output_Menu_Apps="$Out_User_Menu_Apps"
-		Output_PortSoft="$Out_PortSoft_User"
+		Output_PortSoft="$Install_Path_User"
 	fi
 	
 	Output_Files_All=("/tmp/ish") # Files list for Uninstaller

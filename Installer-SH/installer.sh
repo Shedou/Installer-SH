@@ -81,7 +81,7 @@ Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
 Info_Release_Date="2025-04-xx"
 Info_Category="Other"
-Info_Platform="Linux"
+Info_Platform="Linux - Chimbalix 24.7, Debian 7/8/9/10/11/12." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:

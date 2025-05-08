@@ -83,7 +83,7 @@ $Base_Header
 function _BASE_CREATE_TEMP() {
 	if [ -e "$Base_Temp_Dir" ]; then rm -rf "$Base_Temp_Dir"; fi;
 	mkdir "$Base_Temp_Dir"
-	if [ $MODE_DEBUG == true ]; then echo "_BASE_CREATE_TEMP"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CREATE_TEMP"; read pause; fi
 }
 
 function _BASE_DELETE_TEMP() {
@@ -91,7 +91,8 @@ function _BASE_DELETE_TEMP() {
 }
 
 function _BASE_PREPARE_INPUT_FILES_GREP() {
-	local p_text="$1"; local p_path="$2"
+	local p_text="$1"
+	local p_path="$2"
 	grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "s~$p_text~$p_path~g" &> /dev/null
 }
 

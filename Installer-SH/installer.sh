@@ -124,8 +124,8 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
  # Archives MD5 Hash
-Archive_MD5_Hash_ProgramFiles="df773dab4daada421f1c57317b9efeee"
-Archive_MD5_Hash_SystemFiles="ee015109788bb5b22f515ff827eaa731"
+Archive_MD5_Hash_ProgramFiles="e547af90c3d954d249b0c47e6383d8ab"
+Archive_MD5_Hash_SystemFiles="60eaa9e3d10b53e93104c80a50178ea8"
 Archive_MD5_Hash_UserData="4c16d30f7d05a952f3c6942b66405cd5" # Not used if Install_User_Data="false"
 }
 

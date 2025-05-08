@@ -15,12 +15,14 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
-"$Path_To_Script/program/application-one" "$@"
+application_exec="$Path_To_Script/program-two/application-two"
+
+$application_exec "$@"
 
 exit_code="$?"
 
 if [[ "$exit_code" != "0" ]]; then
-	StringMessage="bash -c \"echo \"-\"; echo \"$Path_To_Script/program/kicad\"; echo \"-\"; echo \"WARNING!\ EXIT\ CODE\ -\ $exit_code\"; echo \"The\ program\ has\ terminated\ incorrectly!\"; echo \"Is\ the\ program\ incompatible\ with\ the\ current\ OS?\"; echo \"Does\ the\ program\ contain\ errors?\"; read pause\""
+	StringMessage="bash -c \"echo \"-\"; echo \"$application_exec\"; echo \"-\"; echo \"WARNING!\ EXIT\ CODE\ -\ $exit_code\"; echo \"The\ program\ has\ terminated\ incorrectly!\"; echo \"Is\ the\ program\ incompatible\ with\ the\ current\ OS?\"; echo \"Does\ the\ program\ contain\ errors?\"; read pause\""
 	
 	terminal_executable="x-terminal-emulator"
 	if ! type "x-terminal-emulator" &> /dev/null; then

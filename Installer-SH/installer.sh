@@ -155,12 +155,14 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 	fi
 }
 
+function _UPDATE_MENU() {
+	if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
+	if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
+	if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+}
+
 function _POST_INSTALL() {
-	if [ "$Update_Menu" == "true" ]; then
-		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
-		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
-		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
-	fi
+	if [ "$Update_Menu" == "true" ]; then _UPDATE_MENU;	fi
 	
 	# Exit
 	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
@@ -176,21 +178,26 @@ function _POST_INSTALL() {
 
 function _HELP() {
 	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters:\n"
-	echo -e " -silent   - Silent installation mode.\n             Requires confirmation only in case of errors and conflicts.\n"
-	echo -e " -noupdate - Disables automatic menu update after installation."
-	echo -e "             Recommended for use when batch installing"
-	echo -e "             multiple applications in \"-silent\" mode.\n"
-	echo " -tarpack  - Pack the current installation package into a tar archive."
-	echo " -debug    - Debug mode, for development purposes only."
+	echo -e " -silent    - Silent installation mode."
+	echo -e "              Requires confirmation only in case of errors and conflicts.\n"
+	echo -e " -noupdmenu - Disables automatic menu update after installation."
+	echo -e "              Recommended for use when batch installing"
+	echo -e "              multiple applications in \"-silent\" mode.\n"
+	echo -e " -forcemenu - Only refresh menu. Recommended to use after installing"
+	echo -e "              many applications in \"-silent\" mode."
+	echo -e "              Works if the working environment is supported.\n"
+	echo -e " -tarpack   - Pack the current installation package into a tar archive.\n"
+	echo -e " -debug     - Debug mode, for development purposes only."
 	exit;
 }
 
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
-	if [[ "$ArgumentsString" =~ "-noupdate" ]]; then Update_Menu="false"; fi
-	if [[ "$ArgumentsString" =~ "-debug" ]]; then MODE_DEBUG="true"; fi
-	if [[ "$ArgumentsString" =~ "-silent" ]]; then MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then MODE_TARPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-forcemenu" ]]; then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+	if [[ "$ArgumentsString" =~ "-noupdmenu" ]]; then Update_Menu="false"; fi
+	if [[ "$ArgumentsString" =~ "-debug" ]]; then     MODE_DEBUG="true"; fi
+	if [[ "$ArgumentsString" =~ "-silent" ]]; then    MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then   MODE_TARPACK="true"; fi
 }
 
 function _INIT_GLOBAL_VARIABLES() {

@@ -124,7 +124,7 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
 
  # Archives MD5 Hash
 Archive_MD5_Hash_ProgramFiles="108a7b92dac6e3c0a306ad110a3fff76"
-Archive_MD5_Hash_SystemFiles="7357462921ad9e5eb035372ca5f7f07c"
+Archive_MD5_Hash_SystemFiles="ee015109788bb5b22f515ff827eaa731"
 Archive_MD5_Hash_UserData="4c16d30f7d05a952f3c6942b66405cd5" # Not used if Install_User_Data="false"
 }
 

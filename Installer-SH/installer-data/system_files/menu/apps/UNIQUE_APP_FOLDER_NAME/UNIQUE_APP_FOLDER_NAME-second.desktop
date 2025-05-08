@@ -12,7 +12,7 @@ Name=PROGRAM_NAME_IN_MENU - Second Program
 Comment=
 GenericName=
 
-Icon=PATH_TO_FOLDER/second-icon.png
+Icon=PATH_TO_FOLDER/icon-second.png
 Exec=PATH_TO_FOLDER/launcher-two 'Second App!' 'Second argument!'
 TryExec=PATH_TO_FOLDER/launcher-two
 Path=PATH_TO_FOLDER/program-two

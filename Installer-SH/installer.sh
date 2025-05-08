@@ -16,7 +16,6 @@ function _MAIN() {
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
 	_INIT_GLOBAL_PATHS
-	printf '\033[8;32;100t' # Resize terminal Window (100x32)
 		_IMPORTANT_CHECK_LAST  # Last important check before UI
 	_PRINT_PACKAGE_INFO
 	_CHECK_MD5
@@ -125,8 +124,8 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
  # Archives MD5 Hash
-Archive_MD5_Hash_ProgramFiles="5e57215cfefa44e8af6517930ceed713"
-Archive_MD5_Hash_SystemFiles="804f6c04757f6e3865a77a59be15d2ea"
+Archive_MD5_Hash_ProgramFiles="108a7b92dac6e3c0a306ad110a3fff76"
+Archive_MD5_Hash_SystemFiles="7357462921ad9e5eb035372ca5f7f07c"
 Archive_MD5_Hash_UserData="4c16d30f7d05a952f3c6942b66405cd5" # Not used if Install_User_Data="false"
 }
 
@@ -173,8 +172,16 @@ function _POST_INSTALL() {
 ######### ----------------------------- #########
 ######### BEFORE FIRST DEPENDENCY CHECK #########
 
+function _HELP() {
+	echo -e "Usage:\n"
+	echo -e " -silent   - Silent installation mode.\n             Requires confirmation only in case of errors and conflicts.\n"
+	echo " -tarpack  - Pack the current installation package into a tar archive."
+	echo " -debug    - Debug mode, for development purposes only."
+	exit;
+}
 
 function _CHECK_ARGS() {
+	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]]; then MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]]; then MODE_SILENT="true"; fi
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then MODE_TARPACK="true"; fi
@@ -494,6 +501,10 @@ function _INIT_GLOBAL_PATHS() {
 
 _IMPORTANT_CHECK_LAST() {
 	# Здесь можно использовать локализацию
+	
+	if [ "$MODE_SILENT" == "false" ]; then
+		printf '\033[8;32;100t' # Resize terminal Window (100x32)
+	fi
 	
 	# Проверка наличия 7-Zip в каталоге инструментов и установка прав на запуск при необходимости
 	if [ -e "$Tool_SevenZip_bin" ]; then

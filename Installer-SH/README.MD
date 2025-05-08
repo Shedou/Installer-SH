@@ -8,11 +8,31 @@ The version and hints are in the file "install.sh".
 
 Normal installation, just run:
 
-> `installer.sh`
+> `./installer.sh`
+
+Help:
+
+> `./installer.sh -h`\
+> `./installer.sh -help`\
+> `./installer.sh --help`
 
 Silent installation, no output if everything is installed without errors:
 
-> `installer.sh -silent`
+> `./installer.sh -silent`
+
+Pack the directory with installation files into a TAR archive::
+
+> `./installer.sh -tarpack`
+
+Disables automatic menu update after installation.\
+Recommended for use when batch installing multiple applications in "-silent" mode.
+
+> `./installer.sh -noupdmenu`
+
+Only refresh menu. Recommended to use after installing many applications in "-silent" mode.\
+Works if the working environment is supported.
+
+> `./installer.sh -forcemenu`
 
 ### Creating installation packages (v1.7):
 
@@ -32,11 +52,3 @@ Silent installation, no output if everything is installed without errors:
 TAR extract:
 
 > `tar -xf Installer-SH.tar`
-
-TAR pack:
-
-> `installer.sh -tarpack`
-
-Or
-
-> `tar --owner=ish --group=ish -cf Installer-SH.tar Installer-SH`

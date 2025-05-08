@@ -11,7 +11,6 @@ function _MAIN() {
 	_INSTALLER_SETTINGS
 		_IMPORTANT_CHECK_FIRST # First important check before UI
 	_CHECK_SYSTEM
-		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 	_INIT_FONT_STYLES
 	_SET_LOCALE
 	_CHECK_SYSTEM_DE
@@ -439,8 +438,6 @@ function _CHECK_SYSTEM_DE() {
 	Current_DE="$check_de_raw"
 }
 
-#_CLEAR_BACKGROUND
-
 function _INIT_GLOBAL_PATHS() {
 	### --------------------------- ###
 	### Do not edit variables here! ###
@@ -503,6 +500,7 @@ _IMPORTANT_CHECK_LAST() {
 	# Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then
+		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
 		printf '\033[8;32;100t' # Resize terminal Window (100x32)
 	fi
 	
@@ -535,7 +533,7 @@ _IMPORTANT_CHECK_LAST() {
 	# Check PortSoft
 	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
 		source "$Tool_Prepare_Base"
-		_CLEAR_BACKGROUND
+		if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
 	fi
 }
 
@@ -976,7 +974,7 @@ function _CHECK_OUTPUTS() {
 	done
 	
 	if [ "$check_outputs_error" == "true" ]; then
-		clear
+		_CLEAR_BACKGROUND
 		echo -e "\
 $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKOUTPUTS_Head${Font_Reset_Color}${Font_Reset}"
@@ -988,6 +986,7 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
    ${Font_Yellow}$Str_CHECKOUTPUTS_Attention2${Font_Reset_Color}
 
  $Str_CHECKOUTPUTS_Confirm"
+		
 		read install_confirm
 		if [ "$install_confirm" == "y" ] || [ "$install_confirm" == "yes" ]; then :
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
@@ -1141,7 +1140,7 @@ $Header
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
 	
-	echo " $Str_INSTALLAPP_Set_Rights"
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Set_Rights"; fi
 	sudo chmod -R $Out_App_Folder_Permissions "$Output_Install_Dir"
 	sudo chown -R $Out_App_Folder_Owner "$Output_Install_Dir"
 	

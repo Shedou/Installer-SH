@@ -3,7 +3,6 @@
 # LICENSE for this script is at the end of this file
 
 ######### --------- #########
-all_ok=true
 Base_Header="${Font_Red}${Font_Bold} -=: Preparing PortSoft and Menu (Installer-SH part) :=-${Font_Reset}${Font_Reset_Color}\n"
 Base_Temp_Dir="/tmp/chimbalix-portsoft-menu-prepare""_$RANDOM""_$RANDOM" # TEMP Directory
 
@@ -22,10 +21,9 @@ function _BASE_MAIN() {
 }
 
 function _BASE_PRINT_INFO() {
-if [ $MODE_SILENT == false ]; then
-	if [ $all_ok == true ]; then all_ok=false
-		_CLEAR_BACKGROUND
-		echo -e "\
+if [ "$MODE_SILENT" == "false" ]; then
+	_CLEAR_BACKGROUND
+	echo -e "\
 $Base_Header
  ${Font_Bold}${Font_Cyan}$Str_BASEINFO_Head${Font_Reset_Color}${Font_Reset}
 
@@ -45,13 +43,13 @@ $Base_Header
 
  -${Font_Bold}${Font_DarkGreen}$Str_PACKAGEINFO_CurrentOS${Font_Reset_Color} $Current_OS_Name_Full ($Current_DE)${Font_Reset}
  -${Font_Bold}${Font_DarkGreen}$Str_PACKAGEINFO_InstallMode${Font_Reset_Color} $Install_Mode${Font_Reset}"
-		echo -e "\n $Str_BASEINFO_Confirm"
-		read base_info_confirm
-		if [ "$base_info_confirm" == "y" ] || [ "$base_info_confirm" == "yes" ]; then all_ok=true
-		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-		
-		if [ $MODE_DEBUG == true ]; then echo "_PRINT_PACKAGE_INFO - all_ok = $all_ok"; read pause; fi
-	else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _PRINT_PACKAGE_INFO ${Font_Reset_Color}${Font_Reset}"; fi
+	
+	echo -e "\n $Str_BASEINFO_Confirm"
+	read base_info_confirm
+	if [ "$base_info_confirm" == "y" ] || [ "$base_info_confirm" == "yes" ]; then :
+	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read pause; fi
 fi
 }
 
@@ -59,7 +57,6 @@ fi
 ######### Check and compare MD5 of archive
 
 function _BASE_CHECK_MD5() {
-if [ $all_ok == true ]; then all_ok=false
 	Base_Data_MD5=`md5sum "$Archive_Base_Data" | awk '{print $1}'`
 	if [ "$Base_Data_MD5" != "$Archive_Base_Data_MD5" ]; then
 		_CLEAR_BACKGROUND
@@ -72,29 +69,26 @@ $Base_Header
   
    ${Font_Bold}$Str_BASECHECKMD5PRINT_Expected_bHash${Font_Reset} \"$Archive_Base_Data_MD5\"
    ${Font_Bold}$Str_BASECHECKMD5PRINT_Real_bHash${Font_Reset}     \"$Base_Data_MD5\""
-
+		
 		echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
 		read base_errors_confirm
-		if [ "$base_errors_confirm" == "y" ] || [ "$base_errors_confirm" == "yes" ]; then all_ok=true
+		if [ "$base_errors_confirm" == "y" ] || [ "$base_errors_confirm" == "yes" ]; then :
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-	else all_ok=true; fi
-	if [ $MODE_DEBUG == true ]; then echo "_BASE_CHECK_MD5 - all_ok = $all_ok"; read pause; fi
-else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _BASE_CHECK_MD5 ${Font_Reset_Color}${Font_Reset}"; fi
+	fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CHECK_MD5"; read pause; fi
 }
 
 
 function _BASE_CREATE_TEMP() {
-if [ $all_ok == true ]; then all_ok=false
 	if [ -e "$Base_Temp_Dir" ]; then rm -rf "$Base_Temp_Dir"; fi;
 	mkdir "$Base_Temp_Dir"
-	all_ok=true
-	if [ $MODE_DEBUG == true ]; then echo "_BASE_CREATE_TEMP - all_ok = $all_ok"; read pause; fi
-else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_Error_All_Ok _BASE_CREATE_TEMP ${Font_Reset_Color}${Font_Reset}"; fi
-}
-function _BASE_DELETE_TEMP() {
-if [ -e "$Base_Temp_Dir" ]; then rm -rf "$Base_Temp_Dir"; fi;
+	if [ $MODE_DEBUG == true ]; then echo "_BASE_CREATE_TEMP"; read pause; fi
 }
 
+function _BASE_DELETE_TEMP() {
+	if [ -e "$Base_Temp_Dir" ]; then rm -rf "$Base_Temp_Dir"; fi;
+}
 
 function _BASE_PREPARE_INPUT_FILES_GREP() {
 	local p_text="$1"; local p_path="$2"
@@ -119,8 +113,8 @@ function _BASE_INSTALL_SYSTEM() {
 	sudo cp -rf "$Base_Temp_Dir/desktop-directories/apps/". "$Output_Menu_DDir"
 	sudo cp -rf "$Base_Temp_Dir/menus/applications-merged/". "$Output_Menu_Files"
 	
-	if [ ! -e "$Out_PortSoft_System" ]; then sudo mkdir -p "$Out_PortSoft_System"; fi
-	sudo cp -rf "$Base_Temp_Dir/portsoft/". "$Out_PortSoft_System"
+	if [ ! -e "$Install_Path_System" ]; then sudo mkdir -p "$Install_Path_System"; fi
+	sudo cp -rf "$Base_Temp_Dir/portsoft/". "$Install_Path_System"
 }
 
 function _BASE_INSTALL_USER() {
@@ -131,14 +125,15 @@ function _BASE_INSTALL_USER() {
 	cp -rf "$Base_Temp_Dir/desktop-directories/apps/". "$Output_Menu_DDir"
 	cp -rf "$Base_Temp_Dir/menus/applications-merged/". "$Output_Menu_Files"
 	
-	if [ ! -e "$Out_PortSoft_User" ]; then mkdir -p "$Out_PortSoft_User"; fi
-	cp -rf "$Base_Temp_Dir/portsoft/". "$Out_PortSoft_User"
+	if [ ! -e "$Install_Path_User" ]; then mkdir -p "$Install_Path_User"; fi
+	cp -rf "$Base_Temp_Dir/portsoft/". "$Install_Path_User"
 }
 
 function _BASE_INSTALL_COMPLETE() {
-	if [ "$Current_DE" == "xfce" ]; then xfce4-panel -r &> /dev/null; fi
-	echo -e " $Str_BASE_COMPLETE"
-	read pause
+	if [ "$MODE_SILENT" == "false" ]; then
+		echo -e " $Str_BASE_COMPLETE"
+		read pause
+	fi
 }
 
 _BASE_MAIN

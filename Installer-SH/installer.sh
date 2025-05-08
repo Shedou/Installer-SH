@@ -1182,13 +1182,15 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 	# Здесь можно использовать локализацию
 	
 	if [ -e "$Output_Uninstaller" ]; then
-		sudo chmod 755 "$Output_Uninstaller"
-		sudo chown $Out_App_Folder_Owner "$Output_Uninstaller"
-	
 		for filename in "${!Output_Files_All[@]}"; do
+			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+			sudo chmod 755 "$Output_Uninstaller"
+			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 		done
+		sudo chmod 755 "$Output_Uninstaller"
+		sudo chown $Out_App_Folder_Owner "$Output_Uninstaller"
 	else _ERROR "_PREPARE_UNINSTALLER_SYSTEM" "Output_Uninstaller not found."; fi
 }
 
@@ -1196,12 +1198,14 @@ function _PREPARE_UNINSTALLER_USER() {
 	# Здесь можно использовать локализацию
 	
 	if [ -e "$Output_Uninstaller" ]; then
-		chmod 744 "$Output_Uninstaller"
-	
 		for filename in "${!Output_Files_All[@]}"; do
+			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+			chmod 744 "$Output_Uninstaller"
+			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 		done
+		chmod 744 "$Output_Uninstaller"
 	else _ERROR "_PREPARE_UNINSTALLER_USER" "Output_Uninstaller not found."; fi
 }
 

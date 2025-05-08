@@ -273,6 +273,7 @@ _IMPORTANT_CHECK_FIRST() {
 	if ! type "sudo" &> /dev/null; then     _ABORT "$String_CMD_N_F 'sudo'"; fi
 	if ! type "chown" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chown'"; fi
 	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
+	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
 }
 
 ######### ---------------------------- #########
@@ -1184,7 +1185,9 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			sudo chmod 755 "$Output_Uninstaller"
+			if [ $(stat -c "%a" "$Output_Uninstaller") != "755" ]; then
+				sudo chmod 755 "$Output_Uninstaller"
+			fi
 			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
@@ -1200,7 +1203,9 @@ function _PREPARE_UNINSTALLER_USER() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			chmod 744 "$Output_Uninstaller"
+			if [ $(stat -c "%a" "$Output_Uninstaller") != "744" ]; then
+				chmod 744 "$Output_Uninstaller"
+			fi
 			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"

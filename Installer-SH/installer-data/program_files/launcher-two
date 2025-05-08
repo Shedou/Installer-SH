@@ -16,3 +16,20 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
 "$Path_To_Script/program-two/application-two" "$@"
+
+exit_code="$?"
+
+if [[ "$exit_code" != "0" ]]; then
+	StringMessage="bash -c \"echo \"-\"; echo \"$Path_To_Script/program/kicad\"; echo \"-\"; echo \"WARNING!\ EXIT\ CODE\ -\ $exit_code\"; echo \"The\ program\ has\ terminated\ incorrectly!\"; echo \"Is\ the\ program\ incompatible\ with\ the\ current\ OS?\"; echo \"Does\ the\ program\ contain\ errors?\"; read pause\""
+	
+	terminal_executable="x-terminal-emulator"
+	if ! type "x-terminal-emulator" &> /dev/null; then
+		if type "xfce4-terminal" &> /dev/null; then terminal_executable="xfce4-terminal"
+		elif type "konsole" &> /dev/null; then terminal_executable="konsole"
+		elif type "gnome-terminal" &> /dev/null; then terminal_executable="gnome-terminal"
+		elif type "xterm" &> /dev/null; then terminal_executable="xterm"
+		elif type "uxterm" &> /dev/null; then terminal_executable="uxterm"; fi
+	fi
+	
+	$terminal_executable -e "$StringMessage"
+fi

@@ -34,6 +34,7 @@ function _MAIN() {
 function _INSTALLER_SETTINGS() {
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
+	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
 	
 	Install_Mode="User"             # "System" / "User", In "User" mode, root rights are not required.
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
@@ -46,8 +47,8 @@ function _INSTALLER_SETTINGS() {
 	#
 	# This can help avoid application version conflicts, but requires special preparation.
 	# Do not use for applications installed in "System" mode!
-	# Please see the example before using this function - "installer-data/program_files/run-force-userdata.sh", and configure the system files accordingly.
-	Install_User_Data="true"
+	# Please see the example before using this function - "installer-data/program_files/launcher", and configure the system files accordingly.
+	Install_User_Data="false"
 	
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
@@ -155,9 +156,11 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 }
 
 function _POST_INSTALL() {
-	if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
-	if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
-	if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+	if [ "$Update_Menu" == "true" ]; then
+		if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
+		if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
+		if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+	fi
 	
 	# Exit
 	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
@@ -172,8 +175,11 @@ function _POST_INSTALL() {
 ######### BEFORE FIRST DEPENDENCY CHECK #########
 
 function _HELP() {
-	echo -e "Usage:\n"
+	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters:\n"
 	echo -e " -silent   - Silent installation mode.\n             Requires confirmation only in case of errors and conflicts.\n"
+	echo -e " -noupdate - Disables automatic menu update after installation."
+	echo -e "             Recommended for use when batch installing"
+	echo -e "             multiple applications in \"-silent\" mode.\n"
 	echo " -tarpack  - Pack the current installation package into a tar archive."
 	echo " -debug    - Debug mode, for development purposes only."
 	exit;
@@ -181,6 +187,7 @@ function _HELP() {
 
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
+	if [[ "$ArgumentsString" =~ "-noupdate" ]]; then Update_Menu="false"; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]]; then MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]]; then MODE_SILENT="true"; fi
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then MODE_TARPACK="true"; fi
@@ -1259,7 +1266,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_PACKAGEINFO_Name="Name:"
 	Str_PACKAGEINFO_ReleaseDate="Release Date:"
 	Str_PACKAGEINFO_Category="Category:"
-	Str_PACKAGEINFO_Platform="Platform:"
+	Str_PACKAGEINFO_Platform="Platform (tested):"
 	Str_PACKAGEINFO_InstalledSize="Installed Size:"
 	Str_PACKAGEINFO_Licensing="Licensing:"
 	Str_PACKAGEINFO_Developer="Developer:"

@@ -3,6 +3,7 @@
 ScriptVersion="2.3"; LocaleVersion="2.2" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
+ArgumentsString="$Arguments[$@]"
 
 # Main function, don't change!
 function _MAIN() {
@@ -56,7 +57,7 @@ function _INSTALLER_SETTINGS() {
 	Unique_App_Folder_Name="installer-sh-23" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
-	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" directory.
+	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
 	# good: ex-app-16, exapp-16.
 	# BAD: Ex-app-16, ExApp-16.
 	
@@ -68,8 +69,8 @@ function _INSTALLER_SETTINGS() {
 	Install_Path_System="/portsoft"
 	Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 	
-	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
-	Out_App_Folder_Permissions=755  # Only for "System" mode.
+	Install_Path_Bin_User="$User_Home/.local/bin" # Works starting from Chimbalix 24.4
+	Install_Path_Bin_System="/usr/bin"
 
 ######### - ------------------- - #########
 ######### - Package Information - #########
@@ -172,6 +173,13 @@ function _POST_INSTALL() {
 ######### ----------------------------- #########
 ######### BEFORE FIRST DEPENDENCY CHECK #########
 
+
+function _CHECK_ARGS() {
+	if [[ "$ArgumentsString" =~ "-debug" ]]; then MODE_DEBUG="true"; fi
+	if [[ "$ArgumentsString" =~ "-silent" ]]; then MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then MODE_TARPACK="true"; fi
+}
+
 function _INIT_GLOBAL_VARIABLES() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
@@ -199,9 +207,11 @@ function _INIT_GLOBAL_VARIABLES() {
 	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
 		source "$User_Home/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
-	MODE_DEBUG="false"; if [ "${Arguments[$1]}" == "-debug" ]; then MODE_DEBUG="true"; fi
-	MODE_SILENT="false"; if [ "${Arguments[$1]}" == "-silent" ]; then MODE_SILENT="true"; fi
-	MODE_TARPACK="false"; if [ "${Arguments[$1]}" == "-tarpack" ]; then MODE_TARPACK="true"; fi
+	MODE_DEBUG="false"
+	MODE_SILENT="false"
+	MODE_TARPACK="false"
+	
+	_CHECK_ARGS
 	
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
@@ -447,14 +457,12 @@ function _INIT_GLOBAL_PATHS() {
 	Input_Menu_Desktop_Dir="$Temp_Dir/menu/desktop-directories/apps"
 	Input_Menu_Apps_Dir="$Temp_Dir/menu/apps"
 	
-	Out_User_Bin_Dir="$User_Home/.local/bin" # Works starting from Chimbalix 24.4
 	Out_User_Helpers_Dir="$User_Home/.local/share/xfce4/helpers"
 	Out_User_Desktop_Dir="$User_Desktop_Dir"
 	Out_User_Menu_Files="$User_Home/.config/menus/applications-merged"
 	Out_User_Menu_DDir="$User_Home/.local/share/desktop-directories/apps"
 	Out_User_Menu_Apps="$User_Home/.local/share/applications/apps"
-	
-	Out_System_Bin_Dir="/usr/bin"
+
 	Out_System_Helpers_Dir="/usr/share/xfce4/helpers"
 	Out_System_Menu_Files="/etc/xdg/menus/applications-merged"
 	Out_System_Menu_DDir="/usr/share/desktop-directories/apps"
@@ -462,17 +470,20 @@ function _INIT_GLOBAL_PATHS() {
 	
 	Temp_Test="/tmp/installer-sh"
 	
+	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
+	Out_App_Folder_Permissions=755  # Only for "System" mode.
+	
 	# The "PATH_TO_FOLDER" variable points to the application installation directory without the trailing slash (Output_Install_Dir), for example "/portsoft/x86_64/example_application".
 	Output_Install_Dir="/tmp/ish"; Output_Bin_Dir="/tmp/ish"; Output_Helpers_Dir="/tmp/ish"; Output_Desktop_Dir="$Out_User_Desktop_Dir"
 	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_User_Data="$Install_Path_User_Full/userdata"
 	Output_PortSoft="/tmp/ish"
 	
 	if [ "$Install_Mode" == "System" ]; then
-		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Out_System_Bin_Dir"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
+		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Install_Path_Bin_System"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
 		Output_Menu_Files="$Out_System_Menu_Files"; Output_Menu_DDir="$Out_System_Menu_DDir"; Output_Menu_Apps="$Out_System_Menu_Apps"
 		Output_PortSoft="$Install_Path_System"
 	else
-		Output_Install_Dir="$Install_Path_User_Full"; Output_Bin_Dir="$Out_User_Bin_Dir"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
+		Output_Install_Dir="$Install_Path_User_Full"; Output_Bin_Dir="$Install_Path_Bin_User"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
 		Output_Menu_Files="$Out_User_Menu_Files"; Output_Menu_DDir="$Out_User_Menu_DDir"; Output_Menu_Apps="$Out_User_Menu_Apps"
 		Output_PortSoft="$Install_Path_User"
 	fi

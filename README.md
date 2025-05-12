@@ -20,6 +20,6 @@ Applications packaged in Installer-SH format can be found in the "[Chimbalix-Sof
 
 * Standardized: The installation package follows the PortSoft specifications (https://github.com/Shedou/PortSoft) for applications, and the XDG Desktop specifications (https://specifications.freedesktop.org) for menu shortcut placement. Additionally, Installer-SH itself can prepare the PortSoft directory according to the specification on Linux distributions that do not support these specifications out of the box.
 
-* Excellent compression: Thanks to the 7-Zip archiver, the advantage of Installer-SH over AppImage can reach 80% or more, depending on the type of compressed data, size and parameters, the advantage over tar.xz can reach 10% or more, depending on the compressed data, size and parameters.
+* Excellent compression: Thanks to the 7-Zip archiver, the advantage of Installer-SH over AppImage can reach up to 80% or more, depending on the type of compressed data, size and parameters, the advantage over tar.xz can reach up to 10% or more, depending on the compressed data, size and parameters.
 
 * Silent mode (v2.3+): It is possible to mass install several programs in Installer-SH format with the "-silent" parameter, for more information read the help, run "installer.sh" with the "-h" parameter to call the help.

@@ -17,7 +17,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 application_exec="$Path_To_Script/program-two/application-two"
 
-$application_exec "$@"
+"$application_exec" "$@"
 
 exit_code="$?"
 

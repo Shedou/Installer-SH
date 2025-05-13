@@ -15,9 +15,9 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
-application_exec="$Path_To_Script/program-two/application-two"
+application_exec="$Path_To_Script/program/application-one"
 
-$application_exec "$@"
+"$application_exec" "$@"
 
 exit_code="$?"
 

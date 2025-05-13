@@ -17,6 +17,10 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 application_exec="$Path_To_Script/program/application-one"
 
+if ! [[ -x "$application_exec" ]]; then
+	if ! chmod +x "$application_exec"; then echo "chmod error"; fi
+fi
+
 "$application_exec" "$@"
 
 exit_code="$?"

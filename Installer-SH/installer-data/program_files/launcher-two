@@ -19,6 +19,10 @@ application_exec="$Path_To_Script/program-two/application-two"
 
 "$application_exec" "$@"
 
+if ! [[ -x "$application_exec" ]]; then
+	if ! chmod +x "$application_exec"; then echo "chmod error"; fi
+fi
+
 exit_code="$?"
 
 if [[ "$exit_code" != "0" ]]; then

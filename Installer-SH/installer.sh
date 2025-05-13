@@ -103,10 +103,10 @@ Info_Description_Default="\
  ### ------------------------ ###
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
-Menu_Directory_Name="Installer-SH v$AppVersion"                 #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="$Info_Name v$AppVersion"                   #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
 
-Program_Name_In_Menu="Installer-SH $AppVersion"                 #=> PROGRAM_NAME_IN_MENU
+Program_Name_In_Menu="$Info_Name $AppVersion"                   #=> PROGRAM_NAME_IN_MENU
 Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
 Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNINSTALLER_FILE

@@ -13,7 +13,7 @@ Comment=
 GenericName=
 
 Icon=PATH_TO_FOLDER/icon.png
-Exec=PATH_TO_FOLDER/launcher
+Exec=PATH_TO_FOLDER/launcher %F
 TryExec=PATH_TO_FOLDER/launcher
 Path=PATH_TO_FOLDER/program
 #StartupWMClass=

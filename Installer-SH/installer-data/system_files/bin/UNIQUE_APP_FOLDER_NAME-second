@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec "PATH_TO_FOLDER/launcher-two" "Second App Terminal!" "$@"

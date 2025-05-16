@@ -107,13 +107,13 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
 
 # Application installation directory. Don't touch it if you don't know why you need it!
 # If used incorrectly, it may lead to bad consequences!
-Install_Path_User="$User_Home/portsoft"
+Install_Path_User="$HOME/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
 
 Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 
-Install_Path_Bin_User="$User_Home/.local/bin" # "$User_Home/.local/bin" works starting from Chimbalix 24.4
+Install_Path_Bin_User="$HOME/.local/bin" # "$HOME/.local/bin" works starting from Chimbalix 24.4
 Install_Path_Bin_System="/usr/bin"
 }
 
@@ -209,10 +209,9 @@ function _INIT_GLOBAL_VARIABLES() {
 	# Header Text (unformated)
 	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
-	User_Home="$HOME"
-	User_Desktop_Dir="$User_Home/Desktop"
-	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
-		source "$User_Home/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
+	User_Desktop_Dir="$HOME/Desktop"
+	if [ -e "$HOME/.config/user-dirs.dirs" ]; then
+		source "$HOME/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
 	MODE_DEBUG="false"
 	MODE_SILENT="false"
@@ -275,6 +274,8 @@ _IMPORTANT_CHECK_FIRST() {
 	if ! type "chown" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chown'"; fi
 	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
 	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
+	
+	if [ -z "$HOME" ]; then _ABORT "Variable HOME not found"; fi
 }
 
 ######### ---------------------------- #########
@@ -462,11 +463,11 @@ function _INIT_GLOBAL_PATHS() {
 	Input_Menu_Desktop_Dir="$Temp_Dir/menu/desktop-directories/apps"
 	Input_Menu_Apps_Dir="$Temp_Dir/menu/apps"
 	
-	Out_User_Helpers_Dir="$User_Home/.local/share/xfce4/helpers"
+	Out_User_Helpers_Dir="$HOME/.local/share/xfce4/helpers"
 	Out_User_Desktop_Dir="$User_Desktop_Dir"
-	Out_User_Menu_Files="$User_Home/.config/menus/applications-merged"
-	Out_User_Menu_DDir="$User_Home/.local/share/desktop-directories/apps"
-	Out_User_Menu_Apps="$User_Home/.local/share/applications/apps"
+	Out_User_Menu_Files="$HOME/.config/menus/applications-merged"
+	Out_User_Menu_DDir="$HOME/.local/share/desktop-directories/apps"
+	Out_User_Menu_Apps="$HOME/.local/share/applications/apps"
 
 	Out_System_Helpers_Dir="/usr/share/xfce4/helpers"
 	Out_System_Menu_Files="/etc/xdg/menus/applications-merged"
@@ -554,7 +555,7 @@ function _TEST_COLORS() {
 	if [ "$Font_Styles_RGB" == "true" ]; then echo -e " RGB Mode"
 	else echo -e " 8-bit table Mode"; fi
 	echo -e "
- ${Font_Black}Font_Black ${Font_DarkGray}Font_DarkGray ${Font_Gray}Font_Gray ${Font_White}Font_White ${Font_Reset_Color}
+ ${Font_Dim}Font_Dim ${Font_Black}Font_Black ${Font_DarkGray}Font_DarkGray ${Font_Gray}Font_Gray ${Font_White}Font_White ${Font_Reset_Color}
 
  ${Font_DarkRed}DarkRed ${Font_DarkGreen}DarkGreen ${Font_DarkYellow}DarkYellow ${Font_DarkBlue}DarkBlue ${Font_DarkMagenta}DarkMagenta ${Font_DarkCyan}DarkCyan
  ${Font_Red}Red     ${Font_Green}Green     ${Font_Yellow}Yellow     ${Font_Blue}Blue     ${Font_Magenta}Magenta     ${Font_Cyan}Cyan
@@ -569,18 +570,19 @@ function _TEST_COLORS() {
 
 function _CLEAR_BACKGROUND() {
 	clear; clear
-	echo -ne '\e]11;black\e\\'
-	echo -ne '\e[48;5;232m' # Crutch for GNOME...
-	echo -ne '\e]10;white\e\\'
-	echo -ne '\e[38;5;255m' # Crutch for GNOME...
+	#echo -ne '\e]11;black\e\\'
+	echo -ne '\e[48;5;232m'
+	#echo -ne '\e]10;white\e\\'
+	echo -ne '\e[38;5;255m'
 }
 
 function _CLEAR_TEMP() {
 	# Здесь нежелательно использовать локализацию
+	local clear_temp_test=""
 	
-	if [ ! -z "$Temp_Dir" ]; then
+	if [ -n "$Temp_Dir" ]; then
 		if [ -e "$Temp_Dir" ]; then
-			local clear_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
+			clear_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
 			if [ "$clear_temp_test" == "$Temp_Test" ]; then
 				if ! rm -rf "$Temp_Dir"; then _ABORT "Error clearinG temporary directory...\n   ($Temp_Dir)"; fi
 			else _ABORT "$clear_temp_test != $Temp_Test"; fi
@@ -590,10 +592,11 @@ function _CLEAR_TEMP() {
 
 function _CREATE_TEMP() {
 	# Здесь нежелательно использовать локализацию
+	local clear_temp_test=""
 	
-	if [ ! -z "$Temp_Dir" ]; then
+	if [ -n "$Temp_Dir" ]; then
 		_CLEAR_TEMP
-		local create_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
+		create_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
 		if [ "$create_temp_test" == "$Temp_Test" ]; then
 			if ! mkdir -p "$Temp_Dir"; then _ABORT "Error Creating temporary directory...\n   ($Temp_Dir)"; fi
 		else _ABORT "$create_temp_test != $Temp_Test"; fi
@@ -616,10 +619,10 @@ function _ABORT() {
 	# Стандартное сообщение об ошибке если аргументы не были поданы при вызове функции
 	local abort_message="${Font_Red}message not set...${Font_Reset_Color}"
 	# Проверка наличия первого аргумента, если аргумент есть - стандартное сообщение перезаписывается новым
-	if [ ! -z "$1" ]; then local abort_message="$1"; fi
+	if [ -n "$1" ]; then local abort_message="$1"; fi
 	
 	# Расширенная проверка ошибок
-	if [ "$abort_message" == "funcerr" ] && [ ! -z "$2" ] && [ ! -z "$3" ]; then
+	if [ "$abort_message" == "funcerr" ] && [ -n "$2" ] && [ -n "$3" ]; then
 		## Ошибка функции: _ABORT "funcerr" "имя функции" "код ошибки"
 		echo -e "\
  $Header
@@ -653,8 +656,8 @@ $Header
 function _ERROR() {
 	local err_first="Empty Error Title"
 	local err_second="No description..."
-	if [ ! -z "$1" ]; then local err_first="$1"; fi
-	if [ ! -z "$2" ]; then local err_second="$2"; fi
+	if [ -n "$1" ]; then local err_first="$1"; fi
+	if [ -n "$2" ]; then local err_second="$2"; fi
 	List_Errors="${List_Errors}\n   $err_first: $err_second"
 }
 
@@ -662,8 +665,8 @@ function _ERROR() {
 function _WARNING() {
 	local warn_first="Empty Warning Title"
 	local warn_second="No description."
-	if [ ! -z "$1" ]; then local warn_first="$1"; fi
-	if [ ! -z "$2" ]; then local warn_second="$2"; fi
+	if [ -n "$1" ]; then local warn_first="$1"; fi
+	if [ -n "$2" ]; then local warn_second="$2"; fi
 	List_Warnings="${List_Warnings}\n   $warn_first: $warn_second"
 }
 
@@ -724,8 +727,8 @@ function _CHECK_MD5_COMPARE() {
 
 	MD5_Warning="false"
 	
-	MD5_Hash_ProgramFiles=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
-	MD5_Hash_SystemFiles=`md5sum "$Archive_System_Files" | awk '{print $1}'`
+	MD5_Hash_ProgramFiles=$(md5sum "$Archive_Program_Files" | awk '{print $1}')
+	MD5_Hash_SystemFiles=$(md5sum "$Archive_System_Files" | awk '{print $1}')
 	
 	if [ "$MD5_Hash_ProgramFiles" != "$Archive_MD5_Hash_ProgramFiles" ]; then MD5_Error_ProgramFiles="true"; fi
 	if [ "$MD5_Hash_SystemFiles" != "$Archive_MD5_Hash_SystemFiles" ]; then MD5_Error_SystemFiles="true"; fi
@@ -836,7 +839,7 @@ $Header
    $Output_Bin_Dir"
 		
 	if [ "$Install_Helpers" == "true" ]; then
-		if [ $Current_DE == "XFCE" ]; then
+		if [ "$Current_DE" == "XFCE" ]; then
 			echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Helpers_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Helpers_Dir"; fi; fi
@@ -874,7 +877,7 @@ function _PREPARE_INPUT_FILES_GREP() {
 	local prepare_path="/tmp/ish"
 	local prepare_error="false"
 	
-	if [ ! -z "$1" ] && [ ! -z "$2" ]; then
+	if [ -n "$1" ] && [ -n "$2" ]; then
 		local prepare_text="$1"
 		local prepare_path="$2"
 	else
@@ -912,29 +915,34 @@ function _PREPARE_INPUT_FILES() {
 		fi
 	done
 	
-	local Files_Bin_Dir=( $(ls "$Input_Bin_Dir") )
-	local Files_Menu=( $(ls "$Input_Menu_Files_Dir") )
-	local Files_Menu_Dir=( $(ls "$Input_Menu_Desktop_Dir") )
-	local Files_Menu_Apps=( $(ls "$Input_Menu_Apps_Dir") )
+	OLD_IFS=$IFS; IFS=''
+	
+	local Files_Bin_Dir=();   while read -r line; do Files_Bin_Dir+=("$line");   done < <(ls "$Input_Bin_Dir")
+	local Files_Menu=();      while read -r line; do Files_Menu+=("$line");      done < <(ls "$Input_Menu_Files_Dir")
+	local Files_Menu_Dir=();  while read -r line; do Files_Menu_Dir+=("$line");  done < <(ls "$Input_Menu_Desktop_Dir")
+	local Files_Menu_Apps=(); while read -r line; do Files_Menu_Apps+=("$line"); done < <(ls "$Input_Menu_Apps_Dir")
+	
 	local arr_0=(); local arr_1=(); local arr_2=(); local arr_3=(); local arr_4=(); local arr_5=()
 	
-	for file in "${!Files_Bin_Dir[@]}"; do local arr_0[$file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
+	for file in "${!Files_Bin_Dir[@]}"; do local arr_0[file]="$Output_Bin_Dir/${Files_Bin_Dir[$file]}"; done
 	
 	if [ "$Install_Helpers" == "true" ]; then 
 		if [ "$Current_DE" == "XFCE" ]; then
-			local Files_Helpers_Dir=( $(ls "$Input_Helpers_Dir") )
-			for file in "${!Files_Helpers_Dir[@]}"; do local arr_1[$file]="$Output_Helpers_Dir/${Files_Helpers_Dir[$file]}"; done
+			local Files_Helpers_Dir=(); while read -r line; do Files_Helpers_Dir+=("$line"); done < <(ls "$Input_Helpers_Dir")
+			for file in "${!Files_Helpers_Dir[@]}"; do local arr_1[file]="$Output_Helpers_Dir/${Files_Helpers_Dir[$file]}"; done
 		fi
 	fi
 	
 	if [ "$Install_Desktop_Icons" == "true" ]; then 
-		local Files_Desktop_Dir=( $(ls "$Input_Desktop_Dir") )
-		for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[$file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
+		local Files_Desktop_Dir=(); while read -r line; do Files_Desktop_Dir+=("$line"); done < <(ls "$Input_Desktop_Dir")
+		for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
 	fi
 	
-	for file in "${!Files_Menu[@]}"; do local arr_3[$file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
-	for file in "${!Files_Menu_Dir[@]}"; do local arr_4[$file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
-	for file in "${!Files_Menu_Apps[@]}"; do local arr_5[$file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
+	IFS=$OLD_IFS
+	
+	for file in "${!Files_Menu[@]}"; do local arr_3[file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
+	for file in "${!Files_Menu_Dir[@]}"; do local arr_4[file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
+	for file in "${!Files_Menu_Apps[@]}"; do local arr_5[file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
 	
 	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
 	
@@ -951,7 +959,7 @@ function _CHECK_OUTPUTS() {
 	local arr_files_sorted=()
 	
 	for file in "${!Output_Files_All[@]}"; do
-		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[$file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
+		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
 	done
 	
 	if [ "$check_outputs_error" == "true" ]; then
@@ -1000,7 +1008,7 @@ function _INSTALL_HELPERS() {
 	# Здесь можно использовать локализацию
 	
 	if [ -e "$Input_Helpers_Dir" ]; then
-		if [ $Current_DE == "XFCE" ]; then
+		if [ "$Current_DE" == "XFCE" ]; then
 			if [ "$Install_Mode" == "System" ]; then _INSTALL_HELPERS_XFCE_SYSTEM; else _INSTALL_HELPERS_XFCE_USER; fi; fi
 	else _ERROR "_INSTALL_HELPERS" "Input_Helpers_Dir not found."; fi
 }
@@ -1026,13 +1034,13 @@ function _INSTALL_APP_USER() {
 		_CLEAR_BACKGROUND
 		echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
+ ${Font_Bold}${Font_Cyan}$Str_INSTALLAPP_Head${Font_Reset_Color}${Font_Reset}"; fi
 	
-	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Create_Out"; fi
 	
 	# Check Output Folder
-	if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
-	else if ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
+	elif ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	
@@ -1079,13 +1087,13 @@ function _INSTALL_APP_SYSTEM() {
 		_CLEAR_BACKGROUND
 		echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}$Str_INSTALL_APP_Head${Font_Reset_Color}${Font_Reset}"; fi
+ ${Font_Bold}${Font_Cyan}$Str_INSTALLAPP_Head${Font_Reset_Color}${Font_Reset}"; fi
 		
-	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALL_APP_Create_Out"; fi
+	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Create_Out"; fi
 	
 	# Check Output Folder
-	if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi
-	else if ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALL_APP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
+	elif ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	
@@ -1139,7 +1147,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ $(stat -c "%a" "$Output_Uninstaller") != "755" ]; then
+			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then
 				sudo chmod 755 "$Output_Uninstaller"
 			fi
 			
@@ -1157,7 +1165,7 @@ function _PREPARE_UNINSTALLER_USER() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ $(stat -c "%a" "$Output_Uninstaller") != "744" ]; then
+			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then
 				chmod 744 "$Output_Uninstaller"
 			fi
 			
@@ -1311,6 +1319,17 @@ function _SET_LOCALE() {
 ## START ##
 
 _MAIN
+
+if [ "$MODE_DEBUG" == "true" ]; then
+	echo "$Str_WARNING"
+	echo "$pause"
+	echo "$Current_OS_Name_Full"
+	echo "$Current_OS_Name"
+	echo "$Current_OS_Name_ID"
+	echo "$Current_OS_Version"
+	echo "$Current_OS_Codename"
+	read -r pause
+fi
 
 ## End ##
 

@@ -3,7 +3,7 @@
 ScriptVersion="2.4"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
-ArgumentsString="$Arguments[$@]"
+ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 
 # Main function, don't change!
 function _MAIN() {

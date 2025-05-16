@@ -57,7 +57,7 @@ function _INSTALLER_SETTINGS() {
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.4" # Application version (numbers only)
+AppVersion="2.4-Dev" # Application version (numbers only)
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"

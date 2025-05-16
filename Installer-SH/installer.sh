@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
+# FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
 ScriptVersion="2.4"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
-# FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
-Arguments=("$@")
-ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
+Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 
 # Main function, don't change!
 function _MAIN() {
@@ -32,6 +31,10 @@ function _MAIN() {
 ######### ---- -------- ---- #########
 
 function _INSTALLER_SETTINGS() {
+	# Archives MD5 Hash. Necessary for integrity checking.
+	Archive_MD5_Hash_ProgramFiles="e547af90c3d954d249b0c47e6383d8ab"
+	Archive_MD5_Hash_SystemFiles="60eaa9e3d10b53e93104c80a50178ea8"
+	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
 	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
@@ -49,27 +52,16 @@ function _INSTALLER_SETTINGS() {
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
 	# good: ex-app-16, exapp-16.
 	# BAD: Ex-app-16, ExApp-16.
-	
-	# Application installation directory. Don't touch it if you don't know why you need it!
-	# If used incorrectly, it may lead to bad consequences!
-	Install_Path_User="$User_Home/portsoft"
-	Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
-	
-	Install_Path_System="/portsoft"
-	Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
-	
-	Install_Path_Bin_User="$User_Home/.local/bin" # "$User_Home/.local/bin" works starting from Chimbalix 24.4
-	Install_Path_Bin_System="/usr/bin"
 
 ######### - ------------------- - #########
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.3" # Application version (numbers only)
+AppVersion="2.4" # Application version (numbers only)
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2025-05-08"
+Info_Release_Date="2025-05-xx"
 Info_Category="Other"
 Info_Platform="Linux - Chimbalix 24.7, Debian 7/8/9/10/11/12." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
@@ -113,9 +105,16 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/category-registry.html
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
- # Archives MD5 Hash
-Archive_MD5_Hash_ProgramFiles="e547af90c3d954d249b0c47e6383d8ab"
-Archive_MD5_Hash_SystemFiles="60eaa9e3d10b53e93104c80a50178ea8"
+# Application installation directory. Don't touch it if you don't know why you need it!
+# If used incorrectly, it may lead to bad consequences!
+Install_Path_User="$User_Home/portsoft"
+Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
+
+Install_Path_System="/portsoft"
+Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
+
+Install_Path_Bin_User="$User_Home/.local/bin" # "$User_Home/.local/bin" works starting from Chimbalix 24.4
+Install_Path_Bin_System="/usr/bin"
 }
 
 ######### -- ------------ -- #########
@@ -156,7 +155,7 @@ function _POST_INSTALL() {
 	# Exit
 	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL"; read -r pause; fi
 }
 
 ######### ----------------------------- #########
@@ -210,7 +209,6 @@ function _INIT_GLOBAL_VARIABLES() {
 	# Header Text (unformated)
 	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
-	User_Name="$USER"
 	User_Home="$HOME"
 	User_Desktop_Dir="$User_Home/Desktop"
 	if [ -e "$User_Home/.config/user-dirs.dirs" ]; then
@@ -301,7 +299,7 @@ function _CHECK_SYSTEM_VERSION() {
 		Current_OS_Version="$DISTRIB_RELEASE"
 		Current_OS_Codename="$DISTRIB_CODENAME"
 	else
-		if type uname &>/dev/null; then DistroVersion="$(uname -sr)"
+		if type uname &>/dev/null; then Current_OS_Name_Full="$(uname -sr)"
 		else _ABORT "The name of the operating system / kernel is not defined!"; fi
 	fi
 }
@@ -380,9 +378,9 @@ function _CHECK_SYSTEM_DE() {
 	local check_de_raw=""
 	local check_de_err="0"
 	
-	if   [ $XDG_CURRENT_DESKTOP ]; then local check_de_raw="$(echo "$XDG_CURRENT_DESKTOP" | cut -d: -f 1)"
-	elif [ $XDG_SESSION_DESKTOP ]; then _WARNING "XDG_CURRENT_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$XDG_SESSION_DESKTOP"
-	elif [ $DESKTOP_SESSION ];     then _WARNING "XDG_SESSION_DESKTOP" "$Str_CHECKSYSDE_NotFound"; local check_de_raw="$DESKTOP_SESSION"
+	if   [ "$XDG_CURRENT_DESKTOP" ]; then check_de_raw="$(echo "$XDG_CURRENT_DESKTOP" | cut -d: -f 1)"
+	elif [ "$XDG_SESSION_DESKTOP" ]; then _WARNING "XDG_CURRENT_DESKTOP" "$Str_CHECKSYSDE_NotFound"; check_de_raw="$XDG_SESSION_DESKTOP"
+	elif [ "$DESKTOP_SESSION" ];     then _WARNING "XDG_SESSION_DESKTOP" "$Str_CHECKSYSDE_NotFound"; check_de_raw="$DESKTOP_SESSION"
 	else _WARNING "DESKTOP_SESSION" "$Str_CHECKSYSDE_NotFound"; fi
 	
 	# Normalize
@@ -648,7 +646,7 @@ $Header
 	echo -e "\n  $Str_ABORT_Exit" # "Нажмите Enter или закройте окно для выхода"...
 	
 	# Пауза, очистка и выход.
-	read pause; clear; exit 1 # Double clear resets styles before going to the system terminal window
+	read -r pause; clear; exit 1 # Double clear resets styles before going to the system terminal window
 }
 
 # Функция добавления ошибок в список
@@ -709,11 +707,11 @@ $Info_Description
 	
 	# Запрос подтверждения на продолжение
 	echo -e "\n $Str_PACKAGEINFO_Confirm"
-	read package_info_confirm
+	read -r package_info_confirm
 	if [ "$package_info_confirm" == "y" ] || [ "$package_info_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read -r pause; fi
 fi
 }
 
@@ -752,7 +750,7 @@ $Header
 	echo -e "${Font_Reset_Color}
   ${Font_Bold}$Str_CHECKMD5PRINT_Enter_To_Continue${Font_Reset}"
 	
-	read pause
+	read -r pause
 }
 
 function _CHECK_MD5_PRINT_WARNING() {
@@ -779,7 +777,7 @@ $Header
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_Hash_SystemFiles\""; fi
 	
 	echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
-	read errors_confirm
+	read -r errors_confirm
 	if [ "$errors_confirm" == "y" ] || [ "$errors_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
@@ -806,7 +804,7 @@ function _CHECK_MD5() {
 		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING
 		else _CHECK_MD5_PRINT_GOOD; fi
 		
-		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_MD5"; read pause; fi
+		if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_MD5"; read -r pause; fi
 	fi
 }
 
@@ -858,11 +856,11 @@ $Header
 
  $Str_PRINTINSTALLSETTINGS_Confirm"
 	
-	read install_settings_confirm
+	read -r install_settings_confirm
 	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
 fi
 }
 
@@ -940,7 +938,7 @@ function _PREPARE_INPUT_FILES() {
 	
 	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_INPUT_FILES"; read -r pause; fi
 }
 
 ######### ------------- #########
@@ -970,13 +968,13 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 
  $Str_CHECKOUTPUTS_Confirm"
 		
-		read install_confirm
+		read -r install_confirm
 		if [ "$install_confirm" == "y" ] || [ "$install_confirm" == "yes" ]; then :
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	else :
 	fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS"; read -r pause; fi
 }
 
 ######### --------------- #########
@@ -1042,7 +1040,7 @@ $Header
 		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
 		echo " $Str_INSTALLAPP_Unpack_Err2"
 		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
-		read confirm_unpack
+		read -r confirm_unpack
 		if [ "$confirm_unpack" == "y" ] || [ "$confirm_unpack" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
 		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
 	fi
@@ -1068,7 +1066,7 @@ $Header
 	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read -r pause; fi
 }
 
 ######### --------------------------------- #########
@@ -1096,7 +1094,7 @@ $Header
 		echo " $Str_INSTALLAPP_Unpack_Err2"
 		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
 		
-		read confirm_error_unpacking
+		read -r confirm_error_unpacking
 		if [ "$confirm_error_unpacking" == "y" ] || [ "$confirm_error_unpacking" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
 		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
 	fi
@@ -1122,7 +1120,7 @@ $Header
 	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read -r pause; fi
 }
 
 ######### ------------------- #########
@@ -1174,7 +1172,7 @@ function _PREPARE_UNINSTALLER() {
 	if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
 	if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER"; read -r pause; fi
 }
 
 ######### ---- #########
@@ -1283,9 +1281,6 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKSYSDE_DE_WEIRD_BUDGIE="New shortcuts may not appear in the menu..."
 	Str_CHECKSYSDE_DE_WEIRD_GNOME="The menu doesn't match XDG specifications very well...\n    Re-login to the system if new shortcuts do not appear in the menu!"
 	
-	Str_CHECKLAST_Cmd_not_found="Command not found, unable to continue:"
-	Str_CHECKLAST_File_not_found="File not found, unable to continue:"
-	
 	Str_CHECK_ERRORS_ARCH="Attention!"
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"
 }
@@ -1297,7 +1292,7 @@ function _SET_LOCALE() {
 	_SET_LOCALE_DEFAULT
 	if [ "$MODE_SILENT" == "false" ]; then
 		if [ -e "$Locale_File" ]; then
-			if [ $(grep Locale_Version "$Locale_File") == "Locale_Version=\"$LocaleVersion\"" ]; then
+			if [ "$(grep Locale_Version "$Locale_File")" == "Locale_Version=\"$LocaleVersion\"" ]; then
 				Locale_Use_Default="false"
 				Locale_Display="$Language"
 				source "$Locale_File"

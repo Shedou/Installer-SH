@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
-ScriptVersion="2.3"; LocaleVersion="2.2" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.4"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')
 Arguments=("$@")
 ArgumentsString="$Arguments[$@]"
@@ -40,20 +40,10 @@ function _INSTALLER_SETTINGS() {
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
-	# Copy data to the "userdata" directory.
-	#  For example:
-	#   Install path:  /home/USER/portsoft/script/installer-sh-23
-	#   UserData path: /home/USER/portsoft/script/installer-sh-23/userdata
-	#
-	# This can help avoid application version conflicts, but requires special preparation.
-	# Do not use for applications installed in "System" mode!
-	# Please see the example before using this function - "installer-data/program_files/launcher", and configure the system files accordingly.
-	Install_User_Data="false"
-	
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
-	Unique_App_Folder_Name="installer-sh-23" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-24" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
@@ -68,7 +58,7 @@ function _INSTALLER_SETTINGS() {
 	Install_Path_System="/portsoft"
 	Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 	
-	Install_Path_Bin_User="$User_Home/.local/bin" # Works starting from Chimbalix 24.4
+	Install_Path_Bin_User="$User_Home/.local/bin" # "$User_Home/.local/bin" works starting from Chimbalix 24.4
 	Install_Path_Bin_System="/usr/bin"
 
 ######### - ------------------- - #########
@@ -126,7 +116,6 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # Archives MD5 Hash
 Archive_MD5_Hash_ProgramFiles="e547af90c3d954d249b0c47e6383d8ab"
 Archive_MD5_Hash_SystemFiles="60eaa9e3d10b53e93104c80a50178ea8"
-Archive_MD5_Hash_UserData="4c16d30f7d05a952f3c6942b66405cd5" # Not used if Install_User_Data="false"
 }
 
 ######### -- ------------ -- #########
@@ -465,7 +454,6 @@ function _INIT_GLOBAL_PATHS() {
 	
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
-	Archive_User_Data="$Path_Installer_Data/user_files.7z"
 	
 	Temp_Dir="/tmp/installer-sh/$Unique_App_Folder_Name""_$RANDOM""_$RANDOM" # TEMP Directory
 	
@@ -494,8 +482,7 @@ function _INIT_GLOBAL_PATHS() {
 	
 	# The "PATH_TO_FOLDER" variable points to the application installation directory without the trailing slash (Output_Install_Dir), for example "/portsoft/x86_64/example_application".
 	Output_Install_Dir="/tmp/ish"; Output_Bin_Dir="/tmp/ish"; Output_Helpers_Dir="/tmp/ish"; Output_Desktop_Dir="$Out_User_Desktop_Dir"
-	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_User_Data="$Install_Path_User_Full/userdata"
-	Output_PortSoft="/tmp/ish"
+	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_PortSoft="/tmp/ish"
 	
 	if [ "$Install_Mode" == "System" ]; then
 		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Install_Path_Bin_System"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
@@ -536,10 +523,6 @@ _IMPORTANT_CHECK_LAST() {
 	# Проверка наличия архивов с файлами приложения
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/program_files.7z\" not found."; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
-	if [ ! -e "$Archive_User_Data" ] && [ "$Install_User_Data" == "true" ]; then
-		Install_User_Data="false"
-		_WARNING "_INIT_GLOBAL_PATHS" "$Str_CHECKLAST_no_userdata"
-	fi # Extra check
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
 	
@@ -740,7 +723,7 @@ fi
 function _CHECK_MD5_COMPARE() {
 	MD5_Error_ProgramFiles="false"
 	MD5_Error_SystemFiles="false"
-	MD5_Error_UserFiles="false"
+
 	MD5_Warning="false"
 	
 	MD5_Hash_ProgramFiles=`md5sum "$Archive_Program_Files" | awk '{print $1}'`
@@ -748,10 +731,8 @@ function _CHECK_MD5_COMPARE() {
 	
 	if [ "$MD5_Hash_ProgramFiles" != "$Archive_MD5_Hash_ProgramFiles" ]; then MD5_Error_ProgramFiles="true"; fi
 	if [ "$MD5_Hash_SystemFiles" != "$Archive_MD5_Hash_SystemFiles" ]; then MD5_Error_SystemFiles="true"; fi
-	if [ "$Install_User_Data" == "true" ]; then MD5_Hash_UserData=`md5sum "$Archive_User_Data" | awk '{print $1}'`
-		if [ "$MD5_Hash_UserData" != "$Archive_MD5_Hash_UserData" ]; then MD5_Error_UserFiles="true"; fi; fi
 	
-	if [ "$MD5_Error_ProgramFiles" == "true" ] || [ "$MD5_Error_SystemFiles" == "true" ] || [ "$MD5_Error_UserFiles" == "true" ]; then MD5_Warning="true"; fi
+	if [ "$MD5_Error_ProgramFiles" == "true" ] || [ "$MD5_Error_SystemFiles" == "true" ]; then MD5_Warning="true"; fi
 }
 
 function _CHECK_MD5_PRINT_GOOD() {
@@ -767,9 +748,6 @@ $Header
   ${Font_Green}$Str_CHECKMD5PRINT_Verified
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_pHash${Font_Reset}  \"$MD5_Hash_ProgramFiles\"
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}   \"$MD5_Hash_SystemFiles\""
-	
-	if [ "$Install_User_Data" == "true" ]; then echo -e "\
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_Hash_UserData\""; fi
 	
 	echo -e "${Font_Reset_Color}
   ${Font_Bold}$Str_CHECKMD5PRINT_Enter_To_Continue${Font_Reset}"
@@ -799,11 +777,6 @@ $Header
 
    ${Font_Bold}$Str_CHECKMD5PRINT_Expected_sHash${Font_Reset} \"$Archive_MD5_Hash_SystemFiles\"
    ${Font_Bold}$Str_CHECKMD5PRINT_Real_sHash${Font_Reset}     \"$MD5_Hash_SystemFiles\""; fi
-	if [ "$MD5_Error_UserFiles" == "true" ]; then
-		echo -e "\
-
-   ${Font_Bold}$Str_CHECKMD5PRINT_Expected_uHash${Font_Reset} \"$Archive_MD5_Hash_UserData\"
-   ${Font_Bold}$Str_CHECKMD5PRINT_Real_uHash${Font_Reset}     \"$MD5_Hash_UserData\""; fi
 	
 	echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
 	read errors_confirm
@@ -874,11 +847,6 @@ $Header
 		echo -e "
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Desktop_Dir${Font_Reset_Color}${Font_Reset}
    $Output_Desktop_Dir"; fi
-
-	if [ "$Install_User_Data" == "true" ]; then
-		echo -e "
- -$Str_ATTENTION! ${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Copy_uData_To${Font_Reset_Color}${Font_Reset}
-   $Output_User_Data"; fi
 	
 	if [ "$Install_Mode" == "System" ]; then
 		echo -e "
@@ -1011,22 +979,6 @@ $(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_CHECK_OUTPUTS"; read pause; fi
 }
 
-######### ----------------- #########
-######### Install USER DATA #########
-
-function _INSTALL_USER_DATA() {
-	# Здесь можно использовать локализацию
-	
-	# Copy user data
-	if [ "$Install_User_Data" == "true" ]; then
-		if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Copy_uFiles"; fi
-		if [ ! -e "$Output_User_Data" ]; then mkdir -p "$Output_User_Data"; fi
-		if ! "$Tool_SevenZip_bin" x -aoa "$Archive_User_Data" -o"$Output_User_Data/" &> /dev/null; then
-			_ERROR "_INSTALL_USER_DATA" "$Str_INSTALLAPP_Copy_uFiles_Err"; fi
-	fi
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
-}
-
 ######### --------------- #########
 ######### Install Helpers #########
 
@@ -1116,10 +1068,6 @@ $Header
 	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
 	
-	# Copy user data
-	if [ "$Install_User_Data" == "true" ]; then
-		_INSTALL_USER_DATA; fi
-	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
 }
 
@@ -1173,12 +1121,6 @@ $Header
 	# Install Desktop files
 	if [ "$Install_Desktop_Icons" == "true" ]; then
 		_INSTALL_DESKTOP_ICONS; fi
-	
-	# Copy user data
-	if [ "$Install_User_Data" == "true" ]; then
-		_WARNING "Install_User_Data" "In \"System\" mode this does not work!"
-		#_INSTALL_USER_DATA
-	fi
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read pause; fi
 }
@@ -1288,10 +1230,8 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKMD5PRINT_Hash_Not_Match2="The files may have been copied with errors or modified! Be careful!"
 	Str_CHECKMD5PRINT_Expected_pHash="Expected MD5 hash of \"Program Files\":"
 	Str_CHECKMD5PRINT_Expected_sHash="Expected MD5 hash of \"System Files\":"
-	Str_CHECKMD5PRINT_Expected_uHash="Expected MD5 hash of \"User Files\":"
 	Str_CHECKMD5PRINT_Real_pHash="Real MD5 hash of \"Program Files\":"
 	Str_CHECKMD5PRINT_Real_sHash="Real MD5 hash of \"System Files\":"
-	Str_CHECKMD5PRINT_Real_uHash="Real MD5 hash of \"User Files\":"
 	Str_CHECKMD5PRINT_yes_To_Continue="Enter \"y\" or \"yes\" to continue installation (not recommended):"
 	Str_CHECKMD5PRINT_Enter_To_Continue="Press Enter to continue."
 	Str_CHECKMD5PRINT_Verified="The integrity of the installation archive has been successfully verified"
@@ -1299,14 +1239,12 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKMD5_Head="Checking archives integrity:"
 	Str_CHECKMD5_Sub_Head="Checking the integrity of the installation archives, please wait..."
 	Str_CHECKMD5_Sub_Head2="(this may take some time if the application is large)"
-	Str_CHECKMD5_y_To_Check="Enter \"y\" or \"yes\" to check the integrity of the archives (recommended)."
 	
 	Str_PRINTINSTALLSETTINGS_Head="Installation settings"
 	Str_PRINTINSTALLSETTINGS_Temp_Dir="Temporary Directory:"
 	Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Application install Directory:"
 	Str_PRINTINSTALLSETTINGS_Menu_Dirs="Menu files will be installed to:"
 	Str_PRINTINSTALLSETTINGS_Bin_Dir="Bin files will be installed to:"
-	Str_PRINTINSTALLSETTINGS_Copy_uData_To="User data will be installed in:"
 	Str_PRINTINSTALLSETTINGS_System_Mode="Use \"System\" mode only when installing software for all users!"
 	Str_PRINTINSTALLSETTINGS_System_Mode2="Root rights are required to perform the installation!"
 	Str_PRINTINSTALLSETTINGS_Before_Install="Please close all important applications before installation."
@@ -1334,8 +1272,6 @@ function _SET_LOCALE_DEFAULT() {
 	Str_INSTALLAPP_Unpack_Continue="The installation continues..."
 	Str_INSTALLAPP_Set_Rights="Setting rights and owner..."
 	Str_INSTALLAPP_Install_Bin_Menu="Installing Bin files and copy menu files..."
-	Str_INSTALLAPP_Copy_uFiles="Copying user files...."
-	Str_INSTALLAPP_Copy_uFiles_Err="Error unpacking user files..."
 	
 	Str_CHECKSYSDE_NotFound="Not found..."
 	Str_CHECKSYSDE_XDG_INFO_INCORRECT="The distribution did not provide correct information via the \"XDG\" variables..."
@@ -1349,7 +1285,6 @@ function _SET_LOCALE_DEFAULT() {
 	
 	Str_CHECKLAST_Cmd_not_found="Command not found, unable to continue:"
 	Str_CHECKLAST_File_not_found="File not found, unable to continue:"
-	Str_CHECKLAST_no_userdata="Archive_User_Data not found, Install_User_Data is disabled.\n   Please correct the settings according to the application."
 	
 	Str_CHECK_ERRORS_ARCH="Attention!"
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"

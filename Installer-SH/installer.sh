@@ -3,6 +3,7 @@
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
 ScriptVersion="2.4"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
+HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
@@ -107,13 +108,13 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
 
 # Application installation directory. Don't touch it if you don't know why you need it!
 # If used incorrectly, it may lead to bad consequences!
-Install_Path_User="$HOME/portsoft"
+Install_Path_User="$HOMEDIR/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
 
 Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 
-Install_Path_Bin_User="$HOME/.local/bin" # "$HOME/.local/bin" works starting from Chimbalix 24.4
+Install_Path_Bin_User="$HOMEDIR/.local/bin" # "$HOMEDIR/.local/bin" works starting from Chimbalix 24.4
 Install_Path_Bin_System="/usr/bin"
 }
 
@@ -209,9 +210,9 @@ function _INIT_GLOBAL_VARIABLES() {
 	# Header Text (unformated)
 	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
-	User_Desktop_Dir="$HOME/Desktop"
-	if [ -e "$HOME/.config/user-dirs.dirs" ]; then
-		source "$HOME/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
+	User_Desktop_Dir="$HOMEDIR/Desktop"
+	if [ -e "$HOMEDIR/.config/user-dirs.dirs" ]; then
+		source "$HOMEDIR/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
 	MODE_DEBUG="false"
 	MODE_SILENT="false"
@@ -275,7 +276,7 @@ _IMPORTANT_CHECK_FIRST() {
 	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
 	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
 	
-	if [ -z "$HOME" ]; then _ABORT "Variable HOME not found"; fi
+	if [ -z "$HOMEDIR" ]; then _ABORT "Variable HOME not found"; fi
 }
 
 ######### ---------------------------- #########
@@ -463,11 +464,11 @@ function _INIT_GLOBAL_PATHS() {
 	Input_Menu_Desktop_Dir="$Temp_Dir/menu/desktop-directories/apps"
 	Input_Menu_Apps_Dir="$Temp_Dir/menu/apps"
 	
-	Out_User_Helpers_Dir="$HOME/.local/share/xfce4/helpers"
+	Out_User_Helpers_Dir="$HOMEDIR/.local/share/xfce4/helpers"
 	Out_User_Desktop_Dir="$User_Desktop_Dir"
-	Out_User_Menu_Files="$HOME/.config/menus/applications-merged"
-	Out_User_Menu_DDir="$HOME/.local/share/desktop-directories/apps"
-	Out_User_Menu_Apps="$HOME/.local/share/applications/apps"
+	Out_User_Menu_Files="$HOMEDIR/.config/menus/applications-merged"
+	Out_User_Menu_DDir="$HOMEDIR/.local/share/desktop-directories/apps"
+	Out_User_Menu_Apps="$HOMEDIR/.local/share/applications/apps"
 
 	Out_System_Helpers_Dir="/usr/share/xfce4/helpers"
 	Out_System_Menu_Files="/etc/xdg/menus/applications-merged"
@@ -590,11 +591,11 @@ $Base_Header
  -${Font_Bold}${Font_DarkGreen}$Str_PACKAGEINFO_InstallMode${Font_Reset_Color} $Install_Mode${Font_Reset}"
 	
 	echo -e "\n $Str_BASEINFO_Confirm"
-	read base_info_confirm
+	read -r base_info_confirm
 	if [ "$base_info_confirm" == "y" ] || [ "$base_info_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_PACKAGE_INFO"; read -r pause; fi
 fi
 }
 
@@ -602,7 +603,7 @@ fi
 ######### Check and compare MD5 of archive
 
 function _BASE_CHECK_MD5() {
-	Base_Data_MD5=`md5sum "$Archive_Base_Data" | awk '{print $1}'`
+	Base_Data_MD5=$(md5sum "$Archive_Base_Data" | awk '{print $1}')
 	if [ "$Base_Data_MD5" != "$Archive_Base_Data_MD5" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -616,19 +617,19 @@ $Base_Header
    ${Font_Bold}$Str_BASECHECKMD5PRINT_Real_bHash${Font_Reset}     \"$Base_Data_MD5\""
 		
 		echo -e "\n  $Str_CHECKMD5PRINT_yes_To_Continue"
-		read base_errors_confirm
+		read -r base_errors_confirm
 		if [ "$base_errors_confirm" == "y" ] || [ "$base_errors_confirm" == "yes" ]; then :
 		else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 	fi
 	
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CHECK_MD5"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CHECK_MD5"; read -r pause; fi
 }
 
 
 function _BASE_CREATE_TEMP() {
 	if [ -e "$Base_Temp_Dir" ]; then rm -rf "$Base_Temp_Dir"; fi;
 	mkdir "$Base_Temp_Dir"
-	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CREATE_TEMP"; read pause; fi
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_BASE_CREATE_TEMP"; read -r pause; fi
 }
 
 function _BASE_DELETE_TEMP() {
@@ -678,7 +679,7 @@ function _BASE_INSTALL_USER() {
 function _BASE_INSTALL_COMPLETE() {
 	if [ "$MODE_SILENT" == "false" ]; then
 		echo -e " $Str_BASE_COMPLETE"
-		read pause
+		read -r pause
 	fi
 }
 

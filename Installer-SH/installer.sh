@@ -269,7 +269,7 @@ function _CLEAN_FILE() {
 
 function _CLEAN() {
 	echo -e " Removes unnecessary files and directories.\n USE ONLY AFTER COMPLETING AND TESTING THE PACKAGE.\n \"y\" to delete..."
-	read cleaning_confirmation
+	read -r cleaning_confirmation
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
 		_CLEAN_FILE "$Path_To_Script/installer-data/MD5-Hash.txt"
@@ -280,7 +280,7 @@ function _CLEAN() {
 		_CLEAN_FILE "$Path_To_Script/installer-data/tools/pack_archive.sh"
 		_CLEAN_FILE "$Path_To_Script/installer-data/tools/base_data"
 		echo -e "\n Complete..."
-		read pause
+		read -r pause
 		if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK
 		else exit; fi
 	else

@@ -450,8 +450,6 @@ function _INIT_GLOBAL_PATHS() {
 	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"
 	else Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"; fi
 	
-	Tool_Prepare_Base="$Path_Installer_Data/tools/prepare-portsoft-menu.sh"
-	
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	
@@ -513,13 +511,6 @@ _IMPORTANT_CHECK_LAST() {
 		fi
 	else _ABORT "$Tool_SevenZip_bin not found"; fi
 	
-	# Проверка наличия скрипта подготовки PortSoft директории в каталоге инструментов и установка прав на запуск при необходимости
-	if [ -e "$Tool_Prepare_Base" ]; then
-		if ! [[ -x "$Tool_Prepare_Base" ]]; then
-			if ! chmod +x "$Tool_Prepare_Base"; then _ABORT "chmod Tool_Prepare_Base error"; fi
-		fi
-	else _ABORT "$Tool_Prepare_Base not found"; fi
-	
 	# Проверка наличия архивов с файлами приложения
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/program_files.7z\" not found."; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
@@ -530,7 +521,6 @@ _IMPORTANT_CHECK_LAST() {
 	
 	# Check PortSoft
 	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-		#source "$Tool_Prepare_Base"
 		_BASE_MAIN
 		if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
 	fi

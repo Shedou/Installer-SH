@@ -175,6 +175,9 @@ function _HELP() {
 	echo -e " -forcemenu - Only refresh menu. Recommended to use after installing"
 	echo -e "              many applications in \"-silent\" mode."
 	echo -e "              Works if the working environment is supported.\n"
+	echo -e " -clean     - Delete unnecessary files in the installation package directory."
+	echo -e "              Please make sure that the package is built and ready for use,"
+	echo -e "              this cannot be undone!\n"
 	echo -e " -tarpack   - Pack the current installation package into a tar archive.\n"
 	echo -e " -debug     - Debug mode, for development purposes only."
 	exit;
@@ -186,6 +189,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-noupdmenu" ]]; then Update_Menu="false"; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]]; then     MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]]; then    MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-clean" ]]; then   MODE_CLEAN="true"; fi
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then   MODE_TARPACK="true"; fi
 }
 
@@ -216,6 +220,7 @@ function _INIT_GLOBAL_VARIABLES() {
 	
 	MODE_DEBUG="false"
 	MODE_SILENT="false"
+	MODE_CLEAN="false"
 	MODE_TARPACK="false"
 	
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
@@ -237,7 +242,7 @@ function _INIT_GLOBAL_VARIABLES() {
 
 # _INSTALLER_SETTINGS
 
-_TAR_PACK() {
+function _TAR_PACK() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	cd ..
@@ -245,14 +250,51 @@ _TAR_PACK() {
 	InputDirName="$(basename "$Path_To_Script")"
 	if [ ! -e "$TargetFile" ]; then 
 		tar --owner=ish --group=ish -cf "$TargetFile" "$InputDirName"
-		_ABORT "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
+		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
+		read -r pause
+		exit
 	else
-		_ABORT "File already exists!\n\n $TargetFile\n\n !!! WARNING !!!"
+		echo -e "File already exists!\n\n $TargetFile\n\n !!! WARNING !!!"
+		read -r pause
+		exit
 	fi
 }
 
-_IMPORTANT_CHECK_FIRST() {
+function _CLEAN_FILE() {
+	CleanFileName="$1"
+	echo "Removing: $CleanFileName"
+	if [ -e "$CleanFileName" ]; then rm -rf "$CleanFileName"
+	else echo " Skip (not found): $CleanFileName"; fi
+}
+
+function _CLEAN() {
+	echo -e " Removes unnecessary files and directories.\n USE ONLY AFTER COMPLETING AND TESTING THE PACKAGE.\n \"y\" to delete..."
+	read cleaning_confirmation
+	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
+		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
+		_CLEAN_FILE "$Path_To_Script/installer-data/MD5-Hash.txt"
+		_CLEAN_FILE "$Path_To_Script/installer-data/program_files"
+		_CLEAN_FILE "$Path_To_Script/installer-data/system_files"
+		_CLEAN_FILE "$Path_To_Script/installer-data/pack_archives.sh"
+		_CLEAN_FILE "$Path_To_Script/installer-data/tools/MD5-Hash.txt"
+		_CLEAN_FILE "$Path_To_Script/installer-data/tools/pack_archive.sh"
+		_CLEAN_FILE "$Path_To_Script/installer-data/tools/base_data"
+		echo -e "\n Complete..."
+		read pause
+		if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK
+		else exit; fi
+	else
+		echo "Abort"
+		echo -e "\n Pause..."
+		read -r pause
+		exit
+	fi
+}
+
+function _IMPORTANT_CHECK_FIRST() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
+	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
 	
 	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
 	
@@ -496,7 +538,7 @@ function _INIT_GLOBAL_PATHS() {
 	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
 }
 
-_IMPORTANT_CHECK_LAST() {
+function _IMPORTANT_CHECK_LAST() {
 	# Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then

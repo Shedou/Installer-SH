@@ -587,7 +587,7 @@ function _BASE_MAIN() {
 	
 	######### - Archive path - #########
 	Archive_Base_Data="$Path_Installer_Data/tools/base_data.7z"
-	Archive_Base_Data_MD5="6bb60828b9e2b98d08ffbbf4145c2c0e"
+	Archive_Base_Data_MD5="4b83f6eb8cb4c1b187df681e300cddbd"
 	
 	_BASE_PRINT_INFO
 	_BASE_CHECK_MD5

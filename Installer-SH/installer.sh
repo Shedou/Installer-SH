@@ -175,6 +175,7 @@ function _HELP() {
 	echo -e " -forcemenu - Only refresh menu. Recommended to use after installing"
 	echo -e "              many applications in \"-silent\" mode."
 	echo -e "              Works if the working environment is supported.\n"
+	echo -e " -arcpack   - Pack \"program_files\" and \"system_files\" into archives."
 	echo -e " -clean     - Delete unnecessary files in the installation package directory."
 	echo -e "              Please make sure that the package is built and ready for use,"
 	echo -e "              this cannot be undone!\n"
@@ -189,6 +190,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-noupdmenu" ]]; then Update_Menu="false"; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]]; then     MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]]; then    MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-arcpack" ]]; then   MODE_CLEAN="true"; fi
 	if [[ "$ArgumentsString" =~ "-clean" ]]; then   MODE_CLEAN="true"; fi
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then   MODE_TARPACK="true"; fi
 }
@@ -222,6 +224,8 @@ function _INIT_GLOBAL_VARIABLES() {
 	MODE_SILENT="false"
 	MODE_CLEAN="false"
 	MODE_TARPACK="false"
+	MODE_ARCPACK="false"
+	
 	
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
@@ -241,6 +245,47 @@ function _INIT_GLOBAL_VARIABLES() {
 }
 
 # _INSTALLER_SETTINGS
+
+function PACK_ARCHIVES() {
+	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
+	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
+	Dictionary_Size_Program_Files="32m"
+	Dictionary_Size_System_Files="8m"
+	Dictionary_Size_User_Files="8m"
+	
+	Path_To_Script="$( dirname "$(readlink -f "$0")")"
+	Spacer="\n ===========================================\n ===========================================\n ==========================================="
+	
+	Szip_bin="$Path_Installer_Data/tools/7zip/7zzs"
+	MD5_File="$Path_To_Script/MD5-Hash.txt"
+	
+	Program_Files="$Path_Installer_Data/program_files"
+	System_Files="$Path_Installer_Data/system_files"
+	User_Files="$Path_Installer_Data/user_files"
+	
+	function _pack_archive() {
+		Name_File="$1"
+		DSize="$2"
+		if [ -e "$Szip_bin" ]; then
+			if [ -e "$Name_File" ]; then
+				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
+				echo -e "$Spacer"
+				"$Szip_bin" a -snl -mx9 -m0=LZMA2:d$DSize -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
+				MD5_DATA=`md5sum "$Name_File.7z" | awk '{print $1}'`
+				echo "$(basename $Name_File.7z): $MD5_DATA" >> "$MD5_File"
+			fi
+		else echo " 7-Zip binary not found, abort."
+		fi
+	}
+	
+	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files"
+	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
+	_pack_archive "$User_Files" "$Dictionary_Size_User_Files"
+	
+	echo -e "$Spacer"
+	echo -e "\n Pause..."
+	read pause
+}
 
 function _TAR_PACK() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
@@ -294,8 +339,8 @@ function _CLEAN() {
 function _IMPORTANT_CHECK_FIRST() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
+	if [ "$MODE_ARCPACK" == "true" ]; then PACK_ARCHIVES; fi
 	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
-	
 	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
 	
 	String_CMD_N_F="Command not found, unable to continue:"

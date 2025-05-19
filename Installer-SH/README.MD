@@ -20,6 +20,10 @@ Silent installation, no output if everything is installed without errors:
 
 > `./installer.sh -silent`
 
+Pack "program_files" and "system_files" into archives:
+
+> `./installer.sh -arcpack`
+
 Delete unnecessary files in the installation package directory.\
 Please make sure that the package is built and ready for use, this cannot be undone!
 > `./installer.sh -clean`

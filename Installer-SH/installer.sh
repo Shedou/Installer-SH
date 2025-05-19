@@ -251,9 +251,6 @@ function _PACK_ARCHIVES() {
 	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
 	Dictionary_Size_Program_Files="32m"
 	Dictionary_Size_System_Files="8m"
-	Dictionary_Size_User_Files="8m"
-	
-	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Spacer="\n ===========================================\n ===========================================\n ==========================================="
 	
 	Szip_bin="$Path_Installer_Data/tools/7zip/7zzs"
@@ -261,7 +258,6 @@ function _PACK_ARCHIVES() {
 	
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
-	User_Files="$Path_Installer_Data/user_files"
 	
 	function _pack_archive() {
 		Name_File="$1"
@@ -270,9 +266,9 @@ function _PACK_ARCHIVES() {
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "$Spacer"
-				"$Szip_bin" a -snl -mx9 -m0=LZMA2:d$DSize -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
-				MD5_DATA=`md5sum "$Name_File.7z" | awk '{print $1}'`
-				echo "$(basename $Name_File.7z): $MD5_DATA" >> "$MD5_File"
+				"$Szip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
+				MD5_DATA=$(md5sum "$Name_File.7z" | awk '{print $1}')
+				echo "$(basename "$Name_File.7z"): $MD5_DATA" >> "$MD5_File"
 			fi
 		else echo " 7-Zip binary not found, abort."
 		fi
@@ -280,11 +276,10 @@ function _PACK_ARCHIVES() {
 	
 	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files"
 	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
-	_pack_archive "$User_Files" "$Dictionary_Size_User_Files"
 	
 	echo -e "$Spacer"
 	echo -e "\n Pause..."
-	read pause
+	read -r pause
 }
 
 function _TAR_PACK() {

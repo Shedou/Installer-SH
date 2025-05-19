@@ -215,9 +215,12 @@ function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использов
 	MODE_TARPACK="false"
 	MODE_ARCPACK="false"
 	
-	
+	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
+	
+	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
+	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	
 	List_Errors=""    # _ERROR "Title" "Message."
 	List_Warnings=""  # _WARNING "Title" "Message."
@@ -249,10 +252,6 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	Dictionary_Size_System_Files="8m"
 	Spacer="\n ===========================================\n ===========================================\n ==========================================="
 	
-	MD5_File="$Path_To_Script/MD5-Hash.txt"
-	
-	
-	
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
 	
@@ -264,8 +263,12 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "$Spacer"
 				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
-				MD5_DATA=$(md5sum "$Name_File.7z" | awk '{print $1}')
-				echo "$(basename "$Name_File.7z"): $MD5_DATA" >> "$MD5_File"
+				PackArcMD5=$(md5sum "$Name_File.7z" | awk '{print $1}')
+				if [ "$Name_File" == "$Program_Files" ]; then
+					sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+				elif [ "$Name_File" == "$System_Files" ]; then
+					sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+				fi
 			fi
 		else echo " 7-Zip binary not found, abort."
 		fi
@@ -295,8 +298,6 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 		exit
 	fi
 }
-
-
 
 function _CLEAN() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
@@ -522,9 +523,6 @@ function _INIT_GLOBAL_PATHS() {
 	### --------------------------- ###
 	### Do not edit variables here! ###
 	### --------------------------- ###
-	
-	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
-	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 	
 	Temp_Dir="/tmp/installer-sh/$Unique_App_Folder_Name""_$RANDOM""_$RANDOM" # TEMP Directory
 	

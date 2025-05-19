@@ -195,8 +195,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then   MODE_TARPACK="true"; fi
 }
 
-function _INIT_GLOBAL_VARIABLES() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	### --------------------------- ###
 	### Do not edit variables here! ###
@@ -282,8 +281,7 @@ function _PACK_ARCHIVES() {
 	read -r pause
 }
 
-function _TAR_PACK() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	cd ..
 	TargetFile="$Path_To_Script.tar"
@@ -308,6 +306,7 @@ function _CLEAN_FILE() {
 }
 
 function _CLEAN() {
+	
 	echo -e " Removes unnecessary files and directories.\n USE ONLY AFTER COMPLETING AND TESTING THE PACKAGE.\n \"y\" to delete..."
 	read -r cleaning_confirmation
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
@@ -331,8 +330,7 @@ function _CLEAN() {
 	fi
 }
 
-function _IMPORTANT_CHECK_FIRST() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _IMPORTANT_CHECK_FIRST() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	if [ "$MODE_ARCPACK" == "true" ]; then _PACK_ARCHIVES; fi
 	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
@@ -367,8 +365,7 @@ function _IMPORTANT_CHECK_FIRST() {
 ######### ---------------------------- #########
 ######### BEFORE LAST DEPENDENCY CHECK #########
 
-function _CHECK_SYSTEM_VERSION() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
 		Current_OS_Name_Full="$PRETTY_NAME"
@@ -388,8 +385,7 @@ function _CHECK_SYSTEM_VERSION() {
 	fi
 }
 
-function _CHECK_SYSTEM() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _CHECK_SYSTEM() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	_CHECK_SYSTEM_VERSION
 	Current_Architecture="$(uname -m)"
@@ -400,8 +396,7 @@ function _CHECK_SYSTEM() {
 	fi
 }
 
-function _INIT_FONT_STYLES() {
-	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _INIT_FONT_STYLES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
 	# '\e[38;2;128;128;255m'
@@ -456,8 +451,7 @@ function _INIT_FONT_STYLES() {
 
 #_SET_LOCALE
 
-function _CHECK_SYSTEM_DE() {
-	# Здесь можно использовать локализацию
+function _CHECK_SYSTEM_DE() { # Здесь можно использовать локализацию
 	
 	local check_de_raw=""
 	local check_de_err="0"
@@ -578,8 +572,7 @@ function _INIT_GLOBAL_PATHS() {
 	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
 }
 
-function _IMPORTANT_CHECK_LAST() {
-	# Здесь можно использовать локализацию
+function _IMPORTANT_CHECK_LAST() { # Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
@@ -769,8 +762,7 @@ function _BASE_INSTALL_COMPLETE() {
 ######### ----------- #########
 ######### Test colors #########
 
-function _TEST_COLORS() {
-	# Здесь можно использовать локализацию
+function _TEST_COLORS() { # Здесь можно использовать локализацию
 	
 	echo -e "\n${Font_Bold} -= TEST COLORS =-"
 	if [ "$Font_Styles_RGB" == "true" ]; then echo -e " RGB Mode"
@@ -797,8 +789,8 @@ function _CLEAR_BACKGROUND() {
 	echo -ne '\e[38;5;255m'
 }
 
-function _CLEAR_TEMP() {
-	# Здесь нежелательно использовать локализацию
+function _CLEAR_TEMP() { # Здесь нежелательно использовать локализацию
+	
 	local clear_temp_test=""
 	
 	if [ -n "$Temp_Dir" ]; then
@@ -811,8 +803,8 @@ function _CLEAR_TEMP() {
 	fi
 }
 
-function _CREATE_TEMP() {
-	# Здесь нежелательно использовать локализацию
+function _CREATE_TEMP() { # Здесь нежелательно использовать локализацию
+	
 	local clear_temp_test=""
 	
 	if [ -n "$Temp_Dir" ]; then
@@ -825,8 +817,7 @@ function _CREATE_TEMP() {
 }
 
 # Функция экстренного завершения работы
-function _ABORT() {
-	# Здесь нежелательно использовать локализацию
+function _ABORT() { # Здесь нежелательно использовать локализацию
 	
 	_CLEAR_BACKGROUND
 	
@@ -893,9 +884,8 @@ function _WARNING() {
 
 ######### ------------------------- #########
 ######### Print package information #########
-function _PRINT_PACKAGE_INFO() {
+function _PRINT_PACKAGE_INFO() { # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию если включен тихий режим
-	# Здесь можно использовать локализацию
 	
 	_CLEAR_BACKGROUND
 	
@@ -957,8 +947,7 @@ function _CHECK_MD5_COMPARE() {
 	if [ "$MD5_Error_ProgramFiles" == "true" ] || [ "$MD5_Error_SystemFiles" == "true" ]; then MD5_Warning="true"; fi
 }
 
-function _CHECK_MD5_PRINT_GOOD() {
-	# Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT_GOOD() { # Здесь можно использовать локализацию
 	
 	_CLEAR_BACKGROUND
 	
@@ -977,8 +966,7 @@ $Header
 	read -r pause
 }
 
-function _CHECK_MD5_PRINT_WARNING() {
-	# Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT_WARNING() { # Здесь можно использовать локализацию
 	
 	_CLEAR_BACKGROUND
 	
@@ -1006,8 +994,7 @@ $Header
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-function _CHECK_MD5_PRINT() {
-	# Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT() { # Здесь можно использовать локализацию
 	
 	_CLEAR_BACKGROUND
 	
@@ -1018,8 +1005,8 @@ $Header
    $Str_CHECKMD5_Sub_Head2"
 }
 
-function _CHECK_MD5() {
-	# Проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
+function _CHECK_MD5() { # Проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
+	
 	if [ "$MODE_SILENT" == "true" ]; then _CHECK_MD5_COMPARE
 		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING; fi
 	else
@@ -1035,11 +1022,9 @@ function _CHECK_MD5() {
 ######### --------------------------- #########
 ######### Print installation settings #########
 
-function _PRINT_INSTALL_SETTINGS() {
+function _PRINT_INSTALL_SETTINGS() { # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
-	# Здесь можно использовать локализацию
-	
 	_CLEAR_BACKGROUND
 	
 	echo -e "\
@@ -1091,8 +1076,7 @@ fi
 ######### ------------------- #########
 ######### Prepare Input Files #########
 
-function _PREPARE_INPUT_FILES_GREP() {
-	# Здесь можно использовать локализацию
+function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использовать локализацию
 	
 	local prepare_text="/tmp/ish"
 	local prepare_path="/tmp/ish"
@@ -1110,8 +1094,7 @@ function _PREPARE_INPUT_FILES_GREP() {
 		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null; fi
 }
 
-function _PREPARE_INPUT_FILES() {
-	# Здесь можно использовать локализацию
+function _PREPARE_INPUT_FILES() { # Здесь можно использовать локализацию
 	
 	if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
 		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
@@ -1173,8 +1156,7 @@ function _PREPARE_INPUT_FILES() {
 ######### ------------- #########
 ######### Check outputs #########
 
-function _CHECK_OUTPUTS() {
-	# Здесь можно использовать локализацию
+function _CHECK_OUTPUTS() { # Здесь можно использовать локализацию
 	
 	local check_outputs_error="false"
 	local arr_files_sorted=()
@@ -1225,8 +1207,7 @@ function _INSTALL_HELPERS_XFCE_USER() {
 	cp -rf "$Input_Helpers_Dir/." "$Output_Helpers_Dir"
 }
 
-function _INSTALL_HELPERS() {
-	# Здесь можно использовать локализацию
+function _INSTALL_HELPERS() { # Здесь можно использовать локализацию
 	
 	if [ -e "$Input_Helpers_Dir" ]; then
 		if [ "$Current_DE" == "XFCE" ]; then
@@ -1237,8 +1218,7 @@ function _INSTALL_HELPERS() {
 ######### --------------------- #########
 ######### Install Desktop Icons #########
 
-function _INSTALL_DESKTOP_ICONS() {
-	# Здесь можно использовать локализацию
+function _INSTALL_DESKTOP_ICONS() { # Здесь можно использовать локализацию
 	
 	if [ -e "$Input_Desktop_Dir" ]; then
 		cp -rf "$Input_Desktop_Dir/." "$Output_Desktop_Dir"
@@ -1248,8 +1228,7 @@ function _INSTALL_DESKTOP_ICONS() {
 ######### ------------------------------- #########
 ######### Install application (USER MODE) #########
 
-function _INSTALL_APP_USER() {
-	# Здесь можно использовать локализацию
+function _INSTALL_APP_USER() { # Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
@@ -1301,8 +1280,7 @@ $Header
 ######### --------------------------------- #########
 ######### Install application (SYSTEM MODE) #########
 
-function _INSTALL_APP_SYSTEM() {
-	# Здесь можно использовать локализацию
+function _INSTALL_APP_SYSTEM() { # Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
@@ -1362,8 +1340,7 @@ function _INSTALL_APPLICATION() {
 ######### ------------------------ #########
 ######### Prepare uninstaller file #########
 
-function _PREPARE_UNINSTALLER_SYSTEM() {
-	# Здесь можно использовать локализацию
+function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использовать локализацию
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
@@ -1380,8 +1357,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 	else _ERROR "_PREPARE_UNINSTALLER_SYSTEM" "Output_Uninstaller not found."; fi
 }
 
-function _PREPARE_UNINSTALLER_USER() {
-	# Здесь можно использовать локализацию
+function _PREPARE_UNINSTALLER_USER() { # Здесь можно использовать локализацию
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do

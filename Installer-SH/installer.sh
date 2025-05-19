@@ -277,9 +277,9 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files"
 	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
 	
-	echo -e "$Spacer"
-	echo -e "\n Pause..."
+	echo -e "$Spacer\n\n Pause..."
 	read -r pause
+	exit
 }
 
 function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!

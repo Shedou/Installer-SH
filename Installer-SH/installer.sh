@@ -33,8 +33,8 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() {
 	# Archives MD5 Hash. Necessary for integrity checking.
-	Archive_MD5_Hash_ProgramFiles="e547af90c3d954d249b0c47e6383d8ab"
-	Archive_MD5_Hash_SystemFiles="60eaa9e3d10b53e93104c80a50178ea8"
+	Archive_MD5_Hash_ProgramFiles="3a4ec891e2df213b1e77838654533986"
+	Archive_MD5_Hash_SystemFiles="09dea9250a5c113dc854bd840d2ca891"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other

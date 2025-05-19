@@ -314,13 +314,13 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	read -r cleaning_confirmation
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
-		_CLEAN_FILE "$Path_To_Script/installer-data/MD5-Hash.txt"
-		_CLEAN_FILE "$Path_To_Script/installer-data/program_files"
-		_CLEAN_FILE "$Path_To_Script/installer-data/system_files"
-		_CLEAN_FILE "$Path_To_Script/installer-data/pack_archives.sh"
-		_CLEAN_FILE "$Path_To_Script/installer-data/tools/MD5-Hash.txt"
-		_CLEAN_FILE "$Path_To_Script/installer-data/tools/pack_archive.sh"
-		_CLEAN_FILE "$Path_To_Script/installer-data/tools/base_data"
+		_CLEAN_FILE "$Path_To_Script/MD5-Hash.txt"
+		_CLEAN_FILE "$Path_Installer_Data/program_files"
+		_CLEAN_FILE "$Path_Installer_Data/system_files"
+		_CLEAN_FILE "$Path_Installer_Data/pack_archives.sh"
+		_CLEAN_FILE "$Path_Installer_Data/tools/MD5-Hash.txt"
+		_CLEAN_FILE "$Path_Installer_Data/tools/pack_archive.sh"
+		_CLEAN_FILE "$Path_Installer_Data/tools/base_data"
 		echo -e "\n Complete..."
 		read -r pause
 		if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK

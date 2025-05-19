@@ -7,7 +7,7 @@ HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
-	_INIT_GLOBAL_VARIABLES; _INSTALLER_SETTINGS
+	_INIT_GLOBAL_VARIABLES; _INSTALLER_SETTINGS; _INIT_TOOLS
 		_IMPORTANT_CHECK_FIRST # First important check before UI
 	_CHECK_SYSTEM; _INIT_FONTS; _SET_LOCALE; _CHECK_SYSTEM_DE; _INIT_GLOBAL_PATHS
 		_IMPORTANT_CHECK_LAST  # Last important check before UI
@@ -235,6 +235,12 @@ function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использов
 
 # _INSTALLER_SETTINGS
 
+function _INIT_TOOLS() {
+	Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
+	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
+}
+
+
 function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
@@ -243,8 +249,9 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	Dictionary_Size_System_Files="8m"
 	Spacer="\n ===========================================\n ===========================================\n ==========================================="
 	
-	Szip_bin="$Path_Installer_Data/tools/7zip/7zzs"
 	MD5_File="$Path_To_Script/MD5-Hash.txt"
+	
+	
 	
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
@@ -252,11 +259,11 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	function _pack_archive() {
 		Name_File="$1"
 		DSize="$2"
-		if [ -e "$Szip_bin" ]; then
+		if [ -e "$Tool_SevenZip_bin" ]; then
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "$Spacer"
-				"$Szip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
+				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
 				MD5_DATA=$(md5sum "$Name_File.7z" | awk '{print $1}')
 				echo "$(basename "$Name_File.7z"): $MD5_DATA" >> "$MD5_File"
 			fi
@@ -515,9 +522,6 @@ function _INIT_GLOBAL_PATHS() {
 	### --------------------------- ###
 	### Do not edit variables here! ###
 	### --------------------------- ###
-	
-	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"
-	else Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"; fi
 	
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"

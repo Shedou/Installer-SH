@@ -245,7 +245,8 @@ function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использов
 
 # _INSTALLER_SETTINGS
 
-function _PACK_ARCHIVES() {
+function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
 	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
 	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
 	Dictionary_Size_Program_Files="32m"
@@ -298,14 +299,16 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 	fi
 }
 
-function _CLEAN_FILE() {
-	CleanFileName="$1"
-	echo "Removing: $CleanFileName"
-	if [ -e "$CleanFileName" ]; then rm -rf "$CleanFileName"
-	else echo " Skip (not found): $CleanFileName"; fi
-}
 
-function _CLEAN() {
+
+function _CLEAN() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	
+	function _CLEAN_FILE() {
+		CleanFileName="$1"
+		echo "Removing: $CleanFileName"
+		if [ -e "$CleanFileName" ]; then rm -rf "$CleanFileName"
+		else echo " Skip (not found): $CleanFileName"; fi
+	}
 	
 	echo -e " Removes unnecessary files and directories.\n USE ONLY AFTER COMPLETING AND TESTING THE PACKAGE.\n \"y\" to delete..."
 	read -r cleaning_confirmation

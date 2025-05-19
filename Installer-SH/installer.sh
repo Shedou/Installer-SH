@@ -190,7 +190,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-noupdmenu" ]]; then Update_Menu="false"; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]]; then     MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]]; then    MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-arcpack" ]]; then   MODE_CLEAN="true"; fi
+	if [[ "$ArgumentsString" =~ "-arcpack" ]]; then   MODE_ARCPACK="true"; fi
 	if [[ "$ArgumentsString" =~ "-clean" ]]; then   MODE_CLEAN="true"; fi
 	if [[ "$ArgumentsString" =~ "-tarpack" ]]; then   MODE_TARPACK="true"; fi
 }
@@ -246,7 +246,7 @@ function _INIT_GLOBAL_VARIABLES() {
 
 # _INSTALLER_SETTINGS
 
-function PACK_ARCHIVES() {
+function _PACK_ARCHIVES() {
 	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
 	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
 	Dictionary_Size_Program_Files="32m"
@@ -339,7 +339,7 @@ function _CLEAN() {
 function _IMPORTANT_CHECK_FIRST() {
 	# Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
-	if [ "$MODE_ARCPACK" == "true" ]; then PACK_ARCHIVES; fi
+	if [ "$MODE_ARCPACK" == "true" ]; then _PACK_ARCHIVES; fi
 	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
 	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
 	

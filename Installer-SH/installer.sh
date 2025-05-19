@@ -7,24 +7,14 @@ HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
-	_INIT_GLOBAL_VARIABLES
-	_INSTALLER_SETTINGS
+	_INIT_GLOBAL_VARIABLES; _INSTALLER_SETTINGS
 		_IMPORTANT_CHECK_FIRST # First important check before UI
-	_CHECK_SYSTEM
-	_INIT_FONT_STYLES
-	_SET_LOCALE
-	_CHECK_SYSTEM_DE
-	_INIT_GLOBAL_PATHS
+	_CHECK_SYSTEM; _INIT_FONTS; _SET_LOCALE; _CHECK_SYSTEM_DE; _INIT_GLOBAL_PATHS
 		_IMPORTANT_CHECK_LAST  # Last important check before UI
-	_PRINT_PACKAGE_INFO
-	_CHECK_MD5
+	_PRINT_PACKAGE_INFO; _CHECK_MD5
 	_PRINT_INSTALL_SETTINGS # Last confirm stage
-	_CREATE_TEMP
-	_PREPARE_INPUT_FILES
-	_CHECK_OUTPUTS
-	_INSTALL_APPLICATION
-	_PREPARE_UNINSTALLER
-	_POST_INSTALL
+	_CREATE_TEMP; _PREPARE_INPUT_FILES; _CHECK_OUTPUTS; _INSTALL_APPLICATION;
+	_PREPARE_UNINSTALLER; _POST_INSTALL
 }
 
 ######### ---- -------- ---- #########
@@ -249,7 +239,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	
 	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
 	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
-	Dictionary_Size_Program_Files="32m"
+	Dictionary_Size_Program_Files="64m"
 	Dictionary_Size_System_Files="8m"
 	Spacer="\n ===========================================\n ===========================================\n ==========================================="
 	
@@ -399,7 +389,7 @@ function _CHECK_SYSTEM() { # Здесь НЕЛЬЗЯ использовать л
 	fi
 }
 
-function _INIT_FONT_STYLES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _INIT_FONTS() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
 	# '\e[38;2;128;128;255m'

@@ -5,27 +5,36 @@
 # to avoid conflicts between different versions of the same application.
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
+
 ExtraLibsFolder="$Path_To_Script/libs"
 UserDataFolder="$Path_To_Script/userdata"
 ProgramFolder="$Path_To_Script/program"
+
 ExecutableFolder="$ProgramFolder"
 Executable="$ExecutableFolder/application-one"
 
 export PATH="$PATH:$ExecutableFolder" # Use ":" for separation
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
+if [ -z "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$ExtraLibsFolder"
+else
+	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
+fi
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 # Disable or modify only when necessary.
 MoveHomeDir="true"
 if [ "$MoveHomeDir" == "true" ]; then
 	export HOME="$UserDataFolder"
-	
+fi
+MoveConfigsDir="true"
+if [ "$MoveConfigsDir" == "true" ]; then
 	export HOMECONFIGS="$UserDataFolder"
 	export XDG_DATA_HOME="$HOMECONFIGS/.local/share"
 	export XDG_STATE_HOME="$HOMECONFIGS/.local/state"
 	export XDG_CONFIG_HOME="$HOMECONFIGS/.config"
 	export XDG_CACHE_HOME="$HOMECONFIGS/.cache"
 fi
+
 
 if [ -e "$Executable" ]; then
 	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
@@ -38,8 +47,6 @@ if [ -e "$Executable" ]; then
 else
 	exit_code="Executable not found..."
 fi
-
-
 
 if [[ "$exit_code" != "0" ]]; then
 	StringMessage="bash -c 'echo \"-\"; echo \"$Executable\"; echo \"-\"; echo \"WARNING! EXIT CODE - $exit_code\"; echo \"The program has terminated incorrectly!\"; echo \"Is the program incompatible with the current OS?\"; echo \"Does the program contain errors?\"; read pause'"

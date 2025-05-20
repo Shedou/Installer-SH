@@ -60,6 +60,8 @@ FilesToDelete=(
 
 # Display info and wait confirmation
 echo -e "\
+ XDG_SESSION_DESKTOP: $Current_DE
+ 
  ${Font_Bold}${Font_Yellow}Attention! Make sure that you do not have any important data in the program directory!${Font_Reset_Color}${Font_Reset}
   $Path_To_Script
  

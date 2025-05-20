@@ -6,15 +6,14 @@
 #
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
-Path_To_UserData="$Path_To_Script"
 
-if type thunar &> /dev/null;       then thunar "$Path_To_UserData"
-elif type dolphin &> /dev/null;    then dolphin "$Path_To_UserData"
-elif type nautilus &> /dev/null;   then nautilus "$Path_To_UserData"
-elif type pcmanfm &> /dev/null;    then pcmanfm "$Path_To_UserData"
-elif type pcmanfm-qt &> /dev/null; then pcmanfm-qt "$Path_To_UserData"
-elif type nemo &> /dev/null;       then nemo "$Path_To_UserData"
-elif type caja &> /dev/null;       then caja "$Path_To_UserData"
+if type thunar &> /dev/null;       then thunar "$Path_To_Script"
+elif type dolphin &> /dev/null;    then dolphin "$Path_To_Script"
+elif type nautilus &> /dev/null;   then nautilus "$Path_To_Script"
+elif type pcmanfm &> /dev/null;    then pcmanfm "$Path_To_Script"
+elif type pcmanfm-qt &> /dev/null; then pcmanfm-qt "$Path_To_Script"
+elif type nemo &> /dev/null;       then nemo "$Path_To_Script"
+elif type caja &> /dev/null;       then caja "$Path_To_Script"
 else
 	echo "No file managers found."
 	echo "Installer-SH - https://github.com/Shedou/Chimbalix-Software-Catalog"

@@ -7,21 +7,31 @@ HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
-	_INIT_GLOBAL_VARIABLES; _INSTALLER_SETTINGS; _INIT_TOOLS
-		_IMPORTANT_CHECK_FIRST # First important check before UI
-	_CHECK_SYSTEM; _INIT_FONTS; _SET_LOCALE; _CHECK_SYSTEM_DE; _INIT_GLOBAL_PATHS
-		_IMPORTANT_CHECK_LAST  # Last important check before UI
-	_PRINT_PACKAGE_INFO; _CHECK_MD5
-	_PRINT_INSTALL_SETTINGS # Last confirm stage
-	_CREATE_TEMP; _PREPARE_INPUT_FILES; _CHECK_OUTPUTS; _INSTALL_APPLICATION;
-	_PREPARE_UNINSTALLER; _POST_INSTALL
+	_INIT_GLOBAL_VARIABLES # -= (1) =-
+	_INSTALLER_SETTINGS # -= (2) =-
+	_INIT_TOOLS # -= (3) =-
+		_IMPORTANT_CHECK_FIRST  # -= (4) =- # First important check before UI
+	_CHECK_SYSTEM # -= (5) =-
+	_INIT_FONTS # -= (6) =-
+	_SET_LOCALE # -= (7) =-
+	_CHECK_SYSTEM_DE # -= (8) =-
+	_INIT_GLOBAL_PATHS # -= (9) =-
+		_IMPORTANT_CHECK_LAST # -= (10) =- # Last important check before UI
+	_PRINT_PACKAGE_INFO # -= (11) =-
+	_CHECK_MD5 # -= (12) =-
+	_PRINT_INSTALL_SETTINGS # -= (13) =- # Last confirm stage
+	_PREPARE_INPUT_FILES # -= (14) =-
+	_CHECK_OUTPUTS # -= (15) =-
+	_INSTALL_APPLICATION # -= (16) =-
+	_PREPARE_UNINSTALLER # -= (17) =-
+	_POST_INSTALL # -= (18) =-
 }
 
 ######### ---- -------- ---- #########
 ######### ---- SETTINGS ---- #########
 ######### ---- -------- ---- #########
 
-function _INSTALLER_SETTINGS() {
+function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking.
 	Archive_MD5_Hash_ProgramFiles="3a4ec891e2df213b1e77838654533986"
 	Archive_MD5_Hash_SystemFiles="09dea9250a5c113dc854bd840d2ca891"
@@ -122,7 +132,7 @@ Install_Path_Bin_System="/usr/bin"
 ######### ------------------------- #########
 ######### Post Install (LAST STAGE) #########
 
-function _POST_INSTALL() {
+function _POST_INSTALL() { # -= (18) =-
 	if [ "$Update_Menu" == "true" ]; then _UPDATE_MENU;	fi
 	
 	# Exit
@@ -185,7 +195,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];   then MODE_TARPACK="true"; fi
 }
 
-function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	### --------------------------- ###
 	### Do not edit variables here! ###
@@ -238,7 +248,7 @@ function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использов
 
 # _INSTALLER_SETTINGS
 
-function _INIT_TOOLS() {
+function _INIT_TOOLS() { # -= (3) =-
 	Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
 	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
 }
@@ -331,7 +341,7 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	fi
 }
 
-function _IMPORTANT_CHECK_FIRST() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	if [ "$MODE_ARCPACK" == "true" ]; then _PACK_ARCHIVES; fi
 	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
@@ -386,7 +396,7 @@ function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использов�
 	fi
 }
 
-function _CHECK_SYSTEM() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _CHECK_SYSTEM() { # -= (5) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	_CHECK_SYSTEM_VERSION
 	Current_Architecture="$(uname -m)"
@@ -397,7 +407,7 @@ function _CHECK_SYSTEM() { # Здесь НЕЛЬЗЯ использовать л
 	fi
 }
 
-function _INIT_FONTS() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+function _INIT_FONTS() { # -= (6) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
 	# '\e[38;2;128;128;255m'
@@ -452,7 +462,7 @@ function _INIT_FONTS() { # Здесь НЕЛЬЗЯ использовать ло
 
 #_SET_LOCALE
 
-function _CHECK_SYSTEM_DE() { # Здесь можно использовать локализацию
+function _CHECK_SYSTEM_DE() { # -= (8) =- # Здесь можно использовать локализацию
 	
 	local check_de_raw=""
 	local check_de_err="0"
@@ -519,7 +529,7 @@ function _CHECK_SYSTEM_DE() { # Здесь можно использовать �
 	Current_DE="$check_de_raw"
 }
 
-function _INIT_GLOBAL_PATHS() {
+function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	### --------------------------- ###
 	### Do not edit variables here! ###
 	### --------------------------- ###
@@ -567,7 +577,7 @@ function _INIT_GLOBAL_PATHS() {
 	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
 }
 
-function _IMPORTANT_CHECK_LAST() { # Здесь можно использовать локализацию
+function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно использовать локализацию
 	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
@@ -879,7 +889,7 @@ function _WARNING() {
 
 ######### ------------------------- #########
 ######### Print package information #########
-function _PRINT_PACKAGE_INFO() { # Здесь можно использовать локализацию
+function _PRINT_PACKAGE_INFO() { # -= (11) =- # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию если включен тихий режим
 	
 	_CLEAR_BACKGROUND
@@ -1000,7 +1010,7 @@ $Header
    $Str_CHECKMD5_Sub_Head2"
 }
 
-function _CHECK_MD5() { # Проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
+function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывести ошибки при наличии если активен тихий режим, иначе полностью вывести информацию
 	
 	if [ "$MODE_SILENT" == "true" ]; then _CHECK_MD5_COMPARE
 		if [ "$MD5_Warning" == "true" ]; then _CHECK_MD5_PRINT_WARNING; fi
@@ -1017,7 +1027,7 @@ function _CHECK_MD5() { # Проверить хэши и вывести ошиб
 ######### --------------------------- #########
 ######### Print installation settings #########
 
-function _PRINT_INSTALL_SETTINGS() { # Здесь можно использовать локализацию
+function _PRINT_INSTALL_SETTINGS() { # -= (13) =- # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND
@@ -1089,7 +1099,9 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null; fi
 }
 
-function _PREPARE_INPUT_FILES() { # Здесь можно использовать локализацию
+function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно использовать локализацию
+	
+	_CREATE_TEMP
 	
 	if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
 		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
@@ -1151,7 +1163,7 @@ function _PREPARE_INPUT_FILES() { # Здесь можно использоват
 ######### ------------- #########
 ######### Check outputs #########
 
-function _CHECK_OUTPUTS() { # Здесь можно использовать локализацию
+function _CHECK_OUTPUTS() { # -= (15) =- # Здесь можно использовать локализацию
 	
 	local check_outputs_error="false"
 	local arr_files_sorted=()
@@ -1328,7 +1340,7 @@ $Header
 ######### ------------------- #########
 ######### Install application #########
 
-function _INSTALL_APPLICATION() {
+function _INSTALL_APPLICATION() { # -= (16) =-
 	if [ "$Install_Mode" == "System" ]; then _INSTALL_APP_SYSTEM; else _INSTALL_APP_USER; fi
 }
 
@@ -1368,7 +1380,7 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 	else _ERROR "_PREPARE_UNINSTALLER_USER" "Output_Uninstaller not found."; fi
 }
 
-function _PREPARE_UNINSTALLER() {
+function _PREPARE_UNINSTALLER() { # -= (17) =-
 	if [ "$Install_Mode" == "System" ]; then _PREPARE_UNINSTALLER_SYSTEM; fi
 	if [ "$Install_Mode" == "User" ]; then _PREPARE_UNINSTALLER_USER; fi
 	
@@ -1485,7 +1497,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"
 }
 
-function _SET_LOCALE() {
+function _SET_LOCALE() { # -= (7) =-
 	local Language="${LANG%%.*}"
 	local Locale_File="$Path_To_Script/locales/$Language"
 	

@@ -166,7 +166,7 @@ function _HELP() { # Здесь НЕЛЬЗЯ использовать локал
 	echo -e "                 many applications in \"-silent\" mode."
 	echo -e "                 Works if the working environment is supported.\n"
 	echo -e " -arcpack   -ap - Pack \"program_files\" and \"system_files\" into archives."
-	echo -e " -clean    -cn - Delete unnecessary files in the installation package directory."
+	echo -e " -clean     -cn - Delete unnecessary files in the package directory."
 	echo -e "                 Please make sure that the package is built and ready for use,"
 	echo -e "                 this cannot be undone!\n"
 	echo -e " -tarpack   -tp - Pack the current installation package into a tar archive.\n"

@@ -5,14 +5,14 @@
 # to avoid conflicts between different versions of the same application.
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
-LibsFolder="$Path_To_Script/libs"
+ExtraLibsFolder="$Path_To_Script/libs"
 UserDataFolder="$Path_To_Script/userdata"
 ProgramFolder="$Path_To_Script/program"
 ExecutableFolder="$ProgramFolder"
-ExecutableFile="$ExecutableFolder/application-one"
+Executable="$ExecutableFolder/application-one"
 
 export PATH="$PATH:$ExecutableFolder" # Use ":" for separation
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$LibsFolder" # Use ":" for separation
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 # Disable or modify only when necessary.
@@ -27,16 +27,22 @@ if [ "$MoveHomeDir" == "true" ]; then
 	export XDG_CACHE_HOME="$HOMECONFIGS/.cache"
 fi
 
-if ! [[ -x "$ExecutableFile" ]]; then if ! chmod +x "$ExecutableFile"; then echo "chmod error"; fi; fi
+if [ -e "$Executable" ]; then
+	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
+	
+	cd "$ExecutableFolder" || exit
+	
+	"$Executable" "$@"
+	
+	exit_code="$?"
+else
+	exit_code="Executable not found..."
+fi
 
-cd "$ExecutableFolder"
 
-"$ExecutableFile" "$@"
-
-exit_code="$?"
 
 if [[ "$exit_code" != "0" ]]; then
-	StringMessage="bash -c \"echo \"-\"; echo \"$ExecutableFile\"; echo \"-\"; echo \"WARNING!\ EXIT\ CODE\ -\ $exit_code\"; echo \"The\ program\ has\ terminated\ incorrectly!\"; echo \"Is\ the\ program\ incompatible\ with\ the\ current\ OS?\"; echo \"Does\ the\ program\ contain\ errors?\"; read pause\""
+	StringMessage="bash -c 'echo \"-\"; echo \"$Executable\"; echo \"-\"; echo \"WARNING! EXIT CODE - $exit_code\"; echo \"The program has terminated incorrectly!\"; echo \"Is the program incompatible with the current OS?\"; echo \"Does the program contain errors?\"; read pause'"
 	
 	terminal_executable="x-terminal-emulator"
 	if ! type "x-terminal-emulator" &> /dev/null; then

@@ -10,7 +10,7 @@ Normal installation, just run:
 
 > `./installer.sh`
 
-Help:
+Help (list of all available commands):
 
 > `./installer.sh -h`\
 > `./installer.sh -help`\
@@ -20,27 +20,10 @@ Silent installation, no output if everything is installed without errors:
 
 > `./installer.sh -silent`
 
-Pack "program_files" and "system_files" into archives:
-
-> `./installer.sh -arcpack`
-
-Delete unnecessary files in the installation package directory.\
-Please make sure that the package is built and ready for use, this cannot be undone!
-> `./installer.sh -clean`
-
-Pack the directory with installation files into a TAR archive::
-
-> `./installer.sh -tarpack`
-
 Disables automatic menu update after installation.\
-Recommended for use when batch installing multiple applications in "-silent" mode.
+Recommended for use when batch installing multiple applications in "-silent" mode:
 
 > `./installer.sh -noupdmenu`
-
-Only refresh menu. Recommended to use after installing many applications in "-silent" mode.\
-Works if the working environment is supported.
-
-> `./installer.sh -forcemenu`
 
 ### Creating installation packages (v1.7):
 

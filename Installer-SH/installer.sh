@@ -157,32 +157,32 @@ function _UPDATE_MENU() {
 
 function _HELP() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString\n"
-	echo -e " -silent    -s - Silent installation mode."
+	echo -e " -silent    -st - Silent installation mode."
 	echo -e "                 Requires confirmation only in case of errors and conflicts.\n"
-	echo -e " -noupdmenu -n - Disables automatic menu update after installation."
+	echo -e " -noupdmenu -nm - Disables automatic menu update after installation."
 	echo -e "                 Recommended for use when batch installing"
 	echo -e "                 multiple applications in \"-silent\" mode.\n"
-	echo -e " -forcemenu -f - Only refresh menu. Recommended to use after installing"
+	echo -e " -forcemenu -fm - Only refresh menu. Recommended to use after installing"
 	echo -e "                 many applications in \"-silent\" mode."
 	echo -e "                 Works if the working environment is supported.\n"
-	echo -e " -arcpack   -a - Pack \"program_files\" and \"system_files\" into archives."
-	echo -e " -clean     -c - Delete unnecessary files in the installation package directory."
+	echo -e " -arcpack   -ap - Pack \"program_files\" and \"system_files\" into archives."
+	echo -e " -clean    -cn - Delete unnecessary files in the installation package directory."
 	echo -e "                 Please make sure that the package is built and ready for use,"
 	echo -e "                 this cannot be undone!\n"
-	echo -e " -tarpack   -t - Pack the current installation package into a tar archive.\n"
-	echo -e " -debug     -d - Debug mode, for development purposes only."
+	echo -e " -tarpack   -tp - Pack the current installation package into a tar archive.\n"
+	echo -e " -debug     -dg - Debug mode, for development purposes only."
 	exit;
 }
 
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
-	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-f" ]]; then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
-	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-n" ]]; then Update_Menu="false"; fi
-	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-d" ]];     then MODE_DEBUG="true"; fi
-	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-s" ]];    then MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-a" ]];   then MODE_ARCPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-c" ]];     then MODE_CLEAN="true"; fi
-	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-t" ]];   then MODE_TARPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fm" ]]; then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]]; then Update_Menu="false"; fi
+	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dg" ]];     then MODE_DEBUG="true"; fi
+	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-st" ]];    then MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-ap" ]];   then MODE_ARCPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cn" ]];     then MODE_CLEAN="true"; fi
+	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];   then MODE_TARPACK="true"; fi
 }
 
 function _INIT_GLOBAL_VARIABLES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!

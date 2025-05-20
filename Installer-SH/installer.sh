@@ -108,12 +108,13 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
 
 # Application installation directory. Don't touch it if you don't know why you need it!
 # If used incorrectly, it may lead to bad consequences!
+# DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_User="$HOMEDIR/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
-
+# DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
-
+# DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_Bin_User="$HOMEDIR/.local/bin" # "$HOMEDIR/.local/bin" works starting from Chimbalix 24.4
 Install_Path_Bin_System="/usr/bin"
 }

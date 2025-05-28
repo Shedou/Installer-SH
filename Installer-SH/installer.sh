@@ -70,7 +70,8 @@ Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:
     Freeware - Proprietary (EULA, Please read \"EULA-example.txt\")
     Trialware - 30 days free, Proprietary (Other License Name)"
-Info_Developer="Chimbal"
+Info_Maintainer="Chimbal" # Package creator
+Info_Developer="Chimbal"  # Software developer
 Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog"
 
 # Use this description if there is no suitable localization file.
@@ -908,6 +909,7 @@ $Header
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Platform${Font_Reset}${Font_Reset_Color} $Info_Platform
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_InstalledSize${Font_Reset}${Font_Reset_Color} $Info_Installed_Size
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Licensing${Font_Reset}${Font_Reset_Color} $Info_Licensing
+ -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Maintainer${Font_Reset}${Font_Reset_Color} $Info_Maintainer
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Developer${Font_Reset}${Font_Reset_Color} $Info_Developer
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_URL${Font_Reset}${Font_Reset_Color} $Info_URL
  -${Font_Bold}${Font_Yellow}$Str_PACKAGEINFO_Description${Font_Reset_Color}${Font_Reset}
@@ -1429,6 +1431,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_PACKAGEINFO_Platform="Platform (tested):"
 	Str_PACKAGEINFO_InstalledSize="Installed Size:"
 	Str_PACKAGEINFO_Licensing="Licensing:"
+	Str_PACKAGEINFO_Maintainer="Maintainer:"
 	Str_PACKAGEINFO_Developer="Developer:"
 	Str_PACKAGEINFO_URL="URL:"
 	Str_PACKAGEINFO_Description="Description:"

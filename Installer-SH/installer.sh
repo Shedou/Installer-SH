@@ -107,6 +107,15 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  # URL: https://specifications.freedesktop.org/menu-spec/latest/category-registry.html
  # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
 
+ ### ----------------------------------------------- ###
+ ### Archive packaging parameters "installer.sh -ap" ###
+ ### ----------------------------------------------- ###
+ # Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
+ # For applications 150-200 MiB in size, use a dictionary size of 32 - 128m,
+ # it is not recommended to use a dictionary size greater than 256m.
+Dictionary_Size_Program_Files="64m"
+Dictionary_Size_System_Files="8m"
+
 # Application installation directory. Don't touch it if you don't know why you need it!
 # If used incorrectly, it may lead to bad consequences!
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
@@ -257,13 +266,6 @@ function _INIT_TOOLS() { # -= (3) =-
 
 
 function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
-	
-	# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
-	# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
-	Dictionary_Size_Program_Files="64m"
-	Dictionary_Size_System_Files="8m"
-	Spacer="\n ===========================================\n ===========================================\n ==========================================="
-	
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
 	
@@ -273,7 +275,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		if [ -e "$Tool_SevenZip_bin" ]; then
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
-				echo -e "$Spacer"
+				echo -e "\n"
 				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
 				PackArcMD5=$(md5sum "$Name_File.7z" | awk '{print $1}')
 				if [ "$Name_File" == "$Program_Files" ]; then
@@ -289,7 +291,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files"
 	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
 	
-	echo -e "$Spacer\n\n Pause..."
+	echo -e "\n\n Pause..."
 	read -r pause
 	exit
 }
@@ -324,7 +326,6 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	read -r cleaning_confirmation
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
-		_CLEAN_FILE "$Path_To_Script/MD5-Hash.txt"
 		_CLEAN_FILE "$Path_Installer_Data/program_files"
 		_CLEAN_FILE "$Path_Installer_Data/system_files"
 		_CLEAN_FILE "$Path_Installer_Data/pack_archives.sh"

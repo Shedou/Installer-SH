@@ -32,7 +32,7 @@ function _MAIN() {
 ######### ---- -------- ---- #########
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
-	# Archives MD5 Hash. Necessary for integrity checking.
+	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
 	Archive_MD5_Hash_ProgramFiles="400e20c6cbafa9283808fe428c7a5269"
 	Archive_MD5_Hash_SystemFiles="09dea9250a5c113dc854bd840d2ca891"
 	
@@ -99,20 +99,16 @@ Program_Uninstaller_Icon="ish-software-uninstaller-icon.png"    #=> PROGRAM_UNIN
  # Additional menu categories that will include the main application shortcuts.
 Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
  # -=== Chimbalix 24.4+ main categories:
- # chi-ai  chi-accessories  chi-accessories-fm  chi-view  chi-admin  chi-info  chi-info-bench  chi-info-help
- # chi-dev  chi-dev-other  chi-dev-ide  chi-edit  chi-edit-audiovideo  chi-edit-image  chi-edit-text  chi-games
- # chi-network  chi-multimedia  chi-multimedia-players  chi-office  chi-other  chi-tools  chi-tools-archivers
- # -=== XDG / Linux Categories Version 1.1 (20 August 2016):
- # AudioVideo  Audio  Video  Development  Education  Game  Graphics  Network  Office  Science  Settings  System  Utility
- # URL: https://specifications.freedesktop.org/menu-spec/latest/category-registry.html
- # URL: https://specifications.freedesktop.org/menu-spec/latest/additional-category-registry.html
+ # Check the "Menu-Categories.ods" table for more information
+ # (will be removed when using the -clean / -cn option).
 
- ### ----------------------------------------------- ###
- ### Archive packaging parameters "installer.sh -ap" ###
- ### ----------------------------------------------- ###
+
+
+ ### ---------------------------------------------------------- ###
+ ### Archive packaging parameters (installer.sh -arcpack / -ap) ###
+ ### ---------------------------------------------------------- ###
  # Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
- # For applications 150-200 MiB in size, use a dictionary size of 32 - 128m,
- # it is not recommended to use a dictionary size greater than 256m.
+ # For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
 Dictionary_Size_Program_Files="64m"
 Dictionary_Size_System_Files="8m"
 
@@ -292,24 +288,22 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
 	
 	echo -e "\n\n Pause..."
-	read -r pause
-	exit
+	read -r pause; exit
 }
 
 function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
+	TP_OutputFile="$Path_To_Script.tar"
+	TP_InputDirName="$(basename "$Path_To_Script")"
 	
 	cd ..
-	TargetFile="$Path_To_Script.tar"
-	InputDirName="$(basename "$Path_To_Script")"
-	if [ ! -e "$TargetFile" ]; then 
-		tar --owner=ish --group=ish -cf "$TargetFile" "$InputDirName"
+	
+	if [ ! -e "$TP_OutputFile" ]; then 
+		tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"
 		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
-		read -r pause
-		exit
+		read -r pause; exit
 	else
-		echo -e "File already exists!\n\n $TargetFile\n\n !!! WARNING !!!"
-		read -r pause
-		exit
+		echo -e "File already exists!\n\n $TP_OutputFile\n\n !!! WARNING !!!"
+		read -r pause; exit
 	fi
 }
 
@@ -326,6 +320,7 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	read -r cleaning_confirmation
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
+		_CLEAN_FILE "$Path_To_Script/Menu-Categories.ods"
 		_CLEAN_FILE "$Path_Installer_Data/program_files"
 		_CLEAN_FILE "$Path_Installer_Data/system_files"
 		_CLEAN_FILE "$Path_Installer_Data/pack_archives.sh"

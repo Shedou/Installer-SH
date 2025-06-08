@@ -58,7 +58,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.4-Dev" # Application version (numbers only)
+AppVersion="2.4-Dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
@@ -1427,7 +1427,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_PACKAGEINFO_Platform="Platform (tested):"
 	Str_PACKAGEINFO_InstalledSize="Installed Size:"
 	Str_PACKAGEINFO_Licensing="Licensing:"
-	Str_PACKAGEINFO_Maintainer="Maintainer:"
+	Str_PACKAGEINFO_Maintainer="Package creator:"
 	Str_PACKAGEINFO_Developer="Developer:"
 	Str_PACKAGEINFO_URL="URL:"
 	Str_PACKAGEINFO_Description="Description:"

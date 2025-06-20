@@ -365,7 +365,7 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
 	if [ "$Install_Mode" == "System" ]; then
 		if [ "$EUID" != "0" ]; then
-			if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'\n Try running as root or don't use System install mode..."; fi	
+			if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'\n Do not use 'System' installation mode without 'sudo'..."; fi	
 		fi
 	fi
 	

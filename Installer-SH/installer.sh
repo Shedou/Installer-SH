@@ -360,10 +360,12 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	if ! type "grep" &> /dev/null; then     _ABORT "$String_CMD_N_F 'grep'"; fi
 	if ! type "sed" &> /dev/null; then      _ABORT "$String_CMD_N_F 'sed'"; fi
 	if ! type "xargs" &> /dev/null; then    _ABORT "$String_CMD_N_F 'xargs'"; fi
-	if ! type "sudo" &> /dev/null; then     _ABORT "$String_CMD_N_F 'sudo'"; fi
 	if ! type "chown" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chown'"; fi
 	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
 	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
+	if [ "$Install_Mode" == "System" ]; then
+		if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'"; fi
+	fi
 	
 	if [ -z "$HOMEDIR" ]; then _ABORT "Variable HOME not found"; fi
 }

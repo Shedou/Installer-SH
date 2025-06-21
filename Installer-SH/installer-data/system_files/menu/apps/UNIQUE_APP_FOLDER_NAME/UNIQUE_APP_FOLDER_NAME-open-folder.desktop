@@ -12,7 +12,7 @@ Name=PROGRAM_NAME_IN_MENU - Open Folder
 Comment=
 GenericName=
 
-Icon=PATH_TO_FOLDER/icon-open-folder.png
+Icon=PATH_TO_FOLDER/icons/icon-open-folder.png
 Exec=PATH_TO_FOLDER/open-folder
 TryExec=PATH_TO_FOLDER/open-folder
 Path=PATH_TO_FOLDER

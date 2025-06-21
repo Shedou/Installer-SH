@@ -12,7 +12,7 @@ Name=PROGRAM_NAME_IN_MENU
 Comment=
 GenericName=
 
-Icon=PATH_TO_FOLDER/icon.png
+Icon=PATH_TO_FOLDER/icons/icon.png
 Exec=PATH_TO_FOLDER/launcher %F
 TryExec=PATH_TO_FOLDER/launcher
 Path=PATH_TO_FOLDER/program

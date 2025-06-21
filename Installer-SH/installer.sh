@@ -33,8 +33,8 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="24dbb13e9e80ef560c68a452c1d8a879"
-	Archive_MD5_Hash_SystemFiles="410e1bffae76a7d67fd7ea73445dd730"
+	Archive_MD5_Hash_ProgramFiles="6375fac304890c50d21c8b32293ab232"
+	Archive_MD5_Hash_SystemFiles="8d62cb830196df9bf706b94b60e2dce6"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
@@ -88,13 +88,13 @@ Info_Description_Default="\
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
 Menu_Directory_Name="$Info_Name v$AppVersion"                   #=> MENU_DIRECTORY_NAME
-Menu_Directory_Icon="icon.png"                                  #=> MENU_DIRECTORY_ICON
+Menu_Directory_Icon="/icons/icon.png"                           #=> MENU_DIRECTORY_ICON
 
 Program_Name_In_Menu="$Info_Name $AppVersion"                   #=> PROGRAM_NAME_IN_MENU
 Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
 
-Program_Uninstaller_File="ish-software-uninstaller.sh"          #=> PROGRAM_UNINSTALLER_FILE
-Program_Uninstaller_Icon="ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
+Program_Uninstaller_File="ish-software-uninstaller.sh"                 #=> PROGRAM_UNINSTALLER_FILE
+Program_Uninstaller_Icon="/icons/ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
 
  # Additional menu categories that will include the main application shortcuts.
 Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
@@ -282,6 +282,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "\n"
+				cd "$Path_Installer_Data" || exit
 				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize"m -ms=1g -mqs=on -mmt=3 "$Name_File_Target" "$Name_File/."
 			fi
 		fi

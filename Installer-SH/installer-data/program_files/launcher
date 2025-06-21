@@ -6,19 +6,12 @@
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
 
-ExtraLibsFolder="$Path_To_Script/libs"
-UserDataFolder="$Path_To_Script/userdata"
-ProgramFolder="$Path_To_Script/program"
+ExtraLibsFolder="$Path_To_Script/libs"     # Extra libraries
+UserDataFolder="$Path_To_Script/userdata"  # User data folder for the program
+ProgramFolder="$Path_To_Script/program"    # Path to the program directory
 
-ExecutableFolder="$ProgramFolder"
-Executable="$ExecutableFolder/application-one"
-
-export PATH="$PATH:$ExecutableFolder" # Use ":" for separation
-if [ -z "$LD_LIBRARY_PATH" ]; then
-	export LD_LIBRARY_PATH="$ExtraLibsFolder"
-else
-	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
-fi
+ExecutableFolder="$ProgramFolder"          # Path to the program executable files
+Executable="$ExecutableFolder/application" # Main executable file
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 # Disable or modify only when necessary.
@@ -35,14 +28,17 @@ if [ "$MoveConfigsDir" == "true" ]; then
 	export XDG_CACHE_HOME="$HOMECONFIGS/.cache"
 fi
 
+export PATH="$PATH:$ExecutableFolder" # Use ":" for separation
+if [ -z "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$ExtraLibsFolder"
+else
+	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
+fi
 
 if [ -e "$Executable" ]; then
 	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
-	
 	cd "$ExecutableFolder" || exit
-	
 	"$Executable" "$@"
-	
 	exit_code="$?"
 else
 	exit_code="Executable not found..."

@@ -7,23 +7,15 @@ HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
-	_INIT_GLOBAL_VARIABLES # -= (1) =-
-	_INSTALLER_SETTINGS # -= (2) =-
-	_INIT_TOOLS # -= (3) =-
+	_INIT_GLOBAL_VARIABLES; _INSTALLER_SETTINGS; _INIT_TOOLS # -= (1,2,3) =-
 		_IMPORTANT_CHECK_FIRST  # -= (4) =- # First important check before UI
-	_CHECK_SYSTEM # -= (5) =-
-	_INIT_FONTS # -= (6) =-
-	_SET_LOCALE # -= (7) =-
-	_CHECK_SYSTEM_DE # -= (8) =-
-	_INIT_GLOBAL_PATHS # -= (9) =-
+	_CHECK_SYSTEM; _INIT_FONTS; _SET_LOCALE # -= (5,6,7) =-
+	_CHECK_SYSTEM_DE; _INIT_GLOBAL_PATHS # -= (8,9) =-
 		_IMPORTANT_CHECK_LAST # -= (10) =- # Last important check before UI
-	_PRINT_PACKAGE_INFO # -= (11) =-
-	_CHECK_MD5 # -= (12) =-
+	_PRINT_PACKAGE_INFO; _CHECK_MD5 # -= (11,12) =-
 	_PRINT_INSTALL_SETTINGS # -= (13) =- # Last confirm stage
-	_PREPARE_INPUT_FILES # -= (14) =-
-	_CHECK_OUTPUTS # -= (15) =-
-	_INSTALL_APPLICATION # -= (16) =-
-	_PREPARE_UNINSTALLER # -= (17) =-
+	_PREPARE_INPUT_FILES; _CHECK_OUTPUTS # -= (14,15) =-
+	_INSTALL_APPLICATION; _PREPARE_UNINSTALLER # -= (16,17) =-
 	_POST_INSTALL # -= (18) =-
 }
 

@@ -615,7 +615,7 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	fi
 	
 	if [ "$Current_OS_Name_Full" == "Debian GNU/Linux 9 (stretch)" ]; then
-		_WARNING "OS bugs!" "Application menu does not work correctly in Debian 9! New shortcuts may not be displayed!"
+		_WARNING "OS bugs!" "Application menu does not work correctly in Debian 9!\n   New shortcuts may not be displayed!"
 	fi
 	
 	# Проверка наличия архивов с файлами приложения

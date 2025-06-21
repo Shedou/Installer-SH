@@ -112,11 +112,12 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
 Dictionary_Size_Program_Files="64"
 Dictionary_Size_System_Files="8"
  
- ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7). ###
-Archive_Format="SZip" # "SZip" - 7-Zip (Debian 7+). "Tar" - tar.xz
+ ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7)
+ # "Tar" is not recommended for normal use
+Archive_Format="SZip" # "SZip" / "Tar"
 
-# Application installation directory. Don't touch it if you don't know why you need it!
-# If used incorrectly, it may lead to bad consequences!
+ # Application installation directory. Don't touch it if you don't know why you need it!
+ # If used incorrectly, it may lead to bad consequences!
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_User="$HOMEDIR/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
@@ -605,11 +606,17 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	fi
 	
 	# Проверка наличия 7-Zip в каталоге инструментов и установка прав на запуск при необходимости
-	if [ -e "$Tool_SevenZip_bin" ]; then
-		if ! [[ -x "$Tool_SevenZip_bin" ]]; then
-			if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error"; fi
-		fi
-	else _ABORT "$Tool_SevenZip_bin not found"; fi
+	if [ "$Archive_Format" == "SZip" ]; then
+		if [ -e "$Tool_SevenZip_bin" ]; then
+			if ! [[ -x "$Tool_SevenZip_bin" ]]; then
+				if ! chmod +x "$Tool_SevenZip_bin"; then _ABORT "chmod Tool_SevenZip_bin error"; fi
+			fi
+		else _ABORT "$Tool_SevenZip_bin not found"; fi
+	fi
+	
+	if [ "$Current_OS_Name_Full" == "Debian GNU/Linux 9 (stretch)" ]; then
+		_WARNING "OS bugs!" "Application menu does not work correctly in Debian 9! New shortcuts may not be displayed!"
+	fi
 	
 	# Проверка наличия архивов с файлами приложения
 	

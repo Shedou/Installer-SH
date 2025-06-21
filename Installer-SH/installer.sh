@@ -50,11 +50,11 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.4-Dev" # Application version
+AppVersion="2.4" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2025-05-xx"
+Info_Release_Date="2025-06-xx"
 Info_Category="Other"
 Info_Platform="Linux - Chimbalix 24.7, Debian 7/8/9/10/11/12." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"

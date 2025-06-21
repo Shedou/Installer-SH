@@ -33,8 +33,8 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="400e20c6cbafa9283808fe428c7a5269"
-	Archive_MD5_Hash_SystemFiles="09dea9250a5c113dc854bd840d2ca891"
+	Archive_MD5_Hash_ProgramFiles="24dbb13e9e80ef560c68a452c1d8a879"
+	Archive_MD5_Hash_SystemFiles="410e1bffae76a7d67fd7ea73445dd730"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
@@ -107,10 +107,13 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  ### ---------------------------------------------------------- ###
  ### Archive packaging parameters (installer.sh -arcpack / -ap) ###
  ### ---------------------------------------------------------- ###
- # Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
- # For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
-Dictionary_Size_Program_Files="64m"
-Dictionary_Size_System_Files="8m"
+ # Larger size - better compression and more RAM required for unpacking. (256 dictionary requires 256+ MB of RAM for unpacking)
+ # For applications 150-200 MiB in size, use a dictionary size of 32 - 128, it is not recommended to use a dictionary size greater than 256.
+Dictionary_Size_Program_Files="64"
+Dictionary_Size_System_Files="8"
+ 
+ ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7). ###
+Archive_Format="SZip" # "SZip" - 7-Zip (Debian 7+). "Tar" - tar.xz
 
 # Application installation directory. Don't touch it if you don't know why you need it!
 # If used incorrectly, it may lead to bad consequences!
@@ -123,6 +126,14 @@ Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_Bin_User="$HOMEDIR/.local/bin" # "$HOMEDIR/.local/bin" works starting from Chimbalix 24.4
 Install_Path_Bin_System="/usr/bin"
+
+if [ "$Archive_Format" == "Tar" ]; then
+	Archive_Program_Files="$Path_Installer_Data/program_files.tar.xz"
+	Archive_System_Files="$Path_Installer_Data/system_files.tar.xz"
+else
+	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
+	Archive_System_Files="$Path_Installer_Data/system_files.7z"
+fi
 }
 
 ######### -- ------------ -- #########
@@ -148,10 +159,8 @@ function _POST_INSTALL() { # -= (18) =-
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL"; read -r pause; fi
 }
 
-function _POST_INSTALL_UPDATE_MENU_OPENBOX() { if type "openbox" &> /dev/null; then openbox --restart &> /dev/null; fi; }
 function _POST_INSTALL_UPDATE_MENU_LXDE() { if type "lxpanelctl" &> /dev/null; then lxpanelctl restart &> /dev/null; fi; }
 function _POST_INSTALL_UPDATE_MENU_XFCE() { if type "xfce4-panel" &> /dev/null; then xfce4-panel -r &> /dev/null; fi; }
-
 function _POST_INSTALL_UPDATE_MENU_KDE() {
 	if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null
 	elif type "kbuildsycoca6" &> /dev/null; then kbuildsycoca6 &> /dev/null
@@ -236,9 +245,6 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
 	
-	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
-	Archive_System_Files="$Path_Installer_Data/system_files.7z"
-	
 	List_Errors=""    # _ERROR "Title" "Message."
 	List_Warnings=""  # _WARNING "Title" "Message."
 	
@@ -256,6 +262,7 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 # _INSTALLER_SETTINGS
 
 function _INIT_TOOLS() { # -= (3) =-
+	Tool_Tar="tar" # Альтернативный архиватор
 	Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
 	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
 }
@@ -268,24 +275,35 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	function _pack_archive() {
 		Name_File="$1"
 		DSize="$2"
-		if [ -e "$Tool_SevenZip_bin" ]; then
+		Name_File_Target="$(basename "$3")"
+		Name_File_Target_full="$3"
+		
+		if [ "$Archive_Format" == "SZip" ]; then
 			if [ -e "$Name_File" ]; then
-				if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
+				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "\n"
-				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize" -ms=1g -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
-				PackArcMD5=$(md5sum "$Name_File.7z" | awk '{print $1}')
-				if [ "$Name_File" == "$Program_Files" ]; then
-					sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
-				elif [ "$Name_File" == "$System_Files" ]; then
-					sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
-				fi
+				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize"m -ms=1g -mqs=on -mmt=3 "$Name_File_Target" "$Name_File/."
 			fi
-		else echo " 7-Zip binary not found, abort."
+		fi
+		
+		if [ "$Archive_Format" == "Tar" ]; then
+			if [ -e "$Name_File" ]; then
+				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.tar.xz" "$Name_File-old""_$RANDOM"".tar.xz"; fi
+				cd "$Name_File" || exit
+				tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- *
+			fi
+		fi
+		
+		PackArcMD5=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
+		if [ "$Name_File" == "$Program_Files" ]; then
+			sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+		elif [ "$Name_File" == "$System_Files" ]; then
+			sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 		fi
 	}
 	
-	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files"
-	_pack_archive "$System_Files" "$Dictionary_Size_System_Files"
+	_pack_archive "$Program_Files" "$Dictionary_Size_Program_Files" "$Archive_Program_Files"
+	_pack_archive "$System_Files" "$Dictionary_Size_System_Files" "$Archive_System_Files"
 	
 	echo -e "\n\n Pause..."
 	read -r pause; exit
@@ -366,6 +384,7 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	if [ "$Install_Mode" == "System" ]; then
 		if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'\n Do not use 'System' installation mode without 'sudo'..."; fi
 	fi
+	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
 	
 	if [ -z "$HOMEDIR" ]; then _ABORT "Variable HOME not found"; fi
 }
@@ -592,8 +611,9 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	else _ABORT "$Tool_SevenZip_bin not found"; fi
 	
 	# Проверка наличия архивов с файлами приложения
-	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/program_files.7z\" not found."; fi
-	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "File \"installer-data/system_files.7z\" not found."; fi
+	
+	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"program_files.\" not found.\n $Archive_Program_Files"; fi
+	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"system_files\" not found.\n $Archive_System_Files"; fi
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
 	
@@ -1104,8 +1124,15 @@ function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно испо�
 	
 	_CREATE_TEMP
 	
-	if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
-		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
+	if [ "$Archive_Format" == "SZip" ]; then
+		if ! "$Tool_SevenZip_bin" x "$Archive_System_Files" -o"$Temp_Dir/" &> /dev/null; then
+			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
+	fi
+	
+	if [ "$Archive_Format" == "Tar" ]; then
+		if ! "$Tool_Tar" -xf "$Archive_System_Files" -C "$Temp_Dir"; then
+			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
+	fi
 	
 	for file in "$Temp_Dir"/*; do
 		_PREPARE_INPUT_FILES_GREP "PATH_TO_FOLDER" "$Output_Install_Dir"
@@ -1237,7 +1264,7 @@ function _INSTALL_DESKTOP_ICONS() { # Здесь можно использова
 ######### Install application (USER MODE) #########
 
 function _INSTALL_APP_USER() { # Здесь можно использовать локализацию
-	
+	Unpack_Error_Code=""
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -1252,7 +1279,19 @@ $Header
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	
-	if ! "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+	if [ "$Archive_Format" == "SZip" ]; then
+		if ! "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+			Unpack_Error_Code="error"
+		fi
+	fi
+	
+	if [ "$Archive_Format" == "Tar" ]; then
+		if ! "$Tool_Tar" -xf "$Archive_Program_Files" -C "$Output_Install_Dir"; then
+			Unpack_Error_Code="error"
+		fi
+	fi
+	
+	if [ "$Unpack_Error_Code" == "error" ]; then
 		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
 		echo " $Str_INSTALLAPP_Unpack_Err2"
 		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
@@ -1289,7 +1328,7 @@ $Header
 ######### Install application (SYSTEM MODE) #########
 
 function _INSTALL_APP_SYSTEM() { # Здесь можно использовать локализацию
-	
+	Unpack_Error_Code=""
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -1304,13 +1343,24 @@ $Header
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	
-	if ! sudo "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+	if [ "$Archive_Format" == "SZip" ]; then
+		if ! sudo "$Tool_SevenZip_bin" x -snld -aoa "$Archive_Program_Files" -o"$Output_Install_Dir/" &> /dev/null; then
+			Unpack_Error_Code="error"
+		fi
+	fi
+	
+	if [ "$Archive_Format" == "Tar" ]; then
+		if ! sudo "$Tool_Tar" -xf "$Archive_Program_Files" -C "$Output_Install_Dir"; then
+			Unpack_Error_Code="error"
+		fi
+	fi
+	
+	if [ "$Unpack_Error_Code" == "error" ]; then
 		echo -e "\n $Str_ATTENTION $Str_INSTALLAPP_Unpack_Err"
 		echo " $Str_INSTALLAPP_Unpack_Err2"
 		echo -e "\n $Str_INSTALLAPP_Unpack_Err_Continue"
-		
-		read -r confirm_error_unpacking
-		if [ "$confirm_error_unpacking" == "y" ] || [ "$confirm_error_unpacking" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
+		read -r confirm_unpack
+		if [ "$confirm_unpack" == "y" ] || [ "$confirm_unpack" == "yes" ]; then echo "  $Str_INSTALLAPP_Unpack_Continue"
 		else _ABORT "$Str_ERROR! ${Font_Bold}${Font_Yellow}$Str_INSTALLAPP_Unpack_Err_Abort${Font_Reset_Color}${Font_Reset}"; fi
 	fi
 	

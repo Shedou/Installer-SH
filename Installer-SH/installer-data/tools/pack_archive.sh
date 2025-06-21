@@ -1,34 +1,32 @@
 #!/usr/bin/env bash
 # This Script part of "Installer-SH"
 
-# Larger size - better compression and more RAM required for unpacking. (256m dictionary requires 256+ MB of RAM for unpacking)
-# For applications 150-200 MiB in size, use a dictionary size of 32 - 128m, it is not recommended to use a dictionary size greater than 256m.
-Dictionary_Size_Base_Data="2m"
+Dictionary_Size_Base_Data="8"
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
-Spacer="\n ===========================================\n ===========================================\n ==========================================="
 
 Szip_bin="$Path_To_Script/7zip/7zzs"
 MD5_File="$Path_To_Script/MD5-Hash.txt"
 
 Base_Data="$Path_To_Script/base_data"
+Base_Data_Archive="$Path_To_Script/base_data.tar.xz"
 
 function _pack_archive() {
 	Name_File="$1"
 	DSize="$2"
-	if [ -e "$Szip_bin" ]; then
-		if [ -e "$Name_File" ]; then
-			if [ -e "$Name_File.7z" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM""_$RANDOM"".7z"; fi
-			echo -e "$Spacer"
-			"$Szip_bin" a -snl -mx6 -m0=LZMA2:d$DSize -ms=8m -mqs=on -mmt=3 "$Name_File.7z" "$Name_File/."
-			MD5_DATA=`md5sum "$Name_File.7z" | awk '{print $1}'`
-			echo "$(basename $Name_File.7z): $MD5_DATA" >> "$MD5_File"
-		fi
-	else echo " 7-Zip binary not found, abort."
+	Name_File_Target="$(basename "$3")"
+	Name_File_Target_full="$3"
+	
+	if [ -e "$Name_File" ]; then
+		if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.tar.xz" "$Name_File-old""_$RANDOM"".tar.xz"; fi
+		cd "$Name_File" || exit
+		tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- *
 	fi
+	MD5_DATA=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
+	echo "$(basename "$Name_File_Target_full"): $MD5_DATA" >> "$MD5_File"
 }
 
-_pack_archive "$Base_Data" "$Dictionary_Size_Base_Data"
+_pack_archive "$Base_Data" "$Dictionary_Size_Base_Data" "$Base_Data_Archive"
 
 echo -e "$Spacer"
 echo -e "\n Pause..."

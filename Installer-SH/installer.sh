@@ -290,7 +290,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.tar.xz" "$Name_File-old""_$RANDOM"".tar.xz"; fi
 				cd "$Name_File" || exit
-				tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- *
+				tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- * && echo -e "\nOK" || echo -e "\n BAD, Try with simple tar command..."; tar -cJf ../"$Name_File_Target" -- *
 			fi
 		fi
 		
@@ -644,8 +644,8 @@ function _BASE_MAIN() {
 	Base_Temp_Dir="/tmp/chimbalix-portsoft-menu-prepare""_$RANDOM""_$RANDOM" # TEMP Directory
 	
 	######### - Archive path - #########
-	Archive_Base_Data="$Path_Installer_Data/tools/base_data.7z"
-	Archive_Base_Data_MD5="4b83f6eb8cb4c1b187df681e300cddbd"
+	Archive_Base_Data="$Path_Installer_Data/tools/base_data.tar.xz"
+	Archive_Base_Data_MD5="2a0c85abbb43e93e326748485a436f70"
 	
 	_BASE_PRINT_INFO
 	_BASE_CHECK_MD5
@@ -733,9 +733,7 @@ function _BASE_PREPARE_INPUT_FILES_GREP() {
 }
 
 function _BASE_PREPARE_FILES() {
-	if ! [[ -x "$Tool_SevenZip_bin" ]]; then chmod +x "$Tool_SevenZip_bin"; fi
-	
-	if ! "$Tool_SevenZip_bin" x "$Archive_Base_Data" -o"$Base_Temp_Dir/" &> /dev/null; then
+	if ! tar -xf "$Archive_Base_Data" -C "$Base_Temp_Dir" &> /dev/null; then
 		_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_BASE_PREPARE_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"
 	fi
 	

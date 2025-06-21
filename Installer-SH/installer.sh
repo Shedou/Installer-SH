@@ -280,7 +280,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		
 		if [ "$Archive_Format" == "SZip" ]; then
 			if [ -e "$Name_File" ]; then
-				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.7z" "$Name_File-old""_$RANDOM"".7z"; fi
+				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".7z"; fi
 				echo -e "\n"
 				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize"m -ms=1g -mqs=on -mmt=3 "$Name_File_Target" "$Name_File/."
 			fi
@@ -288,7 +288,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		
 		if [ "$Archive_Format" == "Tar" ]; then
 			if [ -e "$Name_File" ]; then
-				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.tar.xz" "$Name_File-old""_$RANDOM"".tar.xz"; fi
+				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".tar.xz"; fi
 				cd "$Name_File" || exit
 				tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- * && echo -e "\nOK" || echo -e "\n BAD, Try with simple tar command..."; tar -cJf ../"$Name_File_Target" -- *
 			fi

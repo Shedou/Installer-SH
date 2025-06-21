@@ -1459,7 +1459,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_BASEINFO_Head="Installing basic components:"
 	Str_BASEINFO_Warning="Attention! Your system requires preparation, the following basic components must be installed:"
 	Str_BASEINFO_PortSoft="PortSoft directory:"
-	Str_BASEINFO_PortSoft_Full="Basic directory for placing programs, developed for the Chimbalix distribution."
+	Str_BASEINFO_PortSoft_Full="Basic directory for placing programs."
 	Str_BASEINFO_MenuApps="Stable \"Applications\" menu category:"
 	Str_BASEINFO_MenuApps_Full="Stable \"Applications\" category in the menu for placing shortcuts to installed programs."
 	Str_BASEINFO_Attention="Attention! The components will be installed according to the current installation mode.\n  AFTER CONFIRMATION, THIS ACTION CANNOT BE CANCELLED!\n  For proper operation, your distribution must support the XDG standard!\n  The menu must also support subcategories!\n  You may also need to Log Out to refresh the menu after installation."

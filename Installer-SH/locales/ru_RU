@@ -38,6 +38,8 @@ Str_BASECHECKMD5PRINT_Hash_Not_Match2="Файлы могли быть скопи
 Str_BASECHECKMD5PRINT_Expected_bHash="Ожидаемый MD5 хэш \"Base Data\":"
 Str_BASECHECKMD5PRINT_Real_bHash="Реальный MD5 хэш \"Base Data\":"
 
+Str_CHECKLAST_BUI_DebianStretch="Меню приложений работает некорректно в Debian 9!\n Новые ярлыки могут не отображаться!"
+
 Str_PACKAGEINFO_Head="Информация о ПО:"
 Str_PACKAGEINFO_Name="Имя:"
 Str_PACKAGEINFO_ReleaseDate="Дата Выпуска:"

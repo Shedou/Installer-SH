@@ -607,7 +607,7 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	fi
 	
 	if [ "$Current_OS_Name_Full" == "Debian GNU/Linux 9 (stretch)" ]; then
-		_WARNING "OS bugs!" "Application menu does not work correctly in Debian 9!\n   New shortcuts may not be displayed!"
+		_WARNING "OS bugs!" "$Str_CHECKLAST_BUI_DebianStretch"
 	fi
 	
 	# Проверка наличия архивов с файлами приложения
@@ -615,7 +615,7 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"program_files.\" not found.\n $Archive_Program_Files"; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"system_files\" not found.\n $Archive_System_Files"; fi
 	
-	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!"; fi
+	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!\n  $Temp_Dir"; fi
 	
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
 	
@@ -1312,12 +1312,9 @@ $Header
 	cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
 	
 	# Install Helpers
-	if [ "$Install_Helpers" == "true" ]; then
-		_INSTALL_HELPERS; fi
-	
+	if [ "$Install_Helpers" == "true" ]; then _INSTALL_HELPERS; fi
 	# Install Desktop files
-	if [ "$Install_Desktop_Icons" == "true" ]; then
-		_INSTALL_DESKTOP_ICONS; fi
+	if [ "$Install_Desktop_Icons" == "true" ]; then _INSTALL_DESKTOP_ICONS; fi
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_INSTALL_APP"; read -r pause; fi
 }
@@ -1469,6 +1466,8 @@ function _SET_LOCALE_DEFAULT() {
 	Str_BASECHECKMD5PRINT_Hash_Not_Match2="The files may have been copied with errors or modified! Be careful!"
 	Str_BASECHECKMD5PRINT_Expected_bHash="Expected MD5 hash of \"Base Data\":"
 	Str_BASECHECKMD5PRINT_Real_bHash="Real MD5 hash of \"Base Data\":"
+	
+	Str_CHECKLAST_BUI_DebianStretch="Application menu does not work correctly in Debian 9!\n   New shortcuts may not be displayed!"
 	
 	Str_PACKAGEINFO_Head="Software Info:"
 	Str_PACKAGEINFO_Name="Name:"

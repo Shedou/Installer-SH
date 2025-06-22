@@ -47,6 +47,9 @@ fi
 if [[ "$exit_code" != "0" ]]; then
 	StringMessage="bash -c 'echo \"-\"; echo \"$Executable\"; echo \"-\"; echo \"WARNING! EXIT CODE - $exit_code\"; echo \"The program has terminated incorrectly!\"; echo \"Is the program incompatible with the current OS?\"; echo \"Does the program contain errors?\"; read pause'"
 	
+	export PATH="/bin:/usr/bin:$PATH"
+	export LD_LIBRARY_PATH=""
+	
 	terminal_executable="x-terminal-emulator"
 	if ! type "x-terminal-emulator" &> /dev/null; then
 		if type "xfce4-terminal" &> /dev/null; then terminal_executable="xfce4-terminal"

@@ -25,7 +25,7 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="6375fac304890c50d21c8b32293ab232"
+	Archive_MD5_Hash_ProgramFiles="bdb3f03176ec0fa0de63aed288ef2bfc"
 	Archive_MD5_Hash_SystemFiles="8d62cb830196df9bf706b94b60e2dce6"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86

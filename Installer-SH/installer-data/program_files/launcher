@@ -27,13 +27,16 @@ if [ "$MoveConfigsDir" == "true" ]; then
 	export XDG_CONFIG_HOME="$HOMECONFIGS/.config"
 	export XDG_CACHE_HOME="$HOMECONFIGS/.cache"
 fi
+UseExtraLibs="false"
+if [ "$UseExtraLibs" == "true" ]; then
+	if [ -z "$LD_LIBRARY_PATH" ]; then
+		export LD_LIBRARY_PATH="$ExtraLibsFolder"
+	else
+		export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
+	fi
+fi
 
 export PATH="$PATH:$ExecutableFolder" # Use ":" for separation
-if [ -z "$LD_LIBRARY_PATH" ]; then
-	export LD_LIBRARY_PATH="$ExtraLibsFolder"
-else
-	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
-fi
 
 if [ -e "$Executable" ]; then
 	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi

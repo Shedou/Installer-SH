@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.4"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.5-Dev"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 HOMEDIR="$HOME"
 
@@ -25,7 +25,7 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="bdb3f03176ec0fa0de63aed288ef2bfc"
+	Archive_MD5_Hash_ProgramFiles="40582c0c9969c9a8f0a113619cf49d49"
 	Archive_MD5_Hash_SystemFiles="8d62cb830196df9bf706b94b60e2dce6"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
@@ -50,11 +50,11 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.4" # Application version
+AppVersion="2.5-Dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2025-06-xx"
+Info_Release_Date="2025-xx-xx"
 Info_Category="Other"
 Info_Platform="Linux - Chimbalix 24.7, Debian 7/8/9/10/11/12." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
@@ -92,7 +92,7 @@ Program_Uninstaller_Icon="/icons/ish-software-uninstaller-icon.png"    #=> PROGR
 Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
  # -=== Chimbalix 24.4+ main categories:
  # Check the "Menu-Categories.ods" table for more information
- # (will be removed when using the -clean / -cn option).
+ # (file will be removed when using the -clean / -cn option).
 
 
 
@@ -144,7 +144,7 @@ fi
 ######### Post Install (LAST STAGE) #########
 
 function _POST_INSTALL() { # -= (18) =-
-	if [ "$Update_Menu" == "true" ]; then _UPDATE_MENU;	fi
+	if [ "$MODE_NOUPDATE_MENU" == "false" ] && [ "$Update_Menu" == "true" ]; then _UPDATE_MENU; fi
 	
 	# Exit
 	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
@@ -196,7 +196,7 @@ function _HELP() { # Здесь НЕЛЬЗЯ использовать локал
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
 	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fm" ]]; then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
-	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]]; then Update_Menu="false"; fi
+	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]]; then MODE_NOUPDATE_MENU="true"; fi
 	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dg" ]];     then MODE_DEBUG="true"; fi
 	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-st" ]];    then MODE_SILENT="true"; fi
 	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-ap" ]];   then MODE_ARCPACK="true"; fi
@@ -229,6 +229,7 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 		source "$HOMEDIR/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
 	MODE_DEBUG="false"
+	MODE_NOUPDATE_MENU="false"
 	MODE_SILENT="false"
 	MODE_CLEAN="false"
 	MODE_TARPACK="false"

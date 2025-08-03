@@ -39,7 +39,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
-	Unique_App_Folder_Name="installer-sh-24" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-25" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
@@ -56,7 +56,7 @@ Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
 Info_Release_Date="2025-xx-xx"
 Info_Category="Other"
-Info_Platform="Linux - Chimbalix 24.7, Debian 7/8/9/10/11/12." # You need to specify the compatibility of the program, not the installation package.
+Info_Platform="Linux - Chimbalix 24.7, Debian 7-12, Fedora 20-42." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:

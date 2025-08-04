@@ -334,12 +334,20 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
 		_CLEAN_FILE "$Path_To_Script/Menu-Categories.ods"
+		_CLEAN_FILE "$Path_To_Script/for-tests-in-VM-batch-install.sh"
+		_CLEAN_FILE "$Path_To_Script/for-tests-in-VM-create-PortSoft-in-RAM.sh"
 		_CLEAN_FILE "$Path_Installer_Data/program_files"
 		_CLEAN_FILE "$Path_Installer_Data/system_files"
-		_CLEAN_FILE "$Path_Installer_Data/pack_archives.sh"
 		_CLEAN_FILE "$Path_Installer_Data/tools/MD5-Hash.txt"
 		_CLEAN_FILE "$Path_Installer_Data/tools/pack_archive.sh"
 		_CLEAN_FILE "$Path_Installer_Data/tools/base_data"
+		
+		if [ "$Tools_Architecture" == "x86_64" ]; then
+			_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+		elif [ "$Tools_Architecture" == "x86" ]; then
+			_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+		fi
+		
 		echo -e "\n Complete..."
 		read -r pause
 		if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK

@@ -4,6 +4,9 @@
 	<Menu><!-- Applications -->
 		<Name>apps</Name>
 		<Directory>apps/apps.directory</Directory>
-		<Include><Category>apps</Category></Include>
+		<Include>
+			<Category>apps</Category>
+			<Category>crutch-for-broken-linuxes</Category>
+		</Include>
 	</Menu>
 </Menu>

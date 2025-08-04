@@ -25,7 +25,7 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="40582c0c9969c9a8f0a113619cf49d49"
+	Archive_MD5_Hash_ProgramFiles="0f735efb6fbfd381ce285cacdca62791"
 	Archive_MD5_Hash_SystemFiles="8d62cb830196df9bf706b94b60e2dce6"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
@@ -646,7 +646,7 @@ function _BASE_MAIN() {
 	
 	######### - Archive path - #########
 	Archive_Base_Data="$Path_Installer_Data/tools/base_data.tar.xz"
-	Archive_Base_Data_MD5="2a0c85abbb43e93e326748485a436f70"
+	Archive_Base_Data_MD5="63cbfcaee56af6bdc1f67942831cc930"
 	
 	_BASE_PRINT_INFO
 	_BASE_CHECK_MD5
@@ -748,6 +748,7 @@ function _BASE_INSTALL_SYSTEM() {
 	
 	sudo cp -rf "$Base_Temp_Dir/desktop-directories/apps/". "$Output_Menu_DDir"
 	sudo cp -rf "$Base_Temp_Dir/menus/applications-merged/". "$Output_Menu_Files"
+	sudo cp -rf "$Base_Temp_Dir/applications/". "$Output_Menu_Apps"
 	
 	if [ ! -e "$Install_Path_System" ]; then sudo mkdir -p "$Install_Path_System"; fi
 	sudo cp -rf "$Base_Temp_Dir/portsoft/". "$Install_Path_System"
@@ -760,6 +761,7 @@ function _BASE_INSTALL_USER() {
 	
 	cp -rf "$Base_Temp_Dir/desktop-directories/apps/". "$Output_Menu_DDir"
 	cp -rf "$Base_Temp_Dir/menus/applications-merged/". "$Output_Menu_Files"
+	cp -rf "$Base_Temp_Dir/applications/". "$Output_Menu_Apps"
 	
 	if [ ! -e "$Install_Path_User" ]; then mkdir -p "$Install_Path_User"; fi
 	cp -rf "$Base_Temp_Dir/portsoft/". "$Install_Path_User"

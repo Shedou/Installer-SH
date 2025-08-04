@@ -1,0 +1,45 @@
+[Desktop Entry]
+# -= APPLICATION =- #
+Type=Application
+Version=1.0
+Encoding=UTF-8
+#OnlyShowIn=
+#NotShowIn=
+NoDisplay=false
+Hidden=false
+
+Name=-
+Comment=
+GenericName=
+
+Icon=BASE_PATH_TO_SHARE_DDIR/apps.png
+Exec=bash -c 'echo -e "This is a crutch for broken Linux distributions like Debian 9 and Fedora 24.\nWithout this crutch, this menu may not appear on broken Linux distributions."; read pause;'
+TryExec=
+Path=
+#StartupWMClass=
+
+Terminal=true
+StartupNotify=false
+
+Categories=crutch-for-broken-linuxes
+#Keywords=
+#MimeType=
+
+# - Translations:
+# FOR TRANSLATORS! Please! Do not translate the app NAME, such as "FeatherPad".
+#Name[ru]=
+#GenericName[ru]=
+#Comment[ru]=
+
+# - ------------- - #
+# - Actions Begin - #
+
+#Actions=OpenFolder;
+
+#[Desktop Action OpenFolder]
+#Name=Open folder
+#Name[ru]=Открыть каталог
+#Exec=PATH_TO_FOLDER/open-folder
+
+# -  Actions End  - #
+# - ------------- - #

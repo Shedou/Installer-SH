@@ -175,33 +175,38 @@ function _UPDATE_MENU() {
 ######### BEFORE FIRST DEPENDENCY CHECK #########
 
 function _HELP() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
-	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString\n"
-	echo -e " -silent    -st - Silent installation mode."
-	echo -e "                 Requires confirmation only in case of errors and conflicts.\n"
-	echo -e " -noupdmenu -nm - Disables automatic menu update after installation."
-	echo -e "                 Recommended for use when batch installing"
-	echo -e "                 multiple applications in \"-silent\" mode.\n"
-	echo -e " -forcemenu -fm - Only refresh menu. Recommended to use after installing"
-	echo -e "                 many applications in \"-silent\" mode."
-	echo -e "                 Works if the working environment is supported.\n"
-	echo -e " -arcpack   -ap - Pack \"program_files\" and \"system_files\" into archives."
-	echo -e " -clean     -cn - Delete unnecessary files in the package directory."
-	echo -e "                 Please make sure that the package is built and ready for use,"
-	echo -e "                 this cannot be undone!\n"
-	echo -e " -tarpack   -tp - Pack the current installation package into a tar archive.\n"
-	echo -e " -debug     -dg - Debug mode, for development purposes only."
+	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString
+-updatebase -ub - Update base menu files and PortSoft to the latest version.
+-update     -up - Program update mode, warnings about overwriting existing files
+                   will not be displayed!
+-silent     -st - Silent installation mode.
+                   Requires confirmation only in case of errors and conflicts.
+-noupdmenu  -nm - Disables automatic menu update after installation.
+                   Recommended for use when batch installing
+                   multiple applications in \"-silent\" mode.
+-forcemenu  -fm - Only refresh menu. Recommended to use after installing
+                   many applications in \"-silent\" mode.
+                   Works if the working environment is supported.
+-arcpack    -ap - Pack \"program_files\" and \"system_files\" into archives.
+-clean      -cn - Delete unnecessary files in the package directory.
+                   Please make sure that the package is built and ready for use,
+                   this cannot be undone!
+-tarpack    -tp - Pack the current installation package into a tar archive.
+-debug      -dg - Debug mode, for development purposes only."
 	exit;
 }
 
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
-	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fm" ]]; then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
-	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]]; then MODE_NOUPDATE_MENU="true"; fi
-	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dg" ]];     then MODE_DEBUG="true"; fi
-	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-st" ]];    then MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-ap" ]];   then MODE_ARCPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cn" ]];     then MODE_CLEAN="true"; fi
-	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];   then MODE_TARPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fm" ]];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]];  then MODE_NOUPDATE_MENU="true"; fi
+	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dg" ]];      then MODE_DEBUG="true"; fi
+	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-st" ]];     then MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-ap" ]];    then MODE_ARCPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cn" ]];      then MODE_CLEAN="true"; fi
+	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];    then MODE_TARPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-updatebase" ]] || [[ "$ArgumentsString" =~ "-ub" ]]; then MODE_UPDATEBASE="true"; fi
+	if [[ "$ArgumentsString" =~ "-update" ]] || [[ "$ArgumentsString" =~ "-up" ]];     then MODE_UPDATE="true"; fi
 }
 
 function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
@@ -234,6 +239,8 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	MODE_CLEAN="false"
 	MODE_TARPACK="false"
 	MODE_ARCPACK="false"
+	MODE_UPDATEBASE="false"
+	MODE_UPDATE="false"
 	
 	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
@@ -629,7 +636,7 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
 	
 	# Check PortSoft
-	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
+	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ] || [ "$MODE_UPDATEBASE" == "true" ]; then
 		_BASE_MAIN
 		if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
 	fi
@@ -654,7 +661,7 @@ function _BASE_MAIN() {
 	
 	######### - Archive path - #########
 	Archive_Base_Data="$Path_Installer_Data/tools/base_data.tar.xz"
-	Archive_Base_Data_MD5="63cbfcaee56af6bdc1f67942831cc930"
+	Archive_Base_Data_MD5="d8241c9a646b80a1d63cbde97369bb26"
 	
 	_BASE_PRINT_INFO
 	_BASE_CHECK_MD5
@@ -680,6 +687,7 @@ $Base_Header
   
  -${Font_Bold}${Font_Yellow}$Str_BASEINFO_MenuApps${Font_Reset_Color}${Font_Reset}
    $Str_BASEINFO_MenuApps_Full
+     $Output_Menu_Apps/crutch-for-broken-linuxes.desktop
      $Output_Menu_Files/apps.menu
      $Output_Menu_DDir/apps.directory
      $Output_Menu_DDir/apps.png
@@ -1209,7 +1217,7 @@ function _CHECK_OUTPUTS() { # -= (15) =- # Здесь можно использ�
 		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
 	done
 	
-	if [ "$check_outputs_error" == "true" ]; then
+	if [ "$check_outputs_error" == "true" ] && [ "$MODE_UPDATE" == "false" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
 $Header

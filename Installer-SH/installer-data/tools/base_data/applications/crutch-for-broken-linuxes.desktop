@@ -8,17 +8,17 @@ Encoding=UTF-8
 NoDisplay=false
 Hidden=false
 
-Name=-
-Comment=
+Name=Applications
+Comment=Open the PortSoft applications directory (in the home directory)
 GenericName=
 
 Icon=BASE_PATH_TO_SHARE_DDIR/apps.png
-Exec=bash -c 'echo -e "This is a crutch for broken Linux distributions like Debian 9 and Fedora 24.\nWithout this crutch, this menu may not appear on broken Linux distributions."; read pause;'
+Exec=bash -c 'HPDIR="$HOME/portsoft"; if type thunar &> /dev/null; then thunar "$HPDIR"; elif type dolphin &> /dev/null; then dolphin "$HPDIR"; elif type nautilus &> /dev/null; then nautilus "$HPDIR"; elif type pcmanfm &> /dev/null; then pcmanfm "$HPDIR"; elif type pcmanfm-qt &> /dev/null; then pcmanfm-qt "$HPDIR"; elif type nemo &> /dev/null; then nemo "$HPDIR"; elif type caja &> /dev/null; then caja "$HPDIR"; fi'
 TryExec=
 Path=
 #StartupWMClass=
 
-Terminal=true
+Terminal=false
 StartupNotify=false
 
 Categories=crutch-for-broken-linuxes

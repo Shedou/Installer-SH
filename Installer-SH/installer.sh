@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.5-Dev"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.5"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 HOMEDIR="$HOME"
 
@@ -50,13 +50,13 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.5-Dev" # Application version
+AppVersion="2.5" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
 Info_Release_Date="2025-xx-xx"
 Info_Category="Other"
-Info_Platform="Linux - Chimbalix 24.7, Debian 7-12, Fedora 20-42." # You need to specify the compatibility of the program, not the installation package.
+Info_Platform="Linux - Chimbalix 24, Debian 7-12, Fedora 20-42." # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:

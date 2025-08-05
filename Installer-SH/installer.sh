@@ -176,7 +176,7 @@ function _UPDATE_MENU() {
 
 function _HELP() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString
--updatebase -ub - Update base menu files and PortSoft to the latest version.
+-updatebase -ub - Update base menu files and PortSoft (ISH version $ScriptVersion).
 -update     -up - Program update mode, warnings about overwriting existing files
                    will not be displayed!
 -silent     -st - Silent installation mode.

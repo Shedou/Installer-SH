@@ -563,7 +563,9 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	### Do not edit variables here! ###
 	### --------------------------- ###
 	
-	Temp_Dir="/tmp/installer-sh/$Unique_App_Folder_Name""_$RANDOM""_$RANDOM" # TEMP Directory
+	Temp_DirISH="/tmp/installer-sh"
+	Temp_Dir="$Temp_DirISH/$Unique_App_Folder_Name""_$RANDOM""_$RANDOM" # TEMP Directory
+	Temp_Test="/tmp/installer-sh"
 	
 	Input_Bin_Dir="$Temp_Dir/bin"
 	Input_Helpers_Dir="$Temp_Dir/xfce4/helpers"
@@ -582,8 +584,6 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	Out_System_Menu_Files="/etc/xdg/menus/applications-merged"
 	Out_System_Menu_DDir="/usr/share/desktop-directories/apps"
 	Out_System_Menu_Apps="/usr/share/applications/apps"
-	
-	Temp_Test="/tmp/installer-sh"
 	
 	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
 	Out_App_Folder_Permissions=755  # Only for "System" mode.
@@ -853,7 +853,12 @@ function _CREATE_TEMP() { # Здесь нежелательно использо
 		_CLEAR_TEMP
 		create_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
 		if [ "$create_temp_test" == "$Temp_Test" ]; then
+			if [ ! -e "$Temp_DirISH" ]; then
+				if ! mkdir -p "$Temp_DirISH"; then _ABORT "Error Creating temporary directory...\n   ($Temp_DirISH)"; fi
+				chmod 777 "$Temp_DirISH"
+			fi
 			if ! mkdir -p "$Temp_Dir"; then _ABORT "Error Creating temporary directory...\n   ($Temp_Dir)"; fi
+			chmod 700 "$Temp_Dir"
 		else _ABORT "$create_temp_test != $Temp_Test"; fi
 	else _ABORT "_CREATE_TEMP: Temp_Dir variable not found"; fi
 }

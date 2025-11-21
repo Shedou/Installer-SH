@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.5"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.6dev"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 HOMEDIR="$HOME"
 
@@ -13,7 +13,7 @@ function _MAIN() {
 	_CHECK_SYSTEM_DE; _INIT_GLOBAL_PATHS # -= (8,9) =-
 		_IMPORTANT_CHECK_LAST # -= (10) =- # Last important check before UI
 	_PRINT_PACKAGE_INFO; _CHECK_MD5 # -= (11,12) =-
-	_PRINT_INSTALL_SETTINGS # -= (13) =- # Last confirm stage
+	_INSTALL_CONFIG_MODE; _INSTALL_CONFIG_CFG; _PRINT_INSTALL_SETTINGS # -= (13,13.1,13.2) =- # Last confirm stage
 	_PREPARE_INPUT_FILES; _CHECK_OUTPUTS # -= (14,15) =-
 	_INSTALL_APPLICATION; _PREPARE_UNINSTALLER # -= (16,17) =-
 	_POST_INSTALL # -= (18) =-
@@ -39,7 +39,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
-	Unique_App_Folder_Name="installer-sh-25" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-26dev" #=> UNIQUE_APP_FOLDER_NAME
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
@@ -50,7 +50,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 ######### - Package Information - #########
 ######### - ------------------- - #########
 
-AppVersion="2.5" # Application version
+AppVersion="2.6 dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
@@ -1067,10 +1067,92 @@ function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывес
 	fi
 }
 
+######### -------------------------- #########
+######### Installation configuration #########
+
+function _INSTALL_CONFIG_MODE() { # -= (13) =- # Здесь можно использовать локализацию
+if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
+else
+	_CLEAR_BACKGROUND
+	
+	echo -e "\
+$Header
+ ${Font_Bold}${Font_Cyan}В каком режиме установить программу?${Font_Reset_Color}${Font_Reset}
+
+ -${Font_Bold} Текущий режим:${Font_Green} User / ${Font_Yellow}System${Font_Reset_Color}${Font_Reset}
+   ПУТЬ_К_КАТАЛОГУ
+
+ -${Font_Bold}${Font_Green} Описание режима User (рекомендуемый):${Font_Reset_Color}${Font_Reset}
+   Устанавливливает программу в домашний каталог PortSoft.
+   + Root права для установки не нужны.
+   + Программа устанавливается только для текущего пользователя.
+
+ -${Font_Bold}${Font_Yellow} Описание режима System:${Font_Reset_Color}${Font_Reset}
+   Устанавливает программу в системный каталог PortSoft (/portsoft).
+   + Программа устанавливается для всех пользователей системы.
+   - Нужны root права."
+
+	echo -e "
+
+ Нажмите Enter чтобы продолжить в текущем режиме (настроен создателем пакета).
+ Введите \"${Font_Green}y${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - System${Font_Reset_Color})."
+	
+	read -r install_config_confirm_s
+	if [ "$install_config_confirm_s" == "y" ]; then
+		echo " Установки режима Домашний каталог пользователя"
+		read -r pause
+	fi
+
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
+fi
+}
+
+function _INSTALL_CONFIG_CFG() { # -= (13.1) =- # Здесь можно использовать локализацию
+if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
+else
+	_CLEAR_BACKGROUND
+	
+	echo -e "\
+$Header
+ ${Font_Bold}${Font_Cyan}Где разместить файлы конфиурации?${Font_Reset_Color}${Font_Reset}
+
+ -${Font_Bold} Текущий режим:${Font_Green} Рядом с программой / ${Font_Yellow}Домашний каталог пользователя${Font_Reset_Color}${Font_Reset}
+   ПУТЬ_К_ДОМАШНЕМУ_КАТАЛОГУ_ДЛЯ_КОНФИГОВ
+
+ -${Font_Bold}${Font_Green} Описание режима Рядом с программой (рекомендуемый):${Font_Reset_Color}${Font_Reset}
+   Файлы конфигурации и \"продукты жизнедеятельности\" программы размещаются в специально отведённом каталоге рядом с программой.
+   Некоторые программы невозможно полноценно установить без данной функции.
+   + Решает проблему конфликта файлов конфигурации при установке разных версий одной программы.
+   + Решает проблему накопления мусора в домашнем каталоге пользователя.
+   + Позволяет создать резервную копию программы вместе с настройками.
+   ~ Если программа способна запускать другие программы в системе, они так же будут использовать выделенный домашний каталог родительской программы для хранения файлов конфигурации, за исключением программ в формате Installer-SH использующих собственные выделенные каталоги.
+
+ -${Font_Bold}${Font_Yellow} Описание режима Домашний каталог пользователя (не рекомендуется):${Font_Reset_Color}${Font_Reset}
+   Используется домашний каталог пользователя для размещения файлов конфигурации и \"продуктов изнедеятельности\" программы.
+   - При установке нескольких версий одной программы может произойти конфликт файлов конфигурации.
+   - Домашний каталог пользователя со временем превращается в мусорный полигон.
+   - Невозможно легко получить доступ к файлам конфигурации конкретной программы.
+   ~ Так работает большинство программ в среде Linux."
+
+	echo -e "
+
+ Нажмите Enter чтобы продолжить в рекомендуемом режиме (файлы конфигурации рядом с программой).
+ Введите \"${Font_Green}y${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}y - Рядом с программой${Font_Reset_Color} | ${Font_Yellow}s - Домашний каталог${Font_Reset_Color})."
+	
+	read -r install_config_confirm_c
+	if [ "$install_config_confirm_c" == "y" ] || [ "$install_config_confirm_c" == "yes" ]; then
+		echo " Установки режима Домашний каталог пользователя"
+		read -r pause
+	fi
+
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
+fi
+}
+
 ######### --------------------------- #########
 ######### Print installation settings #########
 
-function _PRINT_INSTALL_SETTINGS() { # -= (13) =- # Здесь можно использовать локализацию
+function _PRINT_INSTALL_SETTINGS() { # -= (13.2) =- # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND

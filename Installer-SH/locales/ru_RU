@@ -1,6 +1,6 @@
 # Locale file for Installer-SH
 
-Locale_Version="2.3"
+Locale_Version="2.4"
 Current_Locale="RU Русский"
 
 # Localization:
@@ -70,13 +70,12 @@ Str_CHECKMD5_Head="Проверка целостности архивов:"
 Str_CHECKMD5_Sub_Head="Проверка целостности установочных архивов, пожалуйста, подождите..."
 Str_CHECKMD5_Sub_Head2="(это может занять некоторое время, если приложение большое)"
 
-Str_PRINTINSTALLSETTINGS_Head="Параметры установки"
+Str_PRINTINSTALLSETTINGS_Head="Параметры установки:"
 Str_PRINTINSTALLSETTINGS_Temp_Dir="Временный каталог:"
 Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Каталог установки приложения:"
 Str_PRINTINSTALLSETTINGS_Menu_Dirs="Файлы меню будут установлены в:"
 Str_PRINTINSTALLSETTINGS_Bin_Dir="Файлы \"bin\" будут установлены в:"
-Str_PRINTINSTALLSETTINGS_System_Mode="Используйте режим \"System\" только при установке ПО для всех пользователей!"
-Str_PRINTINSTALLSETTINGS_System_Mode2="Для установки требуются права root!"
+Str_PRINTINSTALLSETTINGS_System_Mode="Для установки требуются права root!"
 Str_PRINTINSTALLSETTINGS_Before_Install="Перед установкой закройте все важные приложения."
 Str_PRINTINSTALLSETTINGS_Confirm="Введите \"y\" or \"yes\" для начала установки."
 Str_PRINTINSTALLSETTINGS_Helpers_Dir="Файлы \"приложений по умолчанию\" (Helpers) будут установлены в:"

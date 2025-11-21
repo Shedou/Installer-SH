@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # LICENSE for this script is at the end of this file
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.6dev"; LocaleVersion="2.3" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.6dev"; LocaleVersion="2.4" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 HOMEDIR="$HOME"
 
@@ -32,7 +32,8 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Program_Architecture="script"   # x86_64, x86, script, other
 	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
 	
-	Install_Mode="User"             # "System" / "User", In "User" mode, root rights are not required.
+	Install_Mode="User"             # "System" / "User". In "User" mode, root rights are not required.
+	Install_Configs="User"          # "SysDef" / "User". SysDef - System Default. User - A separate directory for storing configs.
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
@@ -1077,17 +1078,17 @@ else
 	
 	echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}В каком режиме установить программу?${Font_Reset_Color}${Font_Reset}
+ ${Font_Bold}${Font_Cyan}Настройка режима установки:${Font_Reset_Color}${Font_Reset}
 
- -${Font_Bold} Текущий режим:${Font_Green} User / ${Font_Yellow}System${Font_Reset_Color}${Font_Reset}
-   ПУТЬ_К_КАТАЛОГУ
+ -${Font_Bold}${Font_Green} Текущий режим:${Font_Yellow} $Install_Mode${Font_Reset_Color}${Font_Reset}
+   $Output_Install_Dir
 
- -${Font_Bold}${Font_Green} Описание режима User (рекомендуемый):${Font_Reset_Color}${Font_Reset}
+ -${Font_Bold} Описание режима \"User\":${Font_Reset}
    Устанавливливает программу в домашний каталог PortSoft.
    + Root права для установки не нужны.
    + Программа устанавливается только для текущего пользователя.
 
- -${Font_Bold}${Font_Yellow} Описание режима System:${Font_Reset_Color}${Font_Reset}
+ -${Font_Bold} Описание режима \"System\":${Font_Reset}
    Устанавливает программу в системный каталог PortSoft (/portsoft).
    + Программа устанавливается для всех пользователей системы.
    - Нужны root права."
@@ -1095,10 +1096,10 @@ $Header
 	echo -e "
 
  Нажмите Enter чтобы продолжить в текущем режиме (настроен создателем пакета).
- Введите \"${Font_Green}y${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - System${Font_Reset_Color})."
+ Введите \"${Font_Green}u${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - System${Font_Reset_Color})."
 	
 	read -r install_config_confirm_s
-	if [ "$install_config_confirm_s" == "y" ]; then
+	if [ "$install_config_confirm_s" == "u" ]; then
 		echo " Установки режима Домашний каталог пользователя"
 		read -r pause
 	fi
@@ -1114,33 +1115,29 @@ else
 	
 	echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}Где разместить файлы конфиурации?${Font_Reset_Color}${Font_Reset}
+ ${Font_Bold}${Font_Cyan}Настройка файлов конфигурации:${Font_Reset_Color}${Font_Reset}
 
- -${Font_Bold} Текущий режим:${Font_Green} Рядом с программой / ${Font_Yellow}Домашний каталог пользователя${Font_Reset_Color}${Font_Reset}
-   ПУТЬ_К_ДОМАШНЕМУ_КАТАЛОГУ_ДЛЯ_КОНФИГОВ
+ -${Font_Bold}${Font_Green} Текущий режим:${Font_Yellow} $Install_Configs${Font_Reset_Color}${Font_Reset}
 
- -${Font_Bold}${Font_Green} Описание режима Рядом с программой (рекомендуемый):${Font_Reset_Color}${Font_Reset}
-   Файлы конфигурации и \"продукты жизнедеятельности\" программы размещаются в специально отведённом каталоге рядом с программой.
-   Некоторые программы невозможно полноценно установить без данной функции.
-   + Решает проблему конфликта файлов конфигурации при установке разных версий одной программы.
+ -${Font_Bold} Описание режима \"User\":${Font_Reset}
+   Файлы конфигурации находятся в специально отведенном каталоге.
+   Это необходимо для установки некоторых программ.
+   + Решает проблему конфликта файлов конфигурации при установке разных версий программы.
    + Решает проблему накопления мусора в домашнем каталоге пользователя.
    + Позволяет создать резервную копию программы вместе с настройками.
-   ~ Если программа способна запускать другие программы в системе, они так же будут использовать выделенный домашний каталог родительской программы для хранения файлов конфигурации, за исключением программ в формате Installer-SH использующих собственные выделенные каталоги.
 
- -${Font_Bold}${Font_Yellow} Описание режима Домашний каталог пользователя (не рекомендуется):${Font_Reset_Color}${Font_Reset}
-   Используется домашний каталог пользователя для размещения файлов конфигурации и \"продуктов изнедеятельности\" программы.
-   - При установке нескольких версий одной программы может произойти конфликт файлов конфигурации.
-   - Домашний каталог пользователя со временем превращается в мусорный полигон.
-   - Невозможно легко получить доступ к файлам конфигурации конкретной программы.
+ -${Font_Bold} Описание режима \"SysDef\":${Font_Reset}
+   Используется домашний каталог пользователя для размещения файлов конфигурации.
+   Используйте это только при необходимости.
    ~ Так работает большинство программ в среде Linux."
 
 	echo -e "
 
- Нажмите Enter чтобы продолжить в рекомендуемом режиме (файлы конфигурации рядом с программой).
- Введите \"${Font_Green}y${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}y - Рядом с программой${Font_Reset_Color} | ${Font_Yellow}s - Домашний каталог${Font_Reset_Color})."
+ Нажмите Enter чтобы продолжить в текущем режиме (настроен создателем пакета).
+ Введите \"${Font_Green}u${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - SysDef${Font_Reset_Color})."
 	
 	read -r install_config_confirm_c
-	if [ "$install_config_confirm_c" == "y" ] || [ "$install_config_confirm_c" == "yes" ]; then
+	if [ "$install_config_confirm_c" == "u" ]; then
 		echo " Установки режима Домашний каталог пользователя"
 		read -r pause
 	fi
@@ -1159,7 +1156,10 @@ else
 	
 	echo -e "\
 $Header
- ${Font_Bold}${Font_Cyan}$Str_PRINTINSTALLSETTINGS_Head (${Font_Yellow}$Install_Mode${Font_Cyan}):${Font_Reset_Color}${Font_Reset}
+ ${Font_Bold}${Font_Cyan}$Str_PRINTINSTALLSETTINGS_Head 
+
+ -${Font_Bold}${Font_Green}Режим установки:${Font_Yellow} $Install_Mode${Font_Reset_Color}${Font_Reset}
+ -${Font_Bold}${Font_Green}Файлы конфигурации:${Font_Yellow} $Install_Configs${Font_Reset_Color}${Font_Reset}
 
  -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Temp_Dir${Font_Reset_Color}${Font_Reset} $Temp_Dir
  
@@ -1171,29 +1171,25 @@ $Header
    $Output_Menu_DDir
    $Output_Menu_Apps
 
- -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Bin_Dir${Font_Reset_Color}${Font_Reset}
-   $Output_Bin_Dir"
+ -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Bin_Dir${Font_Reset_Color}${Font_Reset} $Output_Bin_Dir"
 		
 	if [ "$Install_Helpers" == "true" ]; then
 		if [ "$Current_DE" == "XFCE" ]; then
 			echo -e "
- -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Helpers_Dir${Font_Reset_Color}${Font_Reset}
-   $Output_Helpers_Dir"; fi; fi
+ -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Helpers_Dir${Font_Reset_Color}${Font_Reset} $Output_Helpers_Dir"; fi; fi
 
 	if [ "$Install_Desktop_Icons" == "true" ]; then
 		echo -e "
- -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Desktop_Dir${Font_Reset_Color}${Font_Reset}
-   $Output_Desktop_Dir"; fi
+ -${Font_Bold}${Font_Green}$Str_PRINTINSTALLSETTINGS_Desktop_Dir${Font_Reset_Color}${Font_Reset} $Output_Desktop_Dir"; fi
 	
 	if [ "$Install_Mode" == "System" ]; then
 		echo -e "
- -$Str_ATTENTION! ${Font_Bold}${Font_Yellow}$Str_PRINTINSTALLSETTINGS_System_Mode
-   $Str_PRINTINSTALLSETTINGS_System_Mode2${Font_Reset_Color}${Font_Reset}"; fi
+ -$Str_ATTENTION! ${Font_Bold}${Font_Yellow}$Str_PRINTINSTALLSETTINGS_System_Mode${Font_Reset_Color}${Font_Reset}"; fi
 		
 	echo -e "
  $Str_PRINTINSTALLSETTINGS_Before_Install
 
- $Str_PRINTINSTALLSETTINGS_Confirm"
+ ${Font_Bold}${Font_Red}$Str_PRINTINSTALLSETTINGS_Confirm${Font_Reset_Color}${Font_Reset}"
 	
 	read -r install_settings_confirm
 	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then :
@@ -1605,13 +1601,12 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKMD5_Sub_Head="Checking the integrity of the installation archives, please wait..."
 	Str_CHECKMD5_Sub_Head2="(this may take some time if the application is large)"
 	
-	Str_PRINTINSTALLSETTINGS_Head="Installation settings"
+	Str_PRINTINSTALLSETTINGS_Head="Installation settings:"
 	Str_PRINTINSTALLSETTINGS_Temp_Dir="Temporary Directory:"
 	Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Application install Directory:"
 	Str_PRINTINSTALLSETTINGS_Menu_Dirs="Menu files will be installed to:"
 	Str_PRINTINSTALLSETTINGS_Bin_Dir="Bin files will be installed to:"
-	Str_PRINTINSTALLSETTINGS_System_Mode="Use \"System\" mode only when installing software for all users!"
-	Str_PRINTINSTALLSETTINGS_System_Mode2="Root rights are required to perform the installation!"
+	Str_PRINTINSTALLSETTINGS_System_Mode="Root rights are required to perform the installation!"
 	Str_PRINTINSTALLSETTINGS_Before_Install="Please close all important applications before installation."
 	Str_PRINTINSTALLSETTINGS_Confirm="Enter \"y\" or \"yes\" to begin the installation."
 	Str_PRINTINSTALLSETTINGS_Helpers_Dir="Helper files will be installed to:"

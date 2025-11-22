@@ -1,0 +1,45 @@
+[Desktop Entry]
+# -= APPLICATION =- #
+Type=Application
+Version=1.1
+Encoding=UTF-8
+#OnlyShowIn=
+#NotShowIn=
+NoDisplay=false
+Hidden=false
+
+Name=PROGRAM_NAME_IN_MENU - second
+Comment=
+GenericName=
+
+Icon=PATH_TO_FOLDER/icons/icon.png
+Exec=PATH_TO_FOLDER/launcher %F
+TryExec=PATH_TO_FOLDER/launcher
+Path=PATH_TO_FOLDER/program
+#StartupWMClass=
+
+Terminal=true
+StartupNotify=false
+
+Categories=UNIQUE_APP_FOLDER_NAME;ADDITIONAL_CATEGORIES
+#Keywords=
+#MimeType=
+
+# - Translations:
+# FOR TRANSLATORS! Please! Do not translate the app NAME, such as "FeatherPad".
+#Name[ru]=
+#GenericName[ru]=
+#Comment[ru]=
+
+# - ------------- - #
+# - Actions Begin - #
+
+Actions=OpenFolder;
+
+[Desktop Action OpenFolder]
+Name=Open folder
+Name[ru]=Открыть каталог
+Exec=PATH_TO_FOLDER/open-folder
+
+# -  Actions End  - #
+# - ------------- - #

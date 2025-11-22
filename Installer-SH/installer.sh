@@ -15,7 +15,7 @@ function _MAIN() {
 	_PRINT_PACKAGE_INFO; _CHECK_MD5 # -= (11,12) =-
 	_INSTALL_CONFIG_MODE; _INSTALL_CONFIG_CFG; _PRINT_INSTALL_SETTINGS # -= (13,13.1,13.2) =- # Last confirm stage
 	_PREPARE_INPUT_FILES; _CHECK_OUTPUTS # -= (14,15) =-
-	_INSTALL_APPLICATION; _PREPARE_UNINSTALLER # -= (16,17) =-
+	_INSTALL_APPLICATION; _PREPARE_UNINSTALLER; _PREPARE_LAUNCHERS # -= (16,17,17.1) =-
 	_POST_INSTALL # -= (18) =-
 }
 
@@ -25,15 +25,19 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="0f735efb6fbfd381ce285cacdca62791"
-	Archive_MD5_Hash_SystemFiles="8d62cb830196df9bf706b94b60e2dce6"
+	Archive_MD5_Hash_ProgramFiles="122ed9fb78f6decc7e26aab87b0771b3"
+	Archive_MD5_Hash_SystemFiles="a6a78000107e693460f69486434566f9"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
 	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
 	
 	Install_Mode="User"             # "System" / "User". In "User" mode, root rights are not required.
-	Install_Configs="PortSoft"      # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.
+	Install_Configs="PortSoft"      # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.The package creator must add the names of the ISH launchers to the "program_files" directory for this feature to work. This functionality may be changed/improved in future versions of Installer-SH.
+	Program_Launchers=(
+		launcher
+		launcher-second
+	)
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
@@ -181,10 +185,10 @@ function _HELP() { # Здесь НЕЛЬЗЯ использовать локал
 -update     -up - Program update mode, warnings about overwriting existing files
                    will not be displayed!
 -silent     -st - Requires confirmation only in case of errors and conflicts.
--cfgportsoft -cps - 
--cfgsysdef   -csd - 
--modeuser    -mur - 
--modesystem  -msm - 
+-cfgportsoft -cps - Store program settings in a dedicated directory.
+-cfgsysdef   -csd - Do not override the program settings storage directory.
+-modeuser    -mur - Install software only for the current user.
+-modesystem  -msm - Install for all system users (root rights required).
 -noupdmenu  -nm - Disables automatic menu update after installation.
                    Recommended for use when batch installing
                    multiple applications in \"-silent\" mode.
@@ -1143,6 +1147,7 @@ $Header
    + Решает проблему конфликта файлов конфигурации при установке разных версий программы.
    + Решает проблему накопления мусора в домашнем каталоге пользователя.
    + Позволяет создать резервную копию программы вместе с настройками.
+   ~ Создатель установочного пакета должен грамотно настроить лаунчеры для правильной работы.
 
  -${Font_Bold} Описание режима \"SysDef\":${Font_Reset}
    Используется домашний каталог пользователя для размещения файлов конфигурации.
@@ -1551,6 +1556,46 @@ function _PREPARE_UNINSTALLER() { # -= (17) =-
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_UNINSTALLER"; read -r pause; fi
 }
+
+function _PREPARE_LAUNCHERS_SYSTEM() {
+	for filename in "${!Program_Launchers[@]}"; do
+		local CurrentFile="${Program_Launchers[$filename]}"
+		if [ "$Install_Configs" == "SysDef" ]; then
+			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+		else
+			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+		fi
+		
+		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+	done
+}
+
+function _PREPARE_LAUNCHERS_USER() {
+	for filename in "${!Program_Launchers[@]}"; do
+		local CurrentFile="${Program_Launchers[$filename]}"
+		if [ "$Install_Configs" == "SysDef" ]; then
+			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+		else
+			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+		fi
+		
+		echo -e "$Output_Install_Dir/$CurrentFile"
+		
+		read -r pause
+		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+	done
+}
+
+function _PREPARE_LAUNCHERS() { # -= (17.1) =-
+	if [ "$Install_Mode" == "System" ]; then _PREPARE_LAUNCHERS_SYSTEM; fi
+	if [ "$Install_Mode" == "User" ]; then _PREPARE_LAUNCHERS_USER; fi
+	
+	if [ "$MODE_DEBUG" == "true" ]; then echo "_PREPARE_LAUNCHERS"; read -r pause; fi
+}
+
+#Install_Configs="PortSoft"
 
 ######### ---- #########
 ####### Strings! #######

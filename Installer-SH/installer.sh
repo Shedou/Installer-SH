@@ -33,7 +33,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
 	
 	Install_Mode="User"             # "System" / "User". In "User" mode, root rights are not required.
-	Install_Configs="User"          # "SysDef" / "User". SysDef - System Default. User - A separate directory for storing configs.
+	Install_Configs="PortSoft"      # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
@@ -180,8 +180,11 @@ function _HELP() { # Здесь НЕЛЬЗЯ использовать локал
 -updatebase -ub - Update base menu files and PortSoft (ISH version $ScriptVersion).
 -update     -up - Program update mode, warnings about overwriting existing files
                    will not be displayed!
--silent     -st - Silent installation mode.
-                   Requires confirmation only in case of errors and conflicts.
+-silent     -st - Requires confirmation only in case of errors and conflicts.
+-cfgportsoft -cps - 
+-cfgsysdef   -csd - 
+-modeuser    -mur - 
+-modesystem  -msm - 
 -noupdmenu  -nm - Disables automatic menu update after installation.
                    Recommended for use when batch installing
                    multiple applications in \"-silent\" mode.
@@ -208,6 +211,10 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];    then MODE_TARPACK="true"; fi
 	if [[ "$ArgumentsString" =~ "-updatebase" ]] || [[ "$ArgumentsString" =~ "-ub" ]]; then MODE_UPDATEBASE="true"; fi
 	if [[ "$ArgumentsString" =~ "-update" ]] || [[ "$ArgumentsString" =~ "-up" ]];     then MODE_UPDATE="true"; fi
+	if [[ "$ArgumentsString" =~ "-cfgportsoft" ]] || [[ "$ArgumentsString" =~ "-cps" ]]; then CFG_PORTSOFT="true"; fi
+	if [[ "$ArgumentsString" =~ "-cfgsysdef" ]] || [[ "$ArgumentsString" =~ "-csd" ]];   then CFG_SYSDEF="true"; fi
+	if [[ "$ArgumentsString" =~ "-modeuser" ]] || [[ "$ArgumentsString" =~ "-mur" ]];    then MODE_USER="true"; fi
+	if [[ "$ArgumentsString" =~ "-modesystem" ]] || [[ "$ArgumentsString" =~ "-msm" ]];  then MODE_SYSTEM="true"; fi
 }
 
 function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
@@ -242,6 +249,10 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	MODE_ARCPACK="false"
 	MODE_UPDATEBASE="false"
 	MODE_UPDATE="false"
+	CFG_PORTSOFT="false"
+	CFG_SYSDEF="false"
+	MODE_USER="false"
+	MODE_SYSTEM="false"
 	
 	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
@@ -371,27 +382,32 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не заружена!
 	
 	if [ "$MODE_ARCPACK" == "true" ]; then _PACK_ARCHIVES; fi
-	if [ "$MODE_CLEAN" == "true" ]; then _CLEAN; fi
+	if [ "$MODE_CLEAN" == "true" ];   then _CLEAN; fi
 	if [ "$MODE_TARPACK" == "true" ]; then _TAR_PACK; fi
 	
+	if [ "$CFG_SYSDEF" == "true" ];   then Install_Configs="SysDef"; fi
+	if [ "$CFG_PORTSOFT" == "true" ]; then Install_Configs="PortSoft"; fi
+	if [ "$MODE_SYSTEM" == "true" ];  then Install_Mode="System"; fi
+	if [ "$MODE_USER" == "true" ];    then Install_Mode="User"; fi
+	
 	String_CMD_N_F="Command not found, unable to continue:"
-	if ! type "uname" &> /dev/null; then    _ABORT "$String_CMD_N_F 'uname'"; fi
-	if ! type "dirname" &> /dev/null; then  _ABORT "$String_CMD_N_F 'dirname'"; fi
-	if ! type "clear" &> /dev/null; then    _ABORT "$String_CMD_N_F 'clear'"; fi
-	if ! type "readlink" &> /dev/null; then _ABORT "$String_CMD_N_F 'readlink'"; fi
-	if ! type "cut" &> /dev/null; then      _ABORT "$String_CMD_N_F 'cut'"; fi
-	if ! type "rm" &> /dev/null; then       _ABORT "$String_CMD_N_F 'rm'"; fi
-	if ! type "cp" &> /dev/null; then       _ABORT "$String_CMD_N_F 'cp'"; fi
-	if ! type "mkdir" &> /dev/null; then    _ABORT "$String_CMD_N_F 'mkdir'"; fi
-	if ! type "touch" &> /dev/null; then    _ABORT "$String_CMD_N_F 'touch'"; fi
-	if ! type "awk" &> /dev/null; then      _ABORT "$String_CMD_N_F 'awk'"; fi
-	if ! type "find" &> /dev/null; then     _ABORT "$String_CMD_N_F 'find'"; fi
-	if ! type "grep" &> /dev/null; then     _ABORT "$String_CMD_N_F 'grep'"; fi
-	if ! type "sed" &> /dev/null; then      _ABORT "$String_CMD_N_F 'sed'"; fi
-	if ! type "xargs" &> /dev/null; then    _ABORT "$String_CMD_N_F 'xargs'"; fi
-	if ! type "chown" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chown'"; fi
-	if ! type "chmod" &> /dev/null; then    _ABORT "$String_CMD_N_F 'chmod'"; fi
-	if ! type "stat" &> /dev/null; then     _ABORT "$String_CMD_N_F 'stat'"; fi
+	if ! type "uname" &> /dev/null;     then _ABORT "$String_CMD_N_F 'uname'"; fi
+	if ! type "dirname" &> /dev/null;   then _ABORT "$String_CMD_N_F 'dirname'"; fi
+	if ! type "clear" &> /dev/null;     then _ABORT "$String_CMD_N_F 'clear'"; fi
+	if ! type "readlink" &> /dev/null;  then _ABORT "$String_CMD_N_F 'readlink'"; fi
+	if ! type "cut" &> /dev/null;       then _ABORT "$String_CMD_N_F 'cut'"; fi
+	if ! type "rm" &> /dev/null;        then _ABORT "$String_CMD_N_F 'rm'"; fi
+	if ! type "cp" &> /dev/null;        then _ABORT "$String_CMD_N_F 'cp'"; fi
+	if ! type "mkdir" &> /dev/null;     then _ABORT "$String_CMD_N_F 'mkdir'"; fi
+	if ! type "touch" &> /dev/null;     then _ABORT "$String_CMD_N_F 'touch'"; fi
+	if ! type "awk" &> /dev/null;       then _ABORT "$String_CMD_N_F 'awk'"; fi
+	if ! type "find" &> /dev/null;      then _ABORT "$String_CMD_N_F 'find'"; fi
+	if ! type "grep" &> /dev/null;      then _ABORT "$String_CMD_N_F 'grep'"; fi
+	if ! type "sed" &> /dev/null;       then _ABORT "$String_CMD_N_F 'sed'"; fi
+	if ! type "xargs" &> /dev/null;     then _ABORT "$String_CMD_N_F 'xargs'"; fi
+	if ! type "chown" &> /dev/null;     then _ABORT "$String_CMD_N_F 'chown'"; fi
+	if ! type "chmod" &> /dev/null;     then _ABORT "$String_CMD_N_F 'chmod'"; fi
+	if ! type "stat" &> /dev/null;      then _ABORT "$String_CMD_N_F 'stat'"; fi
 	if [ "$Install_Mode" == "System" ]; then
 		if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'\n Do not use 'System' installation mode without 'sudo'..."; fi
 	fi
@@ -559,6 +575,19 @@ function _CHECK_SYSTEM_DE() { # -= (8) =- # Здесь можно использ
 	Current_DE="$check_de_raw"
 }
 
+function _INIT_OUTPUTS() {
+	if [ "$Install_Mode" == "System" ]; then
+		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Install_Path_Bin_System"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
+		Output_Menu_Files="$Out_System_Menu_Files"; Output_Menu_DDir="$Out_System_Menu_DDir"; Output_Menu_Apps="$Out_System_Menu_Apps"
+		Output_PortSoft="$Install_Path_System"
+	else
+		Output_Install_Dir="$Install_Path_User_Full"; Output_Bin_Dir="$Install_Path_Bin_User"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
+		Output_Menu_Files="$Out_User_Menu_Files"; Output_Menu_DDir="$Out_User_Menu_DDir"; Output_Menu_Apps="$Out_User_Menu_Apps"
+		Output_PortSoft="$Install_Path_User"
+	fi
+	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
+}
+
 function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	### --------------------------- ###
 	### Do not edit variables here! ###
@@ -589,22 +618,13 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
 	Out_App_Folder_Permissions=755  # Only for "System" mode.
 	
+	Output_Files_All=("/tmp/ish") # Files list for Uninstaller
+	
 	# The "PATH_TO_FOLDER" variable points to the application installation directory without the trailing slash (Output_Install_Dir), for example "/portsoft/x86_64/example_application".
 	Output_Install_Dir="/tmp/ish"; Output_Bin_Dir="/tmp/ish"; Output_Helpers_Dir="/tmp/ish"; Output_Desktop_Dir="$Out_User_Desktop_Dir"
 	Output_Menu_Files="/tmp/ish"; Output_Menu_DDir="/tmp/ish"; Output_Menu_Apps="/tmp/ish"; Output_PortSoft="/tmp/ish"
 	
-	if [ "$Install_Mode" == "System" ]; then
-		Output_Install_Dir="$Install_Path_System_Full"; Output_Bin_Dir="$Install_Path_Bin_System"; Output_Helpers_Dir="$Out_System_Helpers_Dir"
-		Output_Menu_Files="$Out_System_Menu_Files"; Output_Menu_DDir="$Out_System_Menu_DDir"; Output_Menu_Apps="$Out_System_Menu_Apps"
-		Output_PortSoft="$Install_Path_System"
-	else
-		Output_Install_Dir="$Install_Path_User_Full"; Output_Bin_Dir="$Install_Path_Bin_User"; Output_Helpers_Dir="$Out_User_Helpers_Dir"
-		Output_Menu_Files="$Out_User_Menu_Files"; Output_Menu_DDir="$Out_User_Menu_DDir"; Output_Menu_Apps="$Out_User_Menu_Apps"
-		Output_PortSoft="$Install_Path_User"
-	fi
-	
-	Output_Files_All=("/tmp/ish") # Files list for Uninstaller
-	Output_Uninstaller="$Output_Install_Dir/$Program_Uninstaller_File" # Uninstaller template file.
+	_INIT_OUTPUTS
 }
 
 function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно использовать локализацию
@@ -1099,10 +1119,8 @@ $Header
  Введите \"${Font_Green}u${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - System${Font_Reset_Color})."
 	
 	read -r install_config_confirm_s
-	if [ "$install_config_confirm_s" == "u" ]; then
-		echo " Установки режима Домашний каталог пользователя"
-		read -r pause
-	fi
+	if [ "$install_config_confirm_s" == "s" ]; then Install_Mode="System"
+	elif [ "$install_config_confirm_s" == "u" ]; then Install_Mode="User"; fi
 
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
 fi
@@ -1119,7 +1137,7 @@ $Header
 
  -${Font_Bold}${Font_Green} Текущий режим:${Font_Yellow} $Install_Configs${Font_Reset_Color}${Font_Reset}
 
- -${Font_Bold} Описание режима \"User\":${Font_Reset}
+ -${Font_Bold} Описание режима \"PortSoft\":${Font_Reset}
    Файлы конфигурации находятся в специально отведенном каталоге.
    Это необходимо для установки некоторых программ.
    + Решает проблему конфликта файлов конфигурации при установке разных версий программы.
@@ -1134,13 +1152,11 @@ $Header
 	echo -e "
 
  Нажмите Enter чтобы продолжить в текущем режиме (настроен создателем пакета).
- Введите \"${Font_Green}u${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - SysDef${Font_Reset_Color})."
+ Введите \"${Font_Green}p${Font_Reset_Color}\" или \"${Font_Yellow}s${Font_Reset_Color}\" чтобы изменить режим установки (${Font_Green}p - PortSoft${Font_Reset_Color} | ${Font_Yellow}s - SysDef${Font_Reset_Color})."
 	
 	read -r install_config_confirm_c
-	if [ "$install_config_confirm_c" == "u" ]; then
-		echo " Установки режима Домашний каталог пользователя"
-		read -r pause
-	fi
+	if [ "$install_config_confirm_c" == "s" ]; then Install_Configs="SysDef"
+	elif [ "$install_config_confirm_c" == "p" ]; then Install_Configs="PortSoft"; fi
 
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
 fi
@@ -1152,6 +1168,7 @@ fi
 function _PRINT_INSTALL_SETTINGS() { # -= (13.2) =- # Здесь можно использовать локализацию
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
+	_INIT_OUTPUTS
 	_CLEAR_BACKGROUND
 	
 	echo -e "\

@@ -5,14 +5,24 @@
 # to avoid conflicts between different versions of the same application.
 
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
+FolderBaseName="$( basename "$Path_To_Script")"
+ISHPogramArch="other"
+ISHProgramName="other"
+#ISHInstallMode="User"
+PortSoftUser="$HOME/portsoft/$ISHPogramArch/$ISHProgramName"
+PortSoftSystem="/portsoft/$ISHPogramArch/$ISHProgramName"
+if [ ! -e "$FullPathToUserPortSoft" ]; then if ! mkdir -p "$FullPathToUserPortSoft"; then echo "No_Rights"; fi; fi
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 ISHMoveHomeDir="true"
 UseExtraLibs="false"	# Allows you to add additional libraries to the "libs" directory.
 
+###########################################
 ## THESE VARIABLES NEED TO BE CONFIGURED ##
 ExtraLibsFolder="$Path_To_Script/libs"     # Extra libraries
-UserDataFolder="$Path_To_Script/userdata"  # User data folder for the program
+if [ "$Path_To_Script" == "$PortSoftSystem" ]; then UserDataFolder="$PortSoftUser/userdata"
+elif [ "$Path_To_Script" == "$PortSoftUser" ]; then UserDataFolder="$PortSoftUser/userdata"
+else UserDataFolder="$Path_To_Script/userdata"; fi
 ProgramFolder="$Path_To_Script/program"    # Path to the program directory
 
 ExecutableFolder="$ProgramFolder"          # Path to the directory with executable files

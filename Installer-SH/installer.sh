@@ -25,7 +25,7 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="122ed9fb78f6decc7e26aab87b0771b3"
+	Archive_MD5_Hash_ProgramFiles="017887116e6e6074df398d5ddcbef8ea"
 	Archive_MD5_Hash_SystemFiles="a6a78000107e693460f69486434566f9"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
@@ -1566,6 +1566,10 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
 		fi
 		
+		sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+		sudo sed -i "s/ISHProgramName=.*/ISHProgramName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		#sudo sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
+		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
 	done
@@ -1580,9 +1584,10 @@ function _PREPARE_LAUNCHERS_USER() {
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
 		fi
 		
-		echo -e "$Output_Install_Dir/$CurrentFile"
+		sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+		sed -i "s/ISHProgramName=.*/ISHProgramName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		#sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
-		read -r pause
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
 	done

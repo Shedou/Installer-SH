@@ -18,7 +18,6 @@ ISHInstallPathUser="$HOME/portsoft"
 ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"
 ISHInstallPathSystem="/portsoft"
 ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"
-if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
 
 ###########################################
 ## THESE VARIABLES NEED TO BE CONFIGURED ##
@@ -28,8 +27,12 @@ ExeFolder="$ProgramFolder/bin"            # Path to the directory with executabl
 Executable="$ExeFolder/ExeFile"           # Main executable file
 ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
 
-if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
-elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
+if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
+	if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
+	UserDataFolder="$ISHInstallPathUserFull/userdata"
+elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then
+	if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
+	UserDataFolder="$ISHInstallPathUserFull/userdata"
 else UserDataFolder="$PathToScript/userdata"; fi
 
 ## Space for additional variables and actions ###

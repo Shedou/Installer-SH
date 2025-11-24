@@ -30,7 +30,6 @@ ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
 
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
 elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
-elif 
 else UserDataFolder="$PathToScript/userdata"; fi
 
 ## Space for additional variables and actions ###

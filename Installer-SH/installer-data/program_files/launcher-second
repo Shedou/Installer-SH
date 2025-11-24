@@ -6,12 +6,12 @@
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 ISHMoveHomeDir="true"
-UseExtraLibs="false"	# Allows you to add additional libraries to the "libs" directory.
+UseExtraLibs="false"
 
 PathToScript="$( dirname "$(readlink -f "$0")")"
 FolderBaseName="$( basename "$PathToScript")"
 
-# DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! #
+## DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! ##
 ISHPogramArch="other"
 ISHProgramFName="other"
 ISHInstallPathUser="$HOME/portsoft"
@@ -24,8 +24,8 @@ if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFu
 ## THESE VARIABLES NEED TO BE CONFIGURED ##
 ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ##
 ProgramFolder="$PathToScript/program"      # Path to the program directory
-ExecFolder="$ProgramFolder"                # Path to the directory with executable files
-Executable="$ExecFolder/application"       # Main executable file
+ExeFolder="$ProgramFolder/bin"            # Path to the directory with executable files
+Executable="$ExeFolder/ExeFile"           # Main executable file
 ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
 
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
@@ -36,11 +36,12 @@ else UserDataFolder="$PathToScript/userdata"; fi
 #export SOME_IMPORTANT_VARIABLE="example"
 ## Space for additional variables and actions ###
 
-export PATH="$ExecFolder:$PATH" # Use ":" for separation
+export PATH="$ExeFolder:$PATH" # Use ":" for separation
 
 if [ "$ISHMoveHomeDir" == "true" ]; then
 	export HOME="$UserDataFolder"
 	export HOMECONFIGS="$UserDataFolder"
+	#export XDG_DATA_DIRS="$HOMECONFIGS/.local/share:$XDG_DATA_DIRS"
 	export XDG_DATA_HOME="$HOMECONFIGS/.local/share"
 	export XDG_STATE_HOME="$HOMECONFIGS/.local/state"
 	export XDG_CONFIG_HOME="$HOMECONFIGS/.config"
@@ -56,7 +57,7 @@ fi
 
 if [ -e "$Executable" ]; then
 	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
-	cd "$ExecFolder" || exit
+	cd "$ExeFolder" || exit
 	"$Executable" "$@"
 	exit_code="$?"
 else

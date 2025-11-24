@@ -4,37 +4,39 @@
 # The launcher is designed to simplify the launch of Linux applications and move the home directory
 # to avoid conflicts between different versions of the same application.
 
-Path_To_Script="$( dirname "$(readlink -f "$0")")"
-FolderBaseName="$( basename "$Path_To_Script")"
-ISHPogramArch="other"
-ISHProgramName="other"
-#ISHInstallMode="User"
-PortSoftUser="$HOME/portsoft/$ISHPogramArch/$ISHProgramName"
-PortSoftSystem="/portsoft/$ISHPogramArch/$ISHProgramName"
-if [ ! -e "$FullPathToUserPortSoft" ]; then if ! mkdir -p "$FullPathToUserPortSoft"; then echo "No_Rights"; fi; fi
-
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 ISHMoveHomeDir="true"
 UseExtraLibs="false"	# Allows you to add additional libraries to the "libs" directory.
 
+PathToScript="$( dirname "$(readlink -f "$0")")"
+FolderBaseName="$( basename "$PathToScript")"
+
+# DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! #
+ISHPogramArch="other"
+ISHProgramFName="other"
+ISHInstallPathUser="$HOME/portsoft"
+ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"
+ISHInstallPathSystem="/portsoft"
+ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"
+if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
+
 ###########################################
 ## THESE VARIABLES NEED TO BE CONFIGURED ##
-ExtraLibsFolder="$Path_To_Script/libs"     # Extra libraries
-if [ "$Path_To_Script" == "$PortSoftSystem" ]; then UserDataFolder="$PortSoftUser/userdata"
-elif [ "$Path_To_Script" == "$PortSoftUser" ]; then UserDataFolder="$PortSoftUser/userdata"
-else UserDataFolder="$Path_To_Script/userdata"; fi
-ProgramFolder="$Path_To_Script/program"    # Path to the program directory
+## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ##
+ProgramFolder="$PathToScript/program"      # Path to the program directory
+ExecFolder="$ProgramFolder"                # Path to the directory with executable files
+Executable="$ExecFolder/application"       # Main executable file
+ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
 
-ExecutableFolder="$ProgramFolder"          # Path to the directory with executable files
-Executable="$ExecutableFolder/application" # Main executable file
+if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
+elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
+else UserDataFolder="$PathToScript/userdata"; fi
 
-### Space for additional variables and actions ###
+## Space for additional variables and actions ###
+#export SOME_IMPORTANT_VARIABLE="example"
+## Space for additional variables and actions ###
 
-export SOME_IMPORTANT_VARIABLE="example"
-
-### Space for additional variables and actions ###
-
-export PATH="$ExecutableFolder:$PATH" # Use ":" for separation
+export PATH="$ExecFolder:$PATH" # Use ":" for separation
 
 if [ "$ISHMoveHomeDir" == "true" ]; then
 	export HOME="$UserDataFolder"
@@ -48,13 +50,13 @@ fi
 if [ "$UseExtraLibs" == "true" ]; then
 	if [ -z "$LD_LIBRARY_PATH" ];
 		then export LD_LIBRARY_PATH="$ExtraLibsFolder"
-		else export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ExtraLibsFolder" # Use ":" for separation
+		else export LD_LIBRARY_PATH="$ExtraLibsFolder:$LD_LIBRARY_PATH" # Use ":" for separation
 	fi
 fi
 
 if [ -e "$Executable" ]; then
 	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
-	cd "$ExecutableFolder" || exit
+	cd "$ExecFolder" || exit
 	"$Executable" "$@"
 	exit_code="$?"
 else
@@ -64,7 +66,7 @@ fi
 if [[ "$exit_code" != "0" ]]; then
 	StringMessage="bash -c 'echo \"-\"; echo \"$Executable\"; echo \"-\"; echo \"WARNING! EXIT CODE - $exit_code\"; echo \"The program has terminated incorrectly!\"; echo \"Is the program incompatible with the current OS?\"; echo \"Does the program contain errors?\"; read pause'"
 	
-	export PATH="/bin:/usr/bin:$PATH"
+	export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 	export LD_LIBRARY_PATH=""
 	
 	terminal_executable="x-terminal-emulator"

@@ -25,8 +25,8 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="f44df90c730edce4de7c3265d439a714"
-	Archive_MD5_Hash_SystemFiles="f690c912879b507c659fa1870d4f1b7b"
+	Archive_MD5_Hash_ProgramFiles="f48c3f5b8d3d8d75de1e3f56d116d75a"
+	Archive_MD5_Hash_SystemFiles="c4797fa3bec5fb5fa805e855a66ad548"
 	
 	Tools_Architecture="x86_64"     # x86_64, x86
 	Program_Architecture="script"   # x86_64, x86, script, other
@@ -36,7 +36,6 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Install_Configs="PortSoft"      # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.The package creator must add the names of the ISH launchers to the "program_files" directory for this feature to work. This functionality may be changed/improved in future versions of Installer-SH.
 	Program_Launchers=(
 		launcher
-		launcher-second
 	)
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
@@ -1567,7 +1566,7 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 		fi
 		
 		sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		sudo sed -i "s/ISHProgramName=.*/ISHProgramName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
 		#sudo sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
@@ -1585,7 +1584,7 @@ function _PREPARE_LAUNCHERS_USER() {
 		fi
 		
 		sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		sed -i "s/ISHProgramName=.*/ISHProgramName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
 		#sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!

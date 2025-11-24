@@ -9,7 +9,7 @@ ISHMoveHomeDir="true"
 UseExtraLibs="false"
 
 PathToScript="$( dirname "$(readlink -f "$0")")"
-FolderBaseName="$( basename "$PathToScript")"
+#FolderBaseName="$( basename "$PathToScript")"
 
 ## DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! ##
 ISHPogramArch="other"
@@ -28,11 +28,12 @@ Executable="$ExeFolder/ExeFile"           # Main executable file
 ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
 
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
-	if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
+	if [ ! -e "$ISHInstallPathUserFull" ]; then
+		if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"
+		else cp -rf "$ISHInstallPathSystemFull/userdata/". "$ISHInstallPathUserFull/userdata"; fi
+	fi
 	UserDataFolder="$ISHInstallPathUserFull/userdata"
-elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then
-	if [ ! -e "$ISHInstallPathUserFull" ]; then if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; fi; fi
-	UserDataFolder="$ISHInstallPathUserFull/userdata"
+elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
 else UserDataFolder="$PathToScript/userdata"; fi
 
 ## Space for additional variables and actions ###

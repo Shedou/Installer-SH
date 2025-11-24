@@ -2,8 +2,10 @@
 # Script version 1.0
 
 Args=("$@")
+PathToScript="$( dirname "$(readlink -f "$0")")"
 
 echo -e "Example Application!\n"
+echo -e "Path To Executable: $PathToScript\n"
 
 echo -e "HOME: $HOME\n"
 echo -e "XDG_DATA_HOME: $XDG_DATA_HOME\n"

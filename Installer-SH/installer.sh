@@ -314,8 +314,10 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		PackArcMD5=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
 		if [ "$Name_File" == "$Program_Files" ]; then
 			sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+			# sed -i "" "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 		elif [ "$Name_File" == "$System_Files" ]; then
 			sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+			# sed -i "" "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 		fi
 	}
 	
@@ -771,6 +773,7 @@ function _BASE_PREPARE_INPUT_FILES_GREP() {
 	local p_text="$1"
 	local p_path="$2"
 	grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "s~$p_text~$p_path~g" &> /dev/null
+	# grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "" "s~$p_text~$p_path~g" &> /dev/null
 }
 
 function _BASE_PREPARE_FILES() {
@@ -1238,7 +1241,9 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 	fi
 	
 	if [ "$prepare_error" == "false" ]; then 
-		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null; fi
+		grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null
+		# grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s~$prepare_text~$prepare_path~g" &> /dev/null
+	fi
 }
 
 function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно использовать локализацию
@@ -1522,6 +1527,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+			# sudo sed -i "" "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
@@ -1538,6 +1544,7 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+			# sed -i "" "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
@@ -1559,12 +1566,17 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 		local CurrentFile="${Program_Launchers[$filename]}"
 		if [ "$Install_Configs" == "SysDef" ]; then
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			# sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
 		else
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			# sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
 		fi
 		
 		sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
 		sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		# sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+		# sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		
 		#sudo sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
@@ -1578,12 +1590,17 @@ function _PREPARE_LAUNCHERS_USER() {
 		local CurrentFile="${Program_Launchers[$filename]}"
 		if [ "$Install_Configs" == "SysDef" ]; then
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			# sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
 		else
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			# sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
 		fi
 		
 		sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
 		sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		#sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+		#sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		
 		#sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!

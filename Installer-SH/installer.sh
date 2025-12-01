@@ -1520,13 +1520,12 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
-			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then
-				sudo chmod 755 "$Output_Uninstaller"
-			fi
-			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+			
+			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
+			#BSD if [ "$(stat -f "%p" "$Output_Uninstaller")" != "100755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
 		done
 		sudo chmod 755 "$Output_Uninstaller"
 		sudo chown $Out_App_Folder_Owner "$Output_Uninstaller"
@@ -1537,13 +1536,12 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
-			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then
-				chmod 744 "$Output_Uninstaller"
-			fi
-			
 			local CurrentFile="${Output_Files_All[$filename]}"
 			sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+			
+			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+			if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
+			#BSD if [ "$(stat -f "%p" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
 		done
 		chmod 744 "$Output_Uninstaller"
 	else _ERROR "_PREPARE_UNINSTALLER_USER" "Output_Uninstaller not found."; fi
@@ -1570,7 +1568,8 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 		#sudo sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		#BSD if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
 	done
 }
 
@@ -1589,6 +1588,7 @@ function _PREPARE_LAUNCHERS_USER() {
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		#BSD if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
 	done
 }
 

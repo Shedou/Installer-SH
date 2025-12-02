@@ -28,15 +28,20 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Archive_MD5_Hash_ProgramFiles="dbf8ab50f56432699bdb3851b494bd48"
 	Archive_MD5_Hash_SystemFiles="c4797fa3bec5fb5fa805e855a66ad548"
 	
-	Tools_Architecture="x86_64"     # x86_64, x86
-	Program_Architecture="script"   # x86_64, x86, script, other
-	Update_Menu="true"              # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
+	Tools_Architecture="x86_64"      # x86_64, x86 - Linux || amd64 - FreeBSD
+	Program_Architecture="script"    # x86_64, x86, amd64, script, other...
+	Update_Menu="true"               # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
 	
-	Install_Mode="User"             # "System" / "User". In "User" mode, root rights are not required.
-	Install_Configs="PortSoft"      # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.The package creator must add the names of the ISH launchers to the "program_files" directory for this feature to work. This functionality may be changed/improved in future versions of Installer-SH.
+	Install_Mode="User"              # "System" / "User". In "User" mode, root rights are not required.
+	Install_Mode_CFG_Skip="false"    # Skip CFG...
+	Install_Configs_CFG_Skip="false" # Skip CFG...
+	Install_Configs="PortSoft"       # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.The package creator must add the names of the ISH launchers to the "program_files" directory for this feature to work. This functionality may be changed/improved in future versions of Installer-SH.
+	
+	# Specify here the names of Launchers in the "program_files" directory, which Installer-SH will automatically configure depending on the installation parameters.
 	Program_Launchers=(
 		launcher
 	)
+	
 	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
 	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
 	
@@ -103,14 +108,15 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  ### ---------------------------------------------------------- ###
  ### Archive packaging parameters (installer.sh -arcpack / -ap) ###
  ### ---------------------------------------------------------- ###
- # Larger size - better compression and more RAM required for unpacking. (256 dictionary requires 256+ MB of RAM for unpacking)
- # For applications 150-200 MiB in size, use a dictionary size of 32 - 128, it is not recommended to use a dictionary size greater than 256.
-Dictionary_Size_Program_Files="64"
-Dictionary_Size_System_Files="8"
  
  ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7)
  # "Tar" is not recommended for normal use
 Archive_Format="SZip" # "SZip" / "Tar"
+
+ # Larger size - better compression and more RAM required for unpacking. (256 dictionary requires 256+ MB of RAM for unpacking)
+ # For applications 150-200 MiB in size, use a dictionary size of 32 - 128, it is not recommended to use a dictionary size greater than 256.
+Dictionary_Size_Program_Files="64"
+Dictionary_Size_System_Files="8"
 
  # Application installation directory. Don't touch it if you don't know why you need it!
  # If used incorrectly, it may lead to bad consequences!
@@ -257,6 +263,8 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	MODE_USER="false"
 	MODE_SYSTEM="false"
 	
+	MODE_NO_SUDO="false"
+	
 	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
 	Path_Installer_Data="$Path_To_Script/installer-data"
@@ -281,6 +289,7 @@ function _INIT_TOOLS() { # -= (3) =-
 	Tool_Tar="tar" # Альтернативный архиватор
 	Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
 	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
+	if [ "$Tools_Architecture" == "amd64" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zz-bsd"; fi
 }
 
 
@@ -366,10 +375,20 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 		_CLEAN_FILE "$Path_Installer_Data/tools/pack_archive.sh"
 		_CLEAN_FILE "$Path_Installer_Data/tools/base_data"
 		
-		if [ "$Tools_Architecture" == "x86_64" ]; then
-			_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
-		elif [ "$Tools_Architecture" == "x86" ]; then
-			_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+		if [ "$Archive_Format" == "SZip" ]; then
+			Archive_Format="SZip" # "SZip" / "Tar"
+			if [ "$Tools_Architecture" == "x86_64" ]; then
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
+			elif [ "$Tools_Architecture" == "x86" ]; then
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
+			elif [ "$Tools_Architecture" == "amd64" ]; then
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+			fi
+		elif [ "$Archive_Format" == "Tar" ]; then
+			_CLEAN_FILE "$Path_Installer_Data/tools/7zip"
 		fi
 		
 		echo -e "\n Complete..."
@@ -413,8 +432,11 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	if ! type "chown" &> /dev/null;     then _ABORT "$String_CMD_N_F 'chown'"; fi
 	if ! type "chmod" &> /dev/null;     then _ABORT "$String_CMD_N_F 'chmod'"; fi
 	if ! type "stat" &> /dev/null;      then _ABORT "$String_CMD_N_F 'stat'"; fi
-	if [ "$Install_Mode" == "System" ]; then
-		if ! type "sudo" &> /dev/null; then _ABORT "$String_CMD_N_F 'sudo'\n Do not use 'System' installation mode without 'sudo'..."; fi
+	if ! type "sudo" &> /dev/null; then
+		if [ "$Install_Mode" == "System" ]; then
+			_ABORT "$String_CMD_N_F 'sudo'\n Do not use 'System' installation mode without 'sudo'..."
+		fi
+		MODE_NO_SUDO="true"
 	fi
 	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
 	
@@ -1098,7 +1120,7 @@ function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывес
 ######### Installation configuration #########
 
 function _INSTALL_CONFIG_MODE() { # -= (13) =- # Здесь можно использовать локализацию
-if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
+if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true"] || [ "$Install_Mode_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
 else
 	_CLEAR_BACKGROUND
 	
@@ -1133,7 +1155,7 @@ fi
 }
 
 function _INSTALL_CONFIG_CFG() { # -= (13.1) =- # Здесь можно использовать локализацию
-if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
+if [ "$MODE_SILENT" == "true" ] || [ "$Install_Configs_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND
 	

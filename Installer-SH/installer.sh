@@ -1120,7 +1120,7 @@ function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывес
 ######### Installation configuration #########
 
 function _INSTALL_CONFIG_MODE() { # -= (13) =- # Здесь можно использовать локализацию
-if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true"] || [ "$Install_Mode_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
+if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true" ] || [ "$Install_Mode_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
 else
 	_CLEAR_BACKGROUND
 	
@@ -1587,23 +1587,33 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 	for filename in "${!Program_Launchers[@]}"; do
 		local CurrentFile="${Program_Launchers[$filename]}"
 		if [ "$Install_Configs" == "SysDef" ]; then
-			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
-			# sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			if [ "$Tools_Architecture" == "amd64" ]; then
+				sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			else
+				sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			fi
 		else
-			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
-			# sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			if [ "$Tools_Architecture" == "amd64" ]; then
+				sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			else
+				sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			fi
 		fi
 		
-		sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
-		# sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		# sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
-		
-		#sudo sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
+		if [ "$Tools_Architecture" == "amd64" ]; then
+			sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+			sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		else
+			sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+			sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		fi
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
-		#BSD if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		else
+			if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		fi
 	done
 }
 
@@ -1611,23 +1621,33 @@ function _PREPARE_LAUNCHERS_USER() {
 	for filename in "${!Program_Launchers[@]}"; do
 		local CurrentFile="${Program_Launchers[$filename]}"
 		if [ "$Install_Configs" == "SysDef" ]; then
-			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
-			# sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			if [ "$Tools_Architecture" == "amd64" ]; then
+				sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			else
+				sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$CurrentFile"
+			fi
 		else
-			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
-			# sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			if [ "$Tools_Architecture" == "amd64" ]; then
+				sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			else
+				sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$CurrentFile"
+			fi
 		fi
 		
-		sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
-		#sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
-		#sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
-		
-		#sed -i "s/ISHInstallMode=.*/ISHInstallMode=\"$Install_Mode\"/" "$Output_Install_Dir/$CurrentFile"
+		if [ "$Tools_Architecture" == "amd64" ]; then
+			sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+			sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		else
+			sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$CurrentFile"
+			sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$CurrentFile"
+		fi
 		
 		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-		if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
-		#BSD if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$(stat -f "%p" "$Output_Install_Dir/$CurrentFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		else
+			if [ "$(stat -c "%a" "$Output_Install_Dir/$CurrentFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$CurrentFile"; fi
+		fi
 	done
 }
 

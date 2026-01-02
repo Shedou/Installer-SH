@@ -11,6 +11,15 @@ UseExtraLibs="false"
 PathToScript="$( dirname "$(readlink -f "$0")")"
 #FolderBaseName="$( basename "$PathToScript")"
 
+###########################################
+## THESE VARIABLES NEED TO BE CONFIGURED ##
+## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ##
+ProgramFolder="$PathToScript/program"          # Path to the program directory
+ExeFolder="$ProgramFolder/bin"                 # Path to the directory with executable files
+Executable="$ExeFolder/ExeFile"                # Main executable file
+ExtraLibsFolder="$PathToScript/libs"           # Extra libraries
+DefaultUserDataFolder="$PathToScript/userdata" # Default path to the User Data
+
 ## DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! ##
 ISHPogramArch="other"
 ISHProgramFName="other"
@@ -19,14 +28,6 @@ ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"
 ISHInstallPathSystem="/portsoft"
 ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"
 
-###########################################
-## THESE VARIABLES NEED TO BE CONFIGURED ##
-## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ##
-ProgramFolder="$PathToScript/program"      # Path to the program directory
-ExeFolder="$ProgramFolder/bin"            # Path to the directory with executable files
-Executable="$ExeFolder/ExeFile"           # Main executable file
-ExtraLibsFolder="$PathToScript/libs"       # Extra libraries
-
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
 	if [ ! -e "$ISHInstallPathUserFull" ]; then
 		if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"
@@ -34,7 +35,7 @@ if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
 	fi
 	UserDataFolder="$ISHInstallPathUserFull/userdata"
 elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then UserDataFolder="$ISHInstallPathUserFull/userdata"
-else UserDataFolder="$PathToScript/userdata"; fi
+else UserDataFolder="$DefaultUserDataFolder"; fi
 
 ## Space for additional variables and actions ###
 #export SOME_IMPORTANT_VARIABLE="example"

@@ -126,7 +126,6 @@ Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_Bin_User="$HOMEDIR/.local/bin" # "$HOMEDIR/.local/bin" works starting from Chimbalix 24.4
-Install_Path_Bin_System="/usr/bin"
 
 if [ "$Archive_Format" == "Tar" ]; then
 	Archive_Program_Files="$Path_Installer_Data/program_files.tar.xz"
@@ -643,7 +642,12 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	
 	SysUsrPath="/usr/share"
 	SysEtcPath="/etc"
-	if [ ! -e "$SysUsrPath/applications" ]; then SysUsrPath="/usr/local/share"; fi
+	Install_Path_Bin_System="/usr/bin"
+	
+	if [ ! -e "$SysUsrPath/applications" ]; then
+		SysUsrPath="/usr/local/share"
+		Install_Path_Bin_System="/usr/local/bin"
+	fi
 	if [ ! -e "$SysEtcPath/xdg" ]; then SysEtcPath="/usr/local/etc"; fi
 	if [ ! -e "$SysUsrPath/applications" ] || [ ! -e "$SysEtcPath/xdg" ]; then _ABORT "Try installing in User mode..."; fi
 	

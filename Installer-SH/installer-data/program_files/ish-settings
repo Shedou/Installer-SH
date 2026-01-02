@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Script version 1.0
+# WARNING! This file contains settings that are changed during program installation! Do not touch them unless necessary!
+# These settings are used by launchers to determine where to place configuration files and user data.
+
+ISHPogramArch="other"
+ISHProgramFName="other"
+ISHInstallPathUser="$HOME/portsoft"
+ISHInstallPathSystem="/portsoft"
+ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"
+ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"

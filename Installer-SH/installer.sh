@@ -260,6 +260,7 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	MODE_SYSTEM="false"
 	
 	MODE_NO_SUDO="false"
+	UseMD5="false"
 	
 	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
@@ -316,7 +317,12 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 			fi
 		fi
 		
-		PackArcMD5=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
+		if ! type "md5sum" &> /dev/null; then
+			PackArcMD5=$(md5 -q "$Name_File_Target_full" | awk '{print $1}')
+		else
+			PackArcMD5=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
+		fi
+		
 		if [ "$Name_File" == "$Program_Files" ]; then
 			if [ "$Tools_Architecture" == "amd64" ]; then
 				sed -i "" "s/Archive_MD5_Hash_ProgramFiles=\".*\"/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
@@ -441,6 +447,10 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 		MODE_NO_SUDO="true"
 	fi
 	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
+	if ! type "md5sum" &> /dev/null; then UseMD5="true"
+		if ! type "md5" &> /dev/null; then _ABORT "$String_CMD_N_F 'md5'"; fi
+	fi
+	
 	
 	if [ -z "$HOME" ]; then _ABORT "Variable HOME not found"; fi
 }
@@ -771,7 +781,12 @@ fi
 ######### Check and compare MD5 of archive
 
 function _BASE_CHECK_MD5() {
-	Base_Data_MD5=$(md5sum "$Archive_Base_Data" | awk '{print $1}')
+	if [ "$UseMD5" == "true" ]; then
+		Base_Data_MD5=$(md5 -q "$Archive_Base_Data" | awk '{print $1}')
+	else
+		Base_Data_MD5=$(md5sum "$Archive_Base_Data" | awk '{print $1}')
+	fi
+	
 	if [ "$Base_Data_MD5" != "$Archive_Base_Data_MD5" ]; then
 		_CLEAR_BACKGROUND
 		echo -e "\
@@ -1051,8 +1066,13 @@ function _CHECK_MD5_COMPARE() {
 
 	MD5_Warning="false"
 	
-	MD5_Hash_ProgramFiles=$(md5sum "$Archive_Program_Files" | awk '{print $1}')
-	MD5_Hash_SystemFiles=$(md5sum "$Archive_System_Files" | awk '{print $1}')
+	if [ "$UseMD5" == "true" ]; then
+		MD5_Hash_ProgramFiles=$(md5 -q "$Archive_Program_Files" | awk '{print $1}')
+		MD5_Hash_SystemFiles=$(md5 -q "$Archive_System_Files" | awk '{print $1}')
+	else
+		MD5_Hash_ProgramFiles=$(md5sum "$Archive_Program_Files" | awk '{print $1}')
+		MD5_Hash_SystemFiles=$(md5sum "$Archive_System_Files" | awk '{print $1}')
+	fi
 	
 	if [ "$MD5_Hash_ProgramFiles" != "$Archive_MD5_Hash_ProgramFiles" ]; then MD5_Error_ProgramFiles="true"; fi
 	if [ "$MD5_Hash_SystemFiles" != "$Archive_MD5_Hash_SystemFiles" ]; then MD5_Error_SystemFiles="true"; fi

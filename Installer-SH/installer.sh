@@ -107,7 +107,7 @@ Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_C
  ### ---------------------------------------------------------- ###
  
  ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7)
- # "Tar" is not recommended for normal use
+ # Tar provides the greatest compatibility, but has poorer compression.
 Archive_Format="SZip" # "SZip" / "Tar"
 
  # Larger size - better compression and more RAM required for unpacking. (256 dictionary requires 256+ MB of RAM for unpacking)

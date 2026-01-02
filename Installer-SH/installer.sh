@@ -652,7 +652,7 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	Out_System_Menu_DDir="$SysUsrPath/desktop-directories/apps"
 	Out_System_Menu_Apps="$SysUsrPath/applications/apps"
 	
-	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
+	Out_App_Folder_Owner="root:root"  # Only for "System" mode, username:group
 	Out_App_Folder_Permissions=755  # Only for "System" mode.
 	
 	Output_Files_All=("/tmp/ish") # Files list for Uninstaller

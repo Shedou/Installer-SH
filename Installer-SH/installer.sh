@@ -3,7 +3,6 @@
 # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
 ScriptVersion="2.6dev"; LocaleVersion="2.4" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
-HOMEDIR="$HOME"
 
 # Main function, don't change!
 function _MAIN() {
@@ -119,13 +118,13 @@ Dictionary_Size_System_Files="8"
  # Application installation directory. Don't touch it if you don't know why you need it!
  # If used incorrectly, it may lead to bad consequences!
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
-Install_Path_User="$HOMEDIR/portsoft"
+Install_Path_User="$HOME/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
 # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
-Install_Path_Bin_User="$HOMEDIR/.local/bin" # "$HOMEDIR/.local/bin" works starting from Chimbalix 24.4
+Install_Path_Bin_User="$HOME/.local/bin" # "$HOME/.local/bin" works starting from Chimbalix 24.4
 
 if [ "$Archive_Format" == "Tar" ]; then
 	Archive_Program_Files="$Path_Installer_Data/program_files.tar.xz"
@@ -243,9 +242,9 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	# Header Text (unformated)
 	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
-	User_Desktop_Dir="$HOMEDIR/Desktop"
-	if [ -e "$HOMEDIR/.config/user-dirs.dirs" ]; then
-		source "$HOMEDIR/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
+	User_Desktop_Dir="$HOME/Desktop"
+	if [ -e "$HOME/.config/user-dirs.dirs" ]; then
+		source "$HOME/.config/user-dirs.dirs"; User_Desktop_Dir="$XDG_DESKTOP_DIR"; fi
 	
 	MODE_DEBUG="false"
 	MODE_NOUPDATE_MENU="false"
@@ -443,7 +442,7 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	fi
 	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
 	
-	if [ -z "$HOMEDIR" ]; then _ABORT "Variable HOME not found"; fi
+	if [ -z "$HOME" ]; then _ABORT "Variable HOME not found"; fi
 }
 
 ######### ---------------------------- #########
@@ -634,11 +633,11 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	Input_Menu_Desktop_Dir="$Temp_Dir/menu/desktop-directories/apps"
 	Input_Menu_Apps_Dir="$Temp_Dir/menu/apps"
 	
-	Out_User_Helpers_Dir="$HOMEDIR/.local/share/xfce4/helpers"
+	Out_User_Helpers_Dir="$HOME/.local/share/xfce4/helpers"
 	Out_User_Desktop_Dir="$User_Desktop_Dir"
-	Out_User_Menu_Files="$HOMEDIR/.config/menus/applications-merged"
-	Out_User_Menu_DDir="$HOMEDIR/.local/share/desktop-directories/apps"
-	Out_User_Menu_Apps="$HOMEDIR/.local/share/applications/apps"
+	Out_User_Menu_Files="$HOME/.config/menus/applications-merged"
+	Out_User_Menu_DDir="$HOME/.local/share/desktop-directories/apps"
+	Out_User_Menu_Apps="$HOME/.local/share/applications/apps"
 	
 	SysUsrPath="/usr/share"
 	SysEtcPath="/etc"

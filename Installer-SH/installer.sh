@@ -261,6 +261,8 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	
 	MODE_NO_SUDO="false"
 	UseMD5="false"
+	NewLine='
+'
 	
 	Script_Name="$(basename "$0")"
 	Path_To_Script="$( dirname "$(readlink -f "$0")")"
@@ -1589,7 +1591,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
 			if [ "$Tools_Architecture" == "amd64" ]; then
-				sudo sed -i "" "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi
@@ -1613,7 +1615,7 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
 			if [ "$Tools_Architecture" == "amd64" ]; then
-				sed -i "" "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi

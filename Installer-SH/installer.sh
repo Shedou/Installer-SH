@@ -640,11 +640,17 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	Out_User_Menu_Files="$HOMEDIR/.config/menus/applications-merged"
 	Out_User_Menu_DDir="$HOMEDIR/.local/share/desktop-directories/apps"
 	Out_User_Menu_Apps="$HOMEDIR/.local/share/applications/apps"
-
-	Out_System_Helpers_Dir="/usr/share/xfce4/helpers"
-	Out_System_Menu_Files="/etc/xdg/menus/applications-merged"
-	Out_System_Menu_DDir="/usr/share/desktop-directories/apps"
-	Out_System_Menu_Apps="/usr/share/applications/apps"
+	
+	SysUsrPath="/usr/share"
+	SysEtcPath="/etc"
+	if [ ! -e "$SysUsrPath/applications" ]; then SysUsrPath="/usr/local/share"; fi
+	if [ ! -e "$SysEtcPath/xdg" ]; then SysEtcPath="/usr/local/etc"; fi
+	if [ ! -e "$SysUsrPath/applications" ] || [ ! -e "$SysEtcPath/xdg" ]; then _ABORT "Try installing in User mode..."; fi
+	
+	Out_System_Helpers_Dir="$SysUsrPath/xfce4/helpers"
+	Out_System_Menu_Files="$SysEtcPath/xdg/menus/applications-merged"
+	Out_System_Menu_DDir="$SysUsrPath/desktop-directories/apps"
+	Out_System_Menu_Apps="$SysUsrPath/applications/apps"
 	
 	Out_App_Folder_Owner=root:root  # Only for "System" mode, username:group
 	Out_App_Folder_Permissions=755  # Only for "System" mode.

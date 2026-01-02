@@ -321,13 +321,13 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		PackArcMD5=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
 		if [ "$Name_File" == "$Program_Files" ]; then
 			if [ "$Tools_Architecture" == "amd64" ]; then
-				sed -i "" "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+				sed -i "" "s/Archive_MD5_Hash_ProgramFiles=\".*\"/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			fi
 		elif [ "$Name_File" == "$System_Files" ]; then
 			if [ "$Tools_Architecture" == "amd64" ]; then
-				sed -i "" "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
+				sed -i "" "s/Archive_MD5_Hash_SystemFiles=\".*\"/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			fi

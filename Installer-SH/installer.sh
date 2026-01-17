@@ -57,9 +57,9 @@ AppVersion="2.6 dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2025-xx-xx"
+Info_Release_Date="2026-xx-xx"
 Info_Category="Other"
-Info_Platform="Linux - Chimbalix 24, Debian 7-12, Fedora 20-42." # You need to specify the compatibility of the program, not the installation package.
+Info_Platform="Linux / FreeBSD - Chimbalix 24, Debian 7-12, Fedora 20-42 / GhostBSD xx" # You need to specify the compatibility of the program, not the installation package.
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:

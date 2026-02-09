@@ -27,7 +27,10 @@ UserDataFolder="$DefaultUserDataFolder"
 
 #################################################
 ## DO NOT TOUCH THIS WITHOUT A SERIOUS REASON! ##
-source "$PathToScript/ish-settings" ## IMPORT SETTINGS 
+if [ -e "$PathToScript/ish-settings" ]; then
+	source "$PathToScript/ish-settings" ## IMPORT SETTINGS 
+fi
+
 if [ -z "$ISHPogramArch" ]; then ISHPogramArch="other"; fi # CHECKING IMPORTED VARIABLES
 if [ -z "$ISHProgramFName" ]; then ISHProgramFName="other"; fi
 if [ -z "$ISHInstallPathUser" ]; then ISHInstallPathUser="$HOME/portsoft"; fi

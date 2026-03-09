@@ -354,7 +354,11 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 	cd ..
 	
 	if [ ! -e "$TP_OutputFile" ]; then 
-		tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"
+		if [ $Tools_Architecture == "amd64" ]; then
+			tar -cf "$TP_OutputFile" "$TP_InputDirName"
+		else
+			tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"
+		fi
 		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
 		read -r pause; exit
 	else

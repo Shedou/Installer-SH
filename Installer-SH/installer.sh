@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.6dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.6"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 
 # Main function, don't change!
@@ -42,7 +42,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
 	
-	Unique_App_Folder_Name="installer-sh-26dev" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-26" #=> UNIQUE_APP_FOLDER_NAME
 	
 	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!

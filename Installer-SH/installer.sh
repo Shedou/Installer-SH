@@ -83,6 +83,13 @@ Info_Description_Default="\
  ### ------------------------ ###
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
+
+ # Additional menu categories that will include the main application shortcuts.
+Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
+ # -=== Chimbalix 24.4+ main categories:
+ # Check the "Menu-Categories.ods" table for more information
+ # (file will be removed when using the -clean / -cn option).
+
 Menu_Directory_Name="$Info_Name v$AppVersion"                   #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="/icons/icon.png"                           #=> MENU_DIRECTORY_ICON
 
@@ -94,14 +101,6 @@ Program_Uninstaller_Icon="/icons/ish-software-uninstaller-icon.png"    #=> PROGR
 
 # Path to the ish-settings file that will be configured during installation.
 ISHSettingsFile="ish-settings"
-
- # Additional menu categories that will include the main application shortcuts.
-Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
- # -=== Chimbalix 24.4+ main categories:
- # Check the "Menu-Categories.ods" table for more information
- # (file will be removed when using the -clean / -cn option).
-
-
 
  ### ---------------------------------------------------------- ###
  ### Archive packaging parameters (installer.sh -arcpack / -ap) ###

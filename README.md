@@ -2,6 +2,8 @@
 
 The current repository is for active development of Installer-SH, it contains the latest version of the installation package, however it may be unstable.
 
+![Preview.](https://github.com/Shedou/Installer-SH/blob/main/Installer-SH/Preview.jpg)
+
 Stable and archived versions are available on the [downloads page](https://github.com/Shedou/Installer-SH/releases) or in the "[Installer-SH-Archive](https://github.com/Shedou/Installer-SH-Archive)" repository.
 
 Applications packaged in Installer-SH format can be found in the "[Chimbalix-Software-Catalog](https://github.com/Shedou/Chimbalix-Software-Catalog)" repository.

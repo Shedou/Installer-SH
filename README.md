@@ -8,7 +8,7 @@ Applications packaged in Installer-SH format can be found in the "[Chimbalix-Sof
 
 ## Features of Installer-SH:
 
-* Ease of use: Installer-SH does not require root rights to install programs, just confirm the installation several times to install the application.
+* Ease of use: Installing programs using Installer-SH does not require root privileges by default. Root privileges may be required when installing software in system mode for all users.
 
 * Reliability and autonomy: The installation package is designed for autonomous installation of applications, which means it is suitable for use on computers without Internet access.
 

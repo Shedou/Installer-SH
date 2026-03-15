@@ -1,8 +1,10 @@
 ## Installer-SH [![Github Releases](https://img.shields.io/github/downloads/Shedou/Installer-SH/total.svg)](https://github.com/Shedou/Installer-SH/releases)
 
-The current repository is for active development of Installer-SH, it contains the latest version of the installation package, however it may be unstable.
+Installer-SH is an independent installation package for Linux and FreeBSD applications, allowing you to distribute and install programs even on standalone computers.
 
 ![Preview.](https://github.com/Shedou/Installer-SH/blob/main/Installer-SH/Preview.jpg)
+
+The current repository is for active development of Installer-SH, it contains the latest version of the installation package, however it may be unstable.
 
 Stable and archived versions are available on the [downloads page](https://github.com/Shedou/Installer-SH/releases) or in the "[Installer-SH-Archive](https://github.com/Shedou/Installer-SH-Archive)" repository.
 

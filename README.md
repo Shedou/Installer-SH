@@ -10,6 +10,8 @@ Applications packaged in Installer-SH format can be found in the "[Chimbalix-Sof
 
 * Ease of use: Installing programs using Installer-SH does not require root privileges by default. Root privileges may be required when installing software in system mode for all users.
 
+* Easy management: Installed applications can be easily removed at any time thanks to the independence of the installation package.
+
 * Reliability and autonomy: The installation package is designed for autonomous installation of applications, which means it is suitable for use on computers without Internet access.
 
 * Backward compatibility: Installer-SH works starting with Debian 7 (Linux Kernel 3.2+), the installation package mainly uses GNU tools (https://www.gnu.org/software/software.html) and the 7-Zip archiver (https://7-zip.org, built into the package). Attention! Compatibility of programs packed in the Installer-SH format is on the conscience of the developer.

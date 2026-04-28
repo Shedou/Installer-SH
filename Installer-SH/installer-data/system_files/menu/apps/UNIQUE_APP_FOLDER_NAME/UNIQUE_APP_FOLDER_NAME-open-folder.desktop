@@ -21,13 +21,13 @@ Path=PATH_TO_FOLDER
 Terminal=false
 StartupNotify=false
 
-Categories=UNIQUE_APP_FOLDER_NAME
+Categories=UNIQUE_APP_FOLDER_NAME-Service
 #Keywords=
 #MimeType=
 
 # - Translations:
 # FOR TRANSLATORS! Please! Do not translate the app NAME, such as "FeatherPad".
-#Name[ru]=
+Name[ru]=PROGRAM_NAME_IN_MENU - Открыть Каталог
 #GenericName[ru]=
 #Comment[ru]=
 

@@ -12,6 +12,13 @@
 				<Filename>apps-UNIQUE_APP_FOLDER_NAME-UNIQUE_APP_FOLDER_NAME-uninstall.desktop</Filename>
 				-->
 			</Include>
+			<Menu><!-- Service -->
+				<Name>UNIQUE_APP_FOLDER_NAME-Service</Name>
+				<Directory>apps/UNIQUE_APP_FOLDER_NAME/UNIQUE_APP_FOLDER_NAME-Service.directory</Directory>
+				<Include>
+					<Category>UNIQUE_APP_FOLDER_NAME-Service</Category>
+				</Include>
+			</Menu>
 		</Menu>
 	</Menu>
 </Menu>

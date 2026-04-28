@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.6"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.7dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 
 # Main function, don't change!
@@ -24,43 +24,46 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="fe8908180ec7a4e6e9fbb9cb9f60c471"
-	Archive_MD5_Hash_SystemFiles="c4797fa3bec5fb5fa805e855a66ad548"
+	Archive_MD5_Hash_ProgramFiles="f75b84abd6da8c63ada4c5fdd1f1d879"
+	Archive_MD5_Hash_SystemFiles="493ed0abfaaab473b29bc84d168f96a8"
 	
+	# Tools_Architecture must match the operating system architecture.
 	Tools_Architecture="x86_64"      # x86_64, x86 - Linux || amd64 - FreeBSD
 	Program_Architecture="script"    # x86_64, x86, amd64, script, other...
-	Update_Menu="true"               # Automatically updates the menu with available desktop environment features, currently xfce, kde and lxde are supported.
+	Update_Menu="true"               # Automatically updates the menu...
 	
-	Install_Mode="User"              # "System" / "User". In "User" mode, root rights are not required.
+	Install_Mode="User"              # "System" (root access required) / "User"
 	Install_Mode_CFG_Skip="false"    # Skip CFG...
 	Install_Configs_CFG_Skip="false" # Skip CFG...
-	Install_Configs="PortSoft"       # "SysDef" / "PortSoft". SysDef - System Default. PortSoft - A separate directory for storing configs.The package creator must add the names of the ISH launchers to the "program_files" directory for this feature to work. This functionality may be changed/improved in future versions of Installer-SH.
+	Install_Configs="PortSoft"       # "SysDef" / "PortSoft".
+	# SysDef - System Default.
+	# PortSoft - A separate directory for storing configs.
 	
-	Install_Desktop_Icons="true"    # Place icons on the desktop (only for current user).
-	Install_Helpers="false"         # XFCE Only! Adds "Default Applications" associations, please prepare files in "installer-data/system_files/helpers/" before using.
+	Install_Desktop_Icons="true" # Place icons on the desktop (only for current user).
+	Install_Helpers="false"      # XFCE Only! Adds "Default Applications" associations.
+	# Please prepare files in "installer-data/system_files/helpers/" before using.
 	
-	Debug_Test_Colors="false"       # Test colors (for debugging purposes)
-	Font_Styles_RGB="false"         # Disabled for compatibility with older distributions, can be enabled manually.
+	Debug_Test_Colors="false" # Test colors (for debugging purposes)
+	Font_Styles_RGB="false"   # Disabled for compatibility with older distros...
 	
-	Unique_App_Folder_Name="installer-sh-26" #=> UNIQUE_APP_FOLDER_NAME
-	
-	# Unique name of the output directory.
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
-	# good: ex-app-16, exapp-16.
-	# BAD: Ex-app-16, ExApp-16.
+	Unique_App_Folder_Name="installer-sh-27dev" #=> UNIQUE_APP_FOLDER_NAME
+	# GOOD: ex-app-16, exapp-16 | BAD: Ex-app-16, ExApp 16...
+	# Unique name of the output directory.
 
  ######### - ------------------- - #########
  ######### - Package Information - #########
  ######### - ------------------- - #########
 
-AppVersion="2.6 dev" # Application version
+AppVersion="2.7 dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
 Info_Release_Date="2026-xx-xx"
 Info_Category="Other"
-Info_Platform="Linux / FreeBSD - Chimbalix 24+, Debian 7+, Fedora 20+ / GhostBSD 23+" # You need to specify the compatibility of the program, not the installation package.
+ # Specify the compatibility of the program, not the installation package!
+Info_Platform="Linux / FreeBSD - Chimbalix 24+, Debian 7+, Fedora 20+ / GhostBSD 23+" # (Target App compatibility, not the script)
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:
@@ -71,7 +74,7 @@ Info_Developer="Chimbal"  # Software developer
 Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog"
 
  # Use this description if there is no suitable localization file.
- # WARNING! The maximum number of characters available for description is 100x11, it is not recommended to exceed this limit.
+ # WARNING! The maximum number of characters available for description is 100x11
 Info_Description_Default="\
   1) This universal installer (short description):
      - Suitable for installation on stand-alone PCs without Internet access.
@@ -84,47 +87,49 @@ Info_Description_Default="\
  # Please manually prepare the menu files in the "installer-data/system_files/" directory before packaging the application.
  # Use the variable names given in the comments to simplify the preparation of menu files.
 
- # Additional menu categories that will include the main application shortcuts.
-Additional_Categories="chi-other;Utility;Education;"            #=> ADDITIONAL_CATEGORIES
+Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
  # -=== Chimbalix 24.4+ main categories:
  # Check the "Menu-Categories.ods" table for more information
  # (file will be removed when using the -clean / -cn option).
 
-Menu_Directory_Name="$Info_Name v$AppVersion"                   #=> MENU_DIRECTORY_NAME
-Menu_Directory_Icon="/icons/icon.png"                           #=> MENU_DIRECTORY_ICON
+Menu_Directory_Name="$Info_Name v$AppVersion"        #=> MENU_DIRECTORY_NAME
+Menu_Directory_Icon="icons/icon.png"                 #=> MENU_DIRECTORY_ICON
+Menu_Directory_Service_Icon="icons/icon-service.png" #=> MENU_DIRECTORY_SERVICE_ICON
 
-Program_Name_In_Menu="$Info_Name $AppVersion"                   #=> PROGRAM_NAME_IN_MENU
-Program_Install_Mode="$Install_Mode"                            #=> PROGRAM_INSTALL_MODE
+Program_Name_In_Menu="$Info_Name $AppVersion"        #=> PROGRAM_NAME_IN_MENU
+Program_Install_Mode="$Install_Mode"                 #=> PROGRAM_INSTALL_MODE
 
-Program_Uninstaller_File="ish-software-uninstaller.sh"                 #=> PROGRAM_UNINSTALLER_FILE
-Program_Uninstaller_Icon="/icons/ish-software-uninstaller-icon.png"    #=> PROGRAM_UNINSTALLER_ICON
+Program_Uninstaller_File="ish-software-uninstaller.sh"             #=> PROGRAM_UNINSTALLER_FILE
+Program_Uninstaller_Icon="icons/ish-software-uninstaller-icon.png" #=> PROGRAM_UNINSTALLER_ICON
 
 # Path to the ish-settings file that will be configured during installation.
+# The path is specified within the "program_files" directory.
 ISHSettingsFile="ish-settings"
 
  ### ---------------------------------------------------------- ###
  ### Archive packaging parameters (installer.sh -arcpack / -ap) ###
  ### ---------------------------------------------------------- ###
  
- ### Archive format. Use 7-Zip for better compression. Tar.xz - for compatibility with very old Linux (Debian <7)
- # Tar provides the greatest compatibility, but has poorer compression.
+ # Use 7-Zip for better compression.
+ # Tar.xz - for compatibility with very old Linux (Debian <7)
 Archive_Format="SZip" # "SZip" / "Tar"
 
- # Larger size - better compression and more RAM required for unpacking. (256 dictionary requires 256+ MB of RAM for unpacking)
- # For applications 150-200 MiB in size, use a dictionary size of 32 - 128, it is not recommended to use a dictionary size greater than 256.
-Dictionary_Size_Program_Files="64"
-Dictionary_Size_System_Files="8"
+ # Larger size - better compression and more RAM required for unpacking
+ #  (256 dictionary requires 256+ MB of RAM for unpacking)
+ # For applications 150-200 MiB in size, use a dictionary size of 32-128.
+ #  It is not recommended to use a dictionary size larger than 256.
+Dictionary_Size_Program_Files="64" # MiB
+Dictionary_Size_System_Files="8" # MiB
 
- # Application installation directory. Don't touch it if you don't know why you need it!
- # If used incorrectly, it may lead to bad consequences!
+ # WARNING: Changing this may break system integration!!!
+ # ADVANCED: Modify only if you understand the ISH directory structure.
  # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_User="$HOME/portsoft"
 Install_Path_User_Full="$Install_Path_User/$Program_Architecture/$Unique_App_Folder_Name"
- # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
 Install_Path_System="/portsoft"
 Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App_Folder_Name"
- # DO NOT TOUCH THIS WITHOUT A SERIOUS REASON!
-Install_Path_Bin_User="$HOME/.local/bin" # "$HOME/.local/bin" works starting from Chimbalix 24.4
+ # "$HOME/.local/bin" works starting from Chimbalix 24.4
+Install_Path_Bin_User="$HOME/.local/bin"
 
 if [ "$Archive_Format" == "Tar" ]; then
 	Archive_Program_Files="$Path_Installer_Data/program_files.tar.xz"
@@ -166,11 +171,25 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 	elif type "kbuildsycoca4" &> /dev/null; then kbuildsycoca4 &> /dev/null
 	fi
 }
+function _POST_INSTALL_UPDATE_MENU_XDG() {
+	if [ "$Install_Mode" == "User" ]; then
+		if type "update-desktop-database" &> /dev/null; then
+			update-desktop-database ~/.local/share/applications &> /dev/null
+		fi
+	fi
+	
+	if [ "$Install_Mode" == "System" ]; then
+		if type "update-desktop-database" &> /dev/null; then
+			update-desktop-database /usr/share/applications &> /dev/null
+		fi
+	fi
+}
 
 function _UPDATE_MENU() {
-	if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
-	if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
-	if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
+	_POST_INSTALL_UPDATE_MENU_XDG
+	#if [ "$Current_DE" == "LXDE" ];    then _POST_INSTALL_UPDATE_MENU_LXDE; fi
+	#if [ "$Current_DE" == "XFCE" ];    then _POST_INSTALL_UPDATE_MENU_XFCE; fi
+	#if [ "$Current_DE" == "KDE" ];     then _POST_INSTALL_UPDATE_MENU_KDE; fi
 }
 
  ######### ----------------------------- #########
@@ -181,40 +200,37 @@ function _UPDATE_MENU() {
 
 function _HELP() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
 	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString
--updatebase -ub - Update base menu files and PortSoft (ISH version $ScriptVersion).
--update     -up - Program update mode, warnings about overwriting existing files
-                   will not be displayed!
--silent     -st - Requires confirmation only in case of errors and conflicts.
+-updatebase  -uba - Update base menu files and PortSoft (ISH version $ScriptVersion).
+-update      -upd - Update the App without warnings about overwriting files!!!
+-silent      -slt - Requires confirmation only in case of errors and conflicts.
 -cfgportsoft -cps - Store program settings in a dedicated directory.
 -cfgsysdef   -csd - Do not override the program settings storage directory.
 -modeuser    -mur - Install software only for the current user.
 -modesystem  -msm - Install for all system users (root rights required).
--noupdmenu  -nm - Disables automatic menu update after installation.
-                   Recommended for use when batch installing
-                   multiple applications in \"-silent\" mode.
--forcemenu  -fm - Only refresh menu. Recommended to use after installing
-                   many applications in \"-silent\" mode.
-                   Works if the working environment is supported.
--arcpack    -ap - Pack \"program_files\" and \"system_files\" into archives.
--clean      -cn - Delete unnecessary files in the package directory.
+-noupdmenu   -nmu - Disables automatic menu update after installation.
+                     Recommended for use in batch installations in silent mode.
+-forcemenu  -fmu  - Only refresh menu. Recommended to use after installing
+                     many applications in \"-silent\" mode.
+-arcpack   -apk - Pack \"program_files\" and \"system_files\" into archives.
+-clean     -cln - Delete unnecessary files in the package directory.
                    Please make sure that the package is built and ready for use,
                    this cannot be undone!
--tarpack    -tp - Pack the current installation package into a tar archive.
--debug      -dg - Debug mode, for development purposes only."
+-tarpack   -tpk - Pack the current installation package into a tar archive.
+-debug     -dbg - Debug mode, for development purposes only."
 	exit;
 }
 
 function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
-	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fm" ]];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
-	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nm" ]];  then MODE_NOUPDATE_MENU="true"; fi
-	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dg" ]];      then MODE_DEBUG="true"; fi
-	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-st" ]];     then MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-ap" ]];    then MODE_ARCPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cn" ]];      then MODE_CLEAN="true"; fi
-	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tp" ]];    then MODE_TARPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-updatebase" ]] || [[ "$ArgumentsString" =~ "-ub" ]]; then MODE_UPDATEBASE="true"; fi
-	if [[ "$ArgumentsString" =~ "-update" ]] || [[ "$ArgumentsString" =~ "-up" ]];     then MODE_UPDATE="true"; fi
+	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fmu" ]];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nmu" ]];  then MODE_NOUPDATE_MENU="true"; fi
+	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dbg" ]];      then MODE_DEBUG="true"; fi
+	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-slt" ]];     then MODE_SILENT="true"; fi
+	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-apk" ]];    then MODE_ARCPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cln" ]];      then MODE_CLEAN="true"; fi
+	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tpk" ]];    then MODE_TARPACK="true"; fi
+	if [[ "$ArgumentsString" =~ "-updatebase" ]] || [[ "$ArgumentsString" =~ "-uba" ]]; then MODE_UPDATEBASE="true"; fi
+	if [[ "$ArgumentsString" =~ "-update" ]] || [[ "$ArgumentsString" =~ "-upd" ]];     then MODE_UPDATE="true"; fi
 	if [[ "$ArgumentsString" =~ "-cfgportsoft" ]] || [[ "$ArgumentsString" =~ "-cps" ]]; then CFG_PORTSOFT="true"; fi
 	if [[ "$ArgumentsString" =~ "-cfgsysdef" ]] || [[ "$ArgumentsString" =~ "-csd" ]];   then CFG_SYSDEF="true"; fi
 	if [[ "$ArgumentsString" =~ "-modeuser" ]] || [[ "$ArgumentsString" =~ "-mur" ]];    then MODE_USER="true"; fi
@@ -1297,9 +1313,11 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 	
 	if [ "$prepare_error" == "false" ]; then 
 		if [ "$Tools_Architecture" == "amd64" ]; then
-			grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s~$prepare_text~$prepare_path~g" &> /dev/null
+			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s|$prepare_text|$prepare_path|g" &> /dev/null
+			find "$Temp_Dir" -type f -exec sed -i "" "s|$prepare_text|$prepare_path|g" {} +
 		else
-			grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s~$prepare_text~$prepare_path~g" &> /dev/null
+			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s|$prepare_text|$prepare_path|g" &> /dev/null
+			find "$Temp_Dir" -type f -exec sed -i "s|$prepare_text|$prepare_path|g" {} +
 		fi
 	fi
 }
@@ -1328,6 +1346,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно испо�
 		_PREPARE_INPUT_FILES_GREP "ADDITIONAL_CATEGORIES" "$Additional_Categories"
 		_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_NAME" "$Menu_Directory_Name"
 		_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
+		_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_SERVICE_ICON" "$Menu_Directory_Service_Icon"
 	done
 	
 	local All_Renamed="false"

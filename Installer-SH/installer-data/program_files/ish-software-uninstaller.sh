@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script version 2.1
+# Script version 2.2
 # LICENSE for this script is at the end of this file
 ## ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ##
 ## ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ##
@@ -78,18 +78,9 @@ read -r Confirm
 if [ "$Confirm" == "y" ] || [ "$Confirm" == "yes" ]; then
 	for i in "${!FilesToDelete[@]}"; do _remove "${FilesToDelete[$i]}"; done
 	
-	if [ "$Current_DE" == "xfce" ]; then
-		if type "xfce4-panel" &> /dev/null; then xfce4-panel -r &> /dev/null; fi
-	fi
-	if [ "$Current_DE" == "KDE" ] || [ "$Current_DE" == "plasma" ]; then
-		if type "kbuildsycoca7" &> /dev/null; then kbuildsycoca7 &> /dev/null
-		elif type "kbuildsycoca6" &> /dev/null; then kbuildsycoca6 &> /dev/null
-		elif type "kbuildsycoca5" &> /dev/null; then kbuildsycoca5 &> /dev/null
-		elif type "kbuildsycoca4" &> /dev/null; then kbuildsycoca4 &> /dev/null
-		fi
-	fi
-	if [ "$Current_DE" == "LXDE" ] || [ "$Current_DE" == "lxde" ]; then
-		if type "lxpanelctl" &> /dev/null; then lxpanelctl restart &> /dev/null; fi
+	if type "update-desktop-database" &> /dev/null; then
+		update-desktop-database ~/.local/share/applications &> /dev/null
+		update-desktop-database /usr/share/applications &> /dev/null
 	fi
 	
 	echo -e "\n ${Font_Bold}${Font_Green}Uninstallation completed.${Font_Reset_Color}${Font_Reset}\n"
@@ -100,7 +91,7 @@ read -r Confirm
 
 # MIT License
 #
-# Copyright (c) 2024 Chimbal
+# Copyright (c) 2024-2026 Андрей Цымбалов (Chimbal)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

@@ -1,0 +1,19 @@
+[Desktop Entry]
+# -= DIRECTORY =- #
+Type=Directory
+Version=1.1
+Encoding=UTF-8
+#OnlyShowIn=
+#NotShowIn=
+NoDisplay=false
+Hidden=false
+
+Name=Service
+Comment=
+#GenericName=
+
+Icon=PATH_TO_FOLDER/MENU_DIRECTORY_SERVICE_ICON
+
+# - Translations:
+Name[ru]=Управление
+#Comment[ru]=

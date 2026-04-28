@@ -21,7 +21,7 @@ Path=PATH_TO_FOLDER
 Terminal=true
 StartupNotify=false
 
-Categories=UNIQUE_APP_FOLDER_NAME;
+Categories=UNIQUE_APP_FOLDER_NAME-Service;
 #Keywords=
 #MimeType=
 

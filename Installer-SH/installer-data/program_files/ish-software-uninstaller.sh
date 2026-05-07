@@ -80,7 +80,12 @@ if [ "$Confirm" == "y" ] || [ "$Confirm" == "yes" ]; then
 	
 	if type "update-desktop-database" &> /dev/null; then
 		update-desktop-database ~/.local/share/applications &> /dev/null
-		update-desktop-database /usr/share/applications &> /dev/null
+		if [ -e "/usr/share/applications" ]; then
+			update-desktop-database /usr/share/applications &> /dev/null
+		else
+			update-desktop-database /usr/local/share/applications &> /dev/null
+		fi
+		
 	fi
 	
 	echo -e "\n ${Font_Bold}${Font_Green}Uninstallation completed.${Font_Reset_Color}${Font_Reset}\n"

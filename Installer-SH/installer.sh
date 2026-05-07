@@ -24,7 +24,7 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="f75b84abd6da8c63ada4c5fdd1f1d879"
+	Archive_MD5_Hash_ProgramFiles="0b7d6c55be9a82def6b9b4b180539a1e"
 	Archive_MD5_Hash_SystemFiles="3ebfefacf51c943276431469caf3980b"
 	
 	# Tools_Architecture must match the operating system architecture.
@@ -172,15 +172,17 @@ function _POST_INSTALL_UPDATE_MENU_KDE() {
 	fi
 }
 function _POST_INSTALL_UPDATE_MENU_XDG() {
-	if [ "$Install_Mode" == "User" ]; then
-		if type "update-desktop-database" &> /dev/null; then
+	if type "update-desktop-database" &> /dev/null; then
+		if [ "$Install_Mode" == "User" ]; then
 			update-desktop-database ~/.local/share/applications &> /dev/null
 		fi
-	fi
-	
-	if [ "$Install_Mode" == "System" ]; then
-		if type "update-desktop-database" &> /dev/null; then
-			update-desktop-database /usr/share/applications &> /dev/null
+		
+		if [ "$Install_Mode" == "System" ]; then
+			if [ -e "/usr/share/applications" ]; then
+				update-desktop-database /usr/share/applications &> /dev/null
+			else
+				update-desktop-database /usr/local/share/applications &> /dev/null
+			fi
 		fi
 	fi
 }
@@ -467,8 +469,9 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
 	fi
 	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
 	if ! type "md5sum" &> /dev/null; then UseMD5="true"
-		if ! type "md5" &> /dev/null; then _ABORT "$String_CMD_N_F 'md5'"; fi
+		if ! type "md5" &> /dev/null;  then _ABORT "$String_CMD_N_F 'md5'"; fi
 	fi
+	if ! type "update-desktop-database" &> /dev/null; then _WARNING "Tool" "\"update-desktop-database\" not found..."; fi
 	
 	
 	if [ -z "$HOME" ]; then _ABORT "Variable HOME not found"; fi

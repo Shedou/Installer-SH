@@ -25,7 +25,7 @@ function _MAIN() {
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
 	Archive_MD5_Hash_ProgramFiles="f75b84abd6da8c63ada4c5fdd1f1d879"
-	Archive_MD5_Hash_SystemFiles="493ed0abfaaab473b29bc84d168f96a8"
+	Archive_MD5_Hash_SystemFiles="3ebfefacf51c943276431469caf3980b"
 	
 	# Tools_Architecture must match the operating system architecture.
 	Tools_Architecture="x86_64"      # x86_64, x86 - Linux || amd64 - FreeBSD
@@ -92,7 +92,7 @@ Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
  # Check the "Menu-Categories.ods" table for more information
  # (file will be removed when using the -clean / -cn option).
 
-Menu_Directory_Name="$Info_Name v$AppVersion"        #=> MENU_DIRECTORY_NAME
+Menu_Directory_Name="$Info_Name"                     #=> MENU_DIRECTORY_NAME
 Menu_Directory_Icon="icons/icon.png"                 #=> MENU_DIRECTORY_ICON
 Menu_Directory_Service_Icon="icons/icon-service.png" #=> MENU_DIRECTORY_SERVICE_ICON
 

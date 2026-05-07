@@ -17,10 +17,8 @@ Font_Yellow='\e[38;5;226m'
 
 ## ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ##
 ## ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ----------------------- ##
-
-Current_DE="$XDG_SESSION_DESKTOP"
 Header="${Font_Red}${Font_Bold} -=: Software Uninstaller Script (Installer-SH) :=-${Font_Reset}${Font_Reset_Color}\n"
-printf '\033[8;30;110t' # Resize terminal Window
+printf '\033[8;30;100t' # Resize terminal Window
 
 function _CLEAR_BACKGROUND() {
 	clear; clear
@@ -60,8 +58,6 @@ FilesToDelete=(
 
 # Display info and wait confirmation
 echo -e "\
- XDG_SESSION_DESKTOP: $Current_DE
- 
  ${Font_Bold}${Font_Yellow}Attention! Make sure that you do not have any important data in the program directory!${Font_Reset_Color}${Font_Reset}
   $Path_To_Script
  

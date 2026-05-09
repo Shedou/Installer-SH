@@ -7,6 +7,7 @@
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
 ISHMoveHomeDir="true"
 UseExtraLibs="false"
+ISHTerminalPause="true"
 
 PathToScript="$( dirname "$(readlink -f "$0")")"
 #FolderBaseName="$( basename "$PathToScript")"
@@ -94,9 +95,11 @@ if [[ "$exit_code" != "0" ]]; then
 	$terminal_executable -e "$StringMessage"
 fi
 
+if [ "$ISHTerminalPause" == "true" ]; then read pause; fi
+
 # MIT License
 #
-# Copyright (c) 2025 Chimbal
+# Copyright (c) 2025-2026 Андрей Цымбалов (Chimbal)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

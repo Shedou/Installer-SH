@@ -3,6 +3,7 @@
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
 ScriptVersion="2.7dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
+Current_Architecture="$(uname -m)"
 
 # Main function, don't change!
 function _MAIN() {
@@ -23,8 +24,8 @@ function _MAIN() {
  ######### ---- -------- ---- #########
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
-	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -ap).
-	Archive_MD5_Hash_ProgramFiles="0b7d6c55be9a82def6b9b4b180539a1e"
+	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -apk).
+	Archive_MD5_Hash_ProgramFiles="e5bbf8276f68329b456c43f47c4d29f9"
 	Archive_MD5_Hash_SystemFiles="3ebfefacf51c943276431469caf3980b"
 	
 	# Tools_Architecture must match the operating system architecture.
@@ -255,7 +256,6 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 	Locale_Use_Default="true" # don't change!
 	Locale_Display="Default"
 	Info_Description="TO BE REPLACED BY LOCALE IF PRESENT, DONT CHANGE THIS"
-	Current_Architecture="Unknown"
 	# Header Text (unformated)
 	Header="-=: Installer-SH v$ScriptVersion - Lang: NOT INITIALIZED :=-"
 	
@@ -343,13 +343,13 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		fi
 		
 		if [ "$Name_File" == "$Program_Files" ]; then
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				sed -i "" "s/Archive_MD5_Hash_ProgramFiles=\".*\"/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			fi
 		elif [ "$Name_File" == "$System_Files" ]; then
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				sed -i "" "s/Archive_MD5_Hash_SystemFiles=\".*\"/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
@@ -371,7 +371,7 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 	cd ..
 	
 	if [ ! -e "$TP_OutputFile" ]; then 
-		if [ "$Tools_Architecture" == "amd64" ]; then tar -cf "$TP_OutputFile" "$TP_InputDirName"
+		if [ "$Current_Architecture" == "amd64" ]; then tar -cf "$TP_OutputFile" "$TP_InputDirName"
 		else tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"; fi
 		
 		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
@@ -506,11 +506,12 @@ function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использов�
 function _CHECK_SYSTEM() { # -= (5) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
 	
 	_CHECK_SYSTEM_VERSION
-	Current_Architecture="$(uname -m)"
 	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
-	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
-		if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
-		else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
+	if [ "$Archive_Format" != "Tar" ]; then
+		if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
+			if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
+			else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
+		fi
 	fi
 }
 
@@ -726,7 +727,9 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!\n  $Temp_Dir"; fi
 	
-	if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+	if [ "$Archive_Format" != "Tar" ]; then
+		if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+	fi
 	
 	# Check PortSoft
 	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ] || [ "$MODE_UPDATEBASE" == "true" ]; then
@@ -844,7 +847,7 @@ function _BASE_DELETE_TEMP() {
 function _BASE_PREPARE_INPUT_FILES_GREP() {
 	local p_text="$1"
 	local p_path="$2"
-	if [ "$Tools_Architecture" == "amd64" ]; then
+	if [ "$Current_Architecture" == "amd64" ]; then
 		grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "" "s~$p_text~$p_path~g" &> /dev/null
 	else
 		grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "s~$p_text~$p_path~g" &> /dev/null
@@ -1315,7 +1318,7 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 	fi
 	
 	if [ "$prepare_error" == "false" ]; then 
-		if [ "$Tools_Architecture" == "amd64" ]; then
+		if [ "$Current_Architecture" == "amd64" ]; then
 			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s|$prepare_text|$prepare_path|g" &> /dev/null
 			find "$Temp_Dir" -type f -exec sed -i "" "s|$prepare_text|$prepare_path|g" {} +
 		else
@@ -1607,14 +1610,14 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "100755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
 			else
 				if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
@@ -1631,14 +1634,14 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$Tools_Architecture" == "amd64" ]; then
+			if [ "$Current_Architecture" == "amd64" ]; then
 				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
 			else
 				if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
@@ -1658,20 +1661,20 @@ function _PREPARE_UNINSTALLER() { # -= (17) =-
 function _PREPARE_LAUNCHERS_SYSTEM() {
 	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
-		if [ "$Tools_Architecture" == "amd64" ]; then
+		if [ "$Current_Architecture" == "amd64" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	else
-		if [ "$Tools_Architecture" == "amd64" ]; then
+		if [ "$Current_Architecture" == "amd64" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
 	
-	if [ "$Tools_Architecture" == "amd64" ]; then
+	if [ "$Current_Architecture" == "amd64" ]; then
 		sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
@@ -1680,7 +1683,7 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 	fi
 	
 	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$Tools_Architecture" == "amd64" ]; then
+	if [ "$Current_Architecture" == "amd64" ]; then
 		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
 	else
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
@@ -1690,20 +1693,20 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 function _PREPARE_LAUNCHERS_USER() {
 	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
-		if [ "$Tools_Architecture" == "amd64" ]; then
+		if [ "$Current_Architecture" == "amd64" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	else
-		if [ "$Tools_Architecture" == "amd64" ]; then
+		if [ "$Current_Architecture" == "amd64" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
 	
-	if [ "$Tools_Architecture" == "amd64" ]; then
+	if [ "$Current_Architecture" == "amd64" ]; then
 		sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
@@ -1712,7 +1715,7 @@ function _PREPARE_LAUNCHERS_USER() {
 	fi
 	
 	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$Tools_Architecture" == "amd64" ]; then
+	if [ "$Current_Architecture" == "amd64" ]; then
 		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
 	else
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi

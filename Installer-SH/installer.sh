@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.7dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.7"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
-Current_Architecture="$(uname -m)"
+Current_Architecture="Undefined"; Current_Architecture="$(uname -m)"
 
 # Main function, don't change!
 function _MAIN() {
@@ -49,7 +49,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
-	Unique_App_Folder_Name="installer-sh-27dev" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-27" #=> UNIQUE_APP_FOLDER_NAME
 	# GOOD: ex-app-16, exapp-16 | BAD: Ex-app-16, ExApp 16...
 	# Unique name of the output directory.
 
@@ -57,7 +57,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
  ######### - Package Information - #########
  ######### - ------------------- - #########
 
-AppVersion="2.7 dev" # Application version
+AppVersion="2.7" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
@@ -70,9 +70,10 @@ Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:
     Freeware - Proprietary (EULA, Please read \"EULA-example.txt\")
     Trialware - 30 days free, Proprietary (Other License Name)"
-Info_Maintainer="Chimbal" # Package creator
-Info_Developer="Chimbal"  # Software developer
-Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog"
+Info_Maintainer="Chimbal (Андрей Цымбалов)" # Package creator
+Info_Developer="Chimbal (Андрей Цымбалов)"  # Software developer
+Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog
+       https://overclockers.ru/blog/Hard-Workshop"
 
  # Use this description if there is no suitable localization file.
  # WARNING! The maximum number of characters available for description is 100x11

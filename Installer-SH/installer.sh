@@ -1830,8 +1830,8 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKMD5_Sub_Head2="(this may take some time if the application is large)"
 	
 	Str_PRINTINSTALLSETTINGS_Head="Installation settings:"
-	Str_PRINTINSTALLSETTINGS_InstallMode="Режим установки:"
-	Str_PRINTINSTALLSETTINGS_CFGMode="Файлы конфигурации:"
+	Str_PRINTINSTALLSETTINGS_InstallMode="Installation mode:"
+	Str_PRINTINSTALLSETTINGS_CFGMode="Configuration files:"
 	Str_PRINTINSTALLSETTINGS_Temp_Dir="Temporary Directory:"
 	Str_PRINTINSTALLSETTINGS_App_Inst_Dir="Application install Directory:"
 	Str_PRINTINSTALLSETTINGS_Menu_Dirs="Menu files will be installed to:"

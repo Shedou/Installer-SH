@@ -5,12 +5,12 @@
 # to avoid conflicts between different versions of the same application.
 
 # Allows you to avoid configuration file conflicts when installing different versions of the same application.
-ISHMoveHomeDir="true"
+ISHMoveHomeDir="true" # "true" / "false"
 UseExtraLibs="false"
 ISHTerminalPause="true"
+MultiArch="true"
 
-PathToScript="$( dirname "$(readlink -f "$0")")"
-#FolderBaseName="$( basename "$PathToScript")"
+PathToScript="$( dirname "$(readlink -f "$0")")"; exit_code="0"
 
 ###########################################
 ## THESE VARIABLES NEED TO BE CONFIGURED ##
@@ -18,9 +18,30 @@ PathToScript="$( dirname "$(readlink -f "$0")")"
 ProgramFolder="$PathToScript/program"          # Path to the program directory
 ExeFolder="$ProgramFolder/bin"                 # Path to the directory with executable files
 Executable="$ExeFolder/ExeFile"                # Main executable file
-ExtraLibsFolder="$PathToScript/libs"           # Extra libraries
+ExtraLibsFolder64="$PathToScript/libs64"       # Extra libraries
+ExtraLibsFolder32="$PathToScript/libs32"       # Extra libraries for 32-bit OS
+ExtraLibsArch="x64"                            # Default extra libraries arch...
 DefaultUserDataFolder="$PathToScript/userdata" # Default path to the User Data
 UserDataFolder="$DefaultUserDataFolder"
+
+if [ "$MultiArch" == "true" ]; then
+	OS=$(uname -s)
+	ARCH=$(uname -m)
+
+	case "${OS}_${ARCH}" in
+		Linux_x86_64)   Executable="$ExeFolder/ExeFile-lin64"; ExtraLibsArch="x64" ;;
+		Linux_aarch64)  Executable="$ExeFolder/ExeFile-armlin64"; ExtraLibsArch="x64" ;;
+		Linux_i686|Linux_i586|Linux_i486|Linux_i386) Executable="$ExeFolder/ExeFile-lin32"; ExtraLibsArch="x32" ;;
+		Linux_armv7l|Linux_armv6l) Executable="$ExeFolder/ExeFile-armlin32"; ExtraLibsArch="x32" ;;
+		
+		FreeBSD_amd64)  Executable="$ExeFolder/ExeFile-bsd64"; ExtraLibsArch="x64" ;;
+		FreeBSD_arm64)  Executable="$ExeFolder/ExeFile-armbsd64"; ExtraLibsArch="x64" ;;
+		FreeBSD_i386)   Executable="$ExeFolder/ExeFile-bsd32"; ExtraLibsArch="x32" ;;
+		FreeBSD_arm*)   Executable="$ExeFolder/ExeFile-armbsd32"; ExtraLibsArch="x32" ;;
+		
+		*) echo "ISH Error: The ${OS} ${ARCH} architecture is not supported"; exit_code="The ${OS} ${ARCH} architecture is not supported" ;;
+	esac
+fi
 
 ################################################
 ## Space for additional variables and actions ##
@@ -36,13 +57,14 @@ if [ -z "$ISHPogramArch" ]; then ISHPogramArch="other"; fi # CHECKING IMPORTED V
 if [ -z "$ISHProgramFName" ]; then ISHProgramFName="other"; fi
 if [ -z "$ISHInstallPathUser" ]; then ISHInstallPathUser="$HOME/portsoft"; fi
 if [ -z "$ISHInstallPathSystem" ]; then ISHInstallPathSystem="/portsoft"; fi
-if [ -z "$ISHInstallPathUserFull" ]; then ISHPogramArch="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"; fi
-if [ -z "$ISHInstallPathSystemFull" ]; then ISHPogramArch="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"; fi
+if [ -z "$ISHInstallPathUserFull" ]; then ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"; fi
+if [ -z "$ISHInstallPathSystemFull" ]; then ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"; fi
 # Checks if the program is installed in system mode, and if so, uses the user's home directory to store data and configurations.
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
+	ish_path_rights="true"
 	if [ ! -e "$ISHInstallPathUserFull" ]; then
-		if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"
-		else cp -rf "$ISHInstallPathSystemFull/userdata/". "$ISHInstallPathUserFull/userdata"; fi
+		if ! mkdir -p "$ISHInstallPathUserFull"; then echo "No_Rights"; ish_path_rights="false"; fi
+		if [ "$ish_path_rights" == "true" ]; then cp -rf "$ISHInstallPathSystemFull/userdata/". "$ISHInstallPathUserFull/userdata"; fi
 	fi
 	UserDataFolder="$ISHInstallPathUserFull/userdata"
 elif [ "$PathToScript" == "$ISHInstallPathUserFull" ]; then
@@ -62,22 +84,42 @@ if [ "$ISHMoveHomeDir" == "true" ]; then
 fi
 
 if [ "$UseExtraLibs" == "true" ]; then
-	if [ -z "$LD_LIBRARY_PATH" ];
-		then export LD_LIBRARY_PATH="$ExtraLibsFolder"
-		else export LD_LIBRARY_PATH="$ExtraLibsFolder:$LD_LIBRARY_PATH" # Use ":" for separation
+	
+	if [ "$ExtraLibsArch" == "x64" ]; then
+		if [ -z "$LD_LIBRARY_PATH" ]; then
+			export LD_LIBRARY_PATH="$ExtraLibsFolder64"
+		else
+			export LD_LIBRARY_PATH="$ExtraLibsFolder64:$LD_LIBRARY_PATH" # Use ":" for separation
+		fi
+	
+		if [ "$MultiArch" == "true" ]; then
+			export LD_32_LIBRARY_PATH="$LD_LIBRARY_PATH"
+			export LD_64_LIBRARY_PATH="$LD_LIBRARY_PATH"
+		fi
 	fi
+	
+	if [ "$ExtraLibsArch" == "x32" ]; then
+		if [ -z "$LD_LIBRARY_PATH" ]; then
+			export LD_LIBRARY_PATH="$ExtraLibsFolder32"
+		else
+			export LD_LIBRARY_PATH="$ExtraLibsFolder32:$LD_LIBRARY_PATH" # Use ":" for separation
+		fi
+	
+		if [ "$MultiArch" == "true" ]; then export LD_32_LIBRARY_PATH="$LD_LIBRARY_PATH"; fi
+	fi
+	
 fi
 
 if [ -e "$Executable" ]; then
-	if ! [[ -x "$Executable" ]]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
+	if [ ! -x "$Executable" ]; then if ! chmod +x "$Executable"; then echo "chmod error"; fi; fi
 	cd "$ExeFolder" || exit
 	"$Executable" "$@"
 	exit_code="$?"
 else
-	exit_code="Executable not found..."
+	exit_code="Executable not found... - $exit_code"
 fi
 
-if [[ "$exit_code" != "0" ]]; then
+if [ "$exit_code" != "0" ]; then
 	StringMessage="bash -c 'echo \"-\"; echo \"$Executable\"; echo \"-\"; echo \"WARNING! EXIT CODE - $exit_code\"; echo \"The program has terminated incorrectly!\"; echo \"Is the program incompatible with the current OS?\"; echo \"Does the program contain errors?\"; read pause'"
 	
 	export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -95,7 +137,7 @@ if [[ "$exit_code" != "0" ]]; then
 	$terminal_executable -e "$StringMessage"
 fi
 
-if [ "$ISHTerminalPause" == "true" ]; then read pause; fi
+if [ "$ISHTerminalPause" == "true" ]; then read -r pause; fi
 
 # MIT License
 #

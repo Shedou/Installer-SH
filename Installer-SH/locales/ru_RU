@@ -7,8 +7,9 @@ Current_Locale="RU Русский"
 
 Info_Description="\
   1) Этот установщик (краткое описание):
+     - Поддерживаются Linux и FreeBSD различных архитектур.
      - Подходит для установки на автономные ПК без доступа в Интернет.
-     - Хранит установочные файлы в архиве 7-zip (хорошее сжатие и быстрая распаковка).
+     - Упаковка программных файлов в форматы tar.xz (оптимальная совместимость) и 7-Zip (оптимальное сжатие).
   2) Проверьте текущий файл \"installer.sh\", чтобы настроить установочный пакет."
 
 Str_ERROR="${Font_Bold}${Font_Red}ОШИБКА${Font_Reset_Color}${Font_Reset}"
@@ -44,7 +45,7 @@ Str_PACKAGEINFO_Head="Информация о ПО:"
 Str_PACKAGEINFO_Name="Имя:"
 Str_PACKAGEINFO_ReleaseDate="Дата Выпуска:"
 Str_PACKAGEINFO_Category="Категория:"
-Str_PACKAGEINFO_Platform="Платформа (протестировано):"
+Str_PACKAGEINFO_Platform="Платформа:"
 Str_PACKAGEINFO_InstalledSize="Размер после установки:"
 Str_PACKAGEINFO_Licensing="Лицензия:"
 Str_PACKAGEINFO_Maintainer="Создатель пакета:"

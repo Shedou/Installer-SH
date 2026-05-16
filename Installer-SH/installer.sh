@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.8-dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.8"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 CurrentArchitecture="Undefined"; CurrentArchitecture="$(uname -m)"; CurrentArchitectureNormalized="x32 or x64"
 CurrentOperatingSystem="Undefined"; CurrentOperatingSystem="$(uname -s)" # Linux / FreeBSD
@@ -30,9 +30,9 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Archive_MD5_Hash_SystemFiles="121b9610118ca512fa6c829f6772e6e7"
 	
 	# For applications that have executable files for different platforms and architectures (Linux / FreeBSD).
-	# Disables architecture mismatch warnings. Disables cleaning of unnecessary files in the "tools/7zip" directory.
+	# Disables architecture mismatch warnings. Disables cleaning of unnecessary files in the "tools/7zip" directory (if TarXZ is used).
 	# Please make sure you have all the required versions of 7-Zip in the "tools" directory, or switch to the "TarXZ" compression format.
-	Multi_Arch="true"                # 
+	Multi_Arch="true"                # Please don't forget to configure the "launcher"!
 	# Tools_Architecture must match the operating system architecture. Ignore if TarXZ compression is used.
 	Tools_Architecture="x64"         # x64 (Linux / FreeBSD - x86_64 / amd64) or x32 (Linux x86)
 	
@@ -55,7 +55,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
-	Unique_App_Folder_Name="installer-sh-28d" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-28" #=> UNIQUE_APP_FOLDER_NAME
 	# GOOD: ex-app-16, exapp-16 | BAD: Ex-app-16, ExApp 16...
 	# Unique name of the output directory.
 
@@ -63,14 +63,14 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
  ######### - Package Information - #########
  ######### - ------------------- - #########
 
-AppVersion="2.8-Dev" # Application version
+AppVersion="2.8" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2026-xx-xx"
+Info_Release_Date="2026-05-xx"
 Info_Category="Other"
  # Specify the compatibility of the program, not the installation package!
-Info_Platform="Linux / FreeBSD - Chimbalix 24+, Debian 7+, Fedora 20+ / GhostBSD 23+" # (Target App compatibility, not the script)
+Info_Platform="Linux / FreeBSD - Chimbalix, Debian 7+, Fedora 20+ and more..." # (Target App compatibility, not the script)
 Info_Installed_Size="~1 MiB"
 Info_Licensing="Freeware - Open Source (MIT)
    Other Licensing Examples:
@@ -85,8 +85,9 @@ Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog
  # WARNING! The maximum number of characters available for description is 100x11
 Info_Description_Default="\
   1) This universal installer (short description):
+     - Linux and FreeBSD of various architectures are supported.
      - Suitable for installation on stand-alone PCs without Internet access.
-     - Stores installation files in a 7-zip archive (good compression and fast unpacking).
+     - Packing program files into tar.xz (best compatibility) and 7-Zip (best compression) formats.
   2) Check the current \"installer.sh\" file to configure the installation package."
 
  ### ------------------------ ###
@@ -1814,7 +1815,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_PACKAGEINFO_Name="Name:"
 	Str_PACKAGEINFO_ReleaseDate="Release Date:"
 	Str_PACKAGEINFO_Category="Category:"
-	Str_PACKAGEINFO_Platform="Platform (tested):"
+	Str_PACKAGEINFO_Platform="Platform:"
 	Str_PACKAGEINFO_InstalledSize="Installed Size:"
 	Str_PACKAGEINFO_Licensing="Licensing:"
 	Str_PACKAGEINFO_Maintainer="Package creator:"

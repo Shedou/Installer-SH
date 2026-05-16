@@ -4,7 +4,7 @@
 Args=("$@")
 PathToScript="$( dirname "$(readlink -f "$0")")"
 
-echo -e "Example Application!\n"
+echo -e "Example Application! (bsd64)\n"
 echo -e "Path To Executable:\n $PathToScript\n"
 
 echo -e "HOME:\n $HOME"

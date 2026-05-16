@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.7"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.8-dev"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
-Current_Architecture="Undefined"; Current_Architecture="$(uname -m)"
+CurrentArchitecture="Undefined"; CurrentArchitecture="$(uname -m)"; CurrentArchitectureNormalized="x32 or x64"
+CurrentOperatingSystem="Undefined"; CurrentOperatingSystem="$(uname -s)" # Linux / FreeBSD
 
 # Main function, don't change!
 function _MAIN() {
@@ -25,12 +26,17 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -apk).
-	Archive_MD5_Hash_ProgramFiles="e5bbf8276f68329b456c43f47c4d29f9"
-	Archive_MD5_Hash_SystemFiles="3ebfefacf51c943276431469caf3980b"
+	Archive_MD5_Hash_ProgramFiles="01b2e4f5df0d3260e96247f4e66ad2be"
+	Archive_MD5_Hash_SystemFiles="121b9610118ca512fa6c829f6772e6e7"
 	
-	# Tools_Architecture must match the operating system architecture.
-	Tools_Architecture="x86_64"      # x86_64, x86 - Linux || amd64 - FreeBSD
-	Program_Architecture="script"    # x86_64, x86, amd64, script, other...
+	# For applications that have executable files for different platforms and architectures (Linux / FreeBSD).
+	# Disables architecture mismatch warnings. Disables cleaning of unnecessary files in the "tools/7zip" directory.
+	# Please make sure you have all the required versions of 7-Zip in the "tools" directory, or switch to the "TarXZ" compression format.
+	Multi_Arch="true"                # 
+	# Tools_Architecture must match the operating system architecture. Ignore if TarXZ compression is used.
+	Tools_Architecture="x64"         # x64 (Linux / FreeBSD - x86_64 / amd64) or x32 (Linux x86)
+	
+	Program_Architecture="multi"     # x86_64, x86, amd64, aarch64, armv7l, arm64, script, other...
 	Update_Menu="true"               # Automatically updates the menu...
 	
 	Install_Mode="User"              # "System" (root access required) / "User"
@@ -49,7 +55,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	
 	# WARNING! Do not use capital letters in this place!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
-	Unique_App_Folder_Name="installer-sh-27" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="installer-sh-28d" #=> UNIQUE_APP_FOLDER_NAME
 	# GOOD: ex-app-16, exapp-16 | BAD: Ex-app-16, ExApp 16...
 	# Unique name of the output directory.
 
@@ -57,7 +63,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
  ######### - Package Information - #########
  ######### - ------------------- - #########
 
-AppVersion="2.7" # Application version
+AppVersion="2.8-Dev" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
@@ -113,8 +119,8 @@ ISHSettingsFile="ish-settings"
  ### ---------------------------------------------------------- ###
  
  # Use 7-Zip for better compression.
- # Tar.xz - for compatibility with very old Linux (Debian <7)
-Archive_Format="SZip" # "SZip" / "Tar"
+ # Tar.xz - for maximum compatibility.
+Archive_Format="TarXZ" # "SZip" / "TarXZ"
 
  # Larger size - better compression and more RAM required for unpacking
  #  (256 dictionary requires 256+ MB of RAM for unpacking)
@@ -133,13 +139,28 @@ Install_Path_System_Full="$Install_Path_System/$Program_Architecture/$Unique_App
  # "$HOME/.local/bin" works starting from Chimbalix 24.4
 Install_Path_Bin_User="$HOME/.local/bin"
 
-if [ "$Archive_Format" == "Tar" ]; then
+if [ "$Archive_Format" == "TarXZ" ]; then
 	Archive_Program_Files="$Path_Installer_Data/program_files.tar.xz"
 	Archive_System_Files="$Path_Installer_Data/system_files.tar.xz"
 else
 	Archive_Program_Files="$Path_Installer_Data/program_files.7z"
 	Archive_System_Files="$Path_Installer_Data/system_files.7z"
 fi
+
+case "${CurrentOperatingSystem}_${CurrentArchitecture}" in
+	Linux_x86_64)   CurrentArchitectureNormalized="x64" ;;
+	Linux_aarch64)  CurrentArchitectureNormalized="x64" ;;
+	Linux_i686|Linux_i586|Linux_i486|Linux_i386) CurrentArchitectureNormalized="x32" ;;
+	Linux_armv7l|Linux_armv6l)                   CurrentArchitectureNormalized="x32" ;;
+	
+	FreeBSD_amd64)  CurrentArchitectureNormalized="x64" ;;
+	FreeBSD_arm64)  CurrentArchitectureNormalized="x64" ;;
+	FreeBSD_i386)   CurrentArchitectureNormalized="x32" ;;
+	FreeBSD_arm*)   CurrentArchitectureNormalized="x32" ;;
+	
+	*) _WARNING "Error:" "The ${CurrentOperatingSystem} ${CurrentArchitecture} architecture is not supported" ;;
+esac
+
 }
 
  ######### -- ------------ -- #########
@@ -303,12 +324,18 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ исп
 # _INSTALLER_SETTINGS # -= (2) =-
 
 function _INIT_TOOLS() { # -= (3) =-
-	Tool_Tar="tar" # Альтернативный архиватор
+	Tool_Tar="tar"
 	Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"
-	if [ "$Tools_Architecture" == "x86" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
-	if [ "$Tools_Architecture" == "amd64" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zz-bsd"; fi
+	
+	if [ "$Tools_Architecture" == "x32" ]; then
+		if [ "$CurrentOperatingSystem" == "Linux" ];   then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs-x86"; fi
+		#if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zz-bsd-x86"; fi
+	fi
+	if [ "$Tools_Architecture" == "x64" ]; then
+		if [ "$CurrentOperatingSystem" == "Linux" ];   then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zzs"; fi
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then Tool_SevenZip_bin="$Path_Installer_Data/tools/7zip/7zz-bsd"; fi
+	fi
 }
-
 
 function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
 	Program_Files="$Path_Installer_Data/program_files"
@@ -329,7 +356,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 			fi
 		fi
 		
-		if [ "$Archive_Format" == "Tar" ]; then
+		if [ "$Archive_Format" == "TarXZ" ]; then
 			if [ -e "$Name_File" ]; then
 				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".tar.xz"; fi
 				cd "$Name_File" || exit
@@ -344,13 +371,13 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 		fi
 		
 		if [ "$Name_File" == "$Program_Files" ]; then
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				sed -i "" "s/Archive_MD5_Hash_ProgramFiles=\".*\"/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_ProgramFiles=.*/ s/Archive_MD5_Hash_ProgramFiles=.*/Archive_MD5_Hash_ProgramFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			fi
 		elif [ "$Name_File" == "$System_Files" ]; then
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				sed -i "" "s/Archive_MD5_Hash_SystemFiles=\".*\"/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
 			else
 				sed -i "0,/Archive_MD5_Hash_SystemFiles=.*/ s/Archive_MD5_Hash_SystemFiles=.*/Archive_MD5_Hash_SystemFiles=\"$PackArcMD5\"/" "$Path_To_Script/$Script_Name"
@@ -372,7 +399,7 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 	cd ..
 	
 	if [ ! -e "$TP_OutputFile" ]; then 
-		if [ "$Current_Architecture" == "amd64" ]; then tar -cf "$TP_OutputFile" "$TP_InputDirName"
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then tar -cf "$TP_OutputFile" "$TP_InputDirName"
 		else tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"; fi
 		
 		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
@@ -405,19 +432,32 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 		_CLEAN_FILE "$Path_Installer_Data/tools/pack_archive.sh"
 		_CLEAN_FILE "$Path_Installer_Data/tools/base_data"
 		
-		if [ "$Archive_Format" == "SZip" ]; then
-			Archive_Format="SZip" # "SZip" / "Tar"
-			if [ "$Tools_Architecture" == "x86_64" ]; then
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
-			elif [ "$Tools_Architecture" == "x86" ]; then
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
-			elif [ "$Tools_Architecture" == "amd64" ]; then
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
-				_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+		if [ "$Multi_Arch" != "true" ]; then
+			if [ "$Archive_Format" == "SZip" ]; then
+				if [ "$Tools_Architecture" == "x64" ]; then
+					if [ "$CurrentOperatingSystem" == "Linux" ]; then
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
+					fi
+					if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+					fi
+				fi
+				if [ "$Tools_Architecture" == "x32" ]; then
+					if [ "$CurrentOperatingSystem" == "Linux" ]; then
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zz-bsd"
+					fi
+					if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs"
+						_CLEAN_FILE "$Path_Installer_Data/tools/7zip/7zzs-x86"
+					fi
+				fi
 			fi
-		elif [ "$Archive_Format" == "Tar" ]; then
+		fi
+		
+		if [ "$Archive_Format" == "TarXZ" ]; then
 			_CLEAN_FILE "$Path_Installer_Data/tools/7zip"
 		fi
 		
@@ -507,11 +547,11 @@ function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использов�
 function _CHECK_SYSTEM() { # -= (5) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
 	
 	_CHECK_SYSTEM_VERSION
-	if [ "$Current_Architecture" == "i686" ]; then Current_Architecture="x86"; fi
-	if [ "$Archive_Format" != "Tar" ]; then
-		if [ "$Tools_Architecture" != "$Current_Architecture" ]; then
-			if [ "$Current_OS_Name" == "Chimbalix" ]; then : # Chimbalix has 32-bit libraries, so it is possible to work within this distribution.
-			else _ABORT "The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"; fi
+	if [ "$Archive_Format" != "TarXZ" ]; then
+		if [ "$Multi_Arch" != "true" ]; then
+			if [ "$Tools_Architecture" != "$CurrentArchitectureNormalized" ]; then
+				_WARNING "SARC" "The system architecture ($CurrentArchitectureNormalized) does not match the selected tools architecture ($Tools_Architecture)!"
+			fi
 		fi
 	fi
 }
@@ -728,8 +768,10 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно испо
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!\n  $Temp_Dir"; fi
 	
-	if [ "$Archive_Format" != "Tar" ]; then
-		if [ "$Tools_Architecture" != "$Current_Architecture" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+	if [ "$Multi_Arch" != "true" ]; then
+		if [ "$Archive_Format" == "SZip" ]; then
+			if [ "$Tools_Architecture" != "$CurrentArchitectureNormalized" ]; then _WARNING "$Str_CHECK_ERRORS_ARCH" "$Str_CHECK_ERRORS_ARCH_WARN"; fi
+		fi
 	fi
 	
 	# Check PortSoft
@@ -848,7 +890,7 @@ function _BASE_DELETE_TEMP() {
 function _BASE_PREPARE_INPUT_FILES_GREP() {
 	local p_text="$1"
 	local p_path="$2"
-	if [ "$Current_Architecture" == "amd64" ]; then
+	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "" "s~$p_text~$p_path~g" &> /dev/null
 	else
 		grep -rl "$p_text" "$Base_Temp_Dir" | xargs sed -i "s~$p_text~$p_path~g" &> /dev/null
@@ -1319,7 +1361,7 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 	fi
 	
 	if [ "$prepare_error" == "false" ]; then 
-		if [ "$Current_Architecture" == "amd64" ]; then
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s|$prepare_text|$prepare_path|g" &> /dev/null
 			find "$Temp_Dir" -type f -exec sed -i "" "s|$prepare_text|$prepare_path|g" {} +
 		else
@@ -1338,7 +1380,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно испо�
 			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
 	fi
 	
-	if [ "$Archive_Format" == "Tar" ]; then
+	if [ "$Archive_Format" == "TarXZ" ]; then
 		if ! "$Tool_Tar" -xf "$Archive_System_Files" -C "$Temp_Dir"; then
 			_ABORT "$Str_PREPAREINPUTFILES_Err_Unpack (_PREPARE_INPUT_FILES). $Str_PREPAREINPUTFILES_Err_Unpack2"; fi
 	fi
@@ -1495,7 +1537,7 @@ $Header
 		fi
 	fi
 	
-	if [ "$Archive_Format" == "Tar" ]; then
+	if [ "$Archive_Format" == "TarXZ" ]; then
 		if ! "$Tool_Tar" -xf "$Archive_Program_Files" -C "$Output_Install_Dir"; then
 			Unpack_Error_Code="error"
 		fi
@@ -1556,7 +1598,7 @@ $Header
 		fi
 	fi
 	
-	if [ "$Archive_Format" == "Tar" ]; then
+	if [ "$Archive_Format" == "TarXZ" ]; then
 		if ! sudo "$Tool_Tar" -xf "$Archive_Program_Files" -C "$Output_Install_Dir"; then
 			Unpack_Error_Code="error"
 		fi
@@ -1611,14 +1653,14 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "100755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
 			else
 				if [ "$(stat -c "%a" "$Output_Uninstaller")" != "755" ]; then sudo chmod 755 "$Output_Uninstaller"; fi
@@ -1635,14 +1677,14 @@ function _PREPARE_UNINSTALLER_USER() { # Здесь можно использо�
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
 			
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
 			else
 				sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-			if [ "$Current_Architecture" == "amd64" ]; then
+			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
 			else
 				if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
@@ -1662,20 +1704,20 @@ function _PREPARE_UNINSTALLER() { # -= (17) =-
 function _PREPARE_LAUNCHERS_SYSTEM() {
 	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
-		if [ "$Current_Architecture" == "amd64" ]; then
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	else
-		if [ "$Current_Architecture" == "amd64" ]; then
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
 	
-	if [ "$Current_Architecture" == "amd64" ]; then
+	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
@@ -1684,7 +1726,7 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 	fi
 	
 	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$Current_Architecture" == "amd64" ]; then
+	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
 	else
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
@@ -1694,20 +1736,20 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 function _PREPARE_LAUNCHERS_USER() {
 	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
-		if [ "$Current_Architecture" == "amd64" ]; then
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	else
-		if [ "$Current_Architecture" == "amd64" ]; then
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		else
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
 	
-	if [ "$Current_Architecture" == "amd64" ]; then
+	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
@@ -1716,7 +1758,7 @@ function _PREPARE_LAUNCHERS_USER() {
 	fi
 	
 	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$Current_Architecture" == "amd64" ]; then
+	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
 	else
 		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
@@ -1874,7 +1916,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_CHECKSYSDE_DE_WEIRD_GNOME="The menu doesn't match XDG specifications very well...\n    Re-login to the system if new shortcuts do not appear in the menu!"
 	
 	Str_CHECK_ERRORS_ARCH="Attention!"
-	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($Current_Architecture) does not match the selected tools architecture ($Tools_Architecture)!"
+	Str_CHECK_ERRORS_ARCH_WARN="The system architecture ($CurrentArchitectureNormalized) does not match the selected tools architecture ($Tools_Architecture)!"
 }
 
 function _SET_LOCALE() { # -= (7) =-
@@ -1892,7 +1934,7 @@ function _SET_LOCALE() { # -= (7) =-
 		fi
 	else Locale_Display="-silent"; fi
 	
-	Header="-=: Universal Software Installer Script for Chimbalix (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-"
+	Header="-=: Universal Software Installer (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-"
 	Header="${Font_DarkYellow}${Font_Bold}${Header}${Font_Reset}${Font_Reset_Color}\n"
 }
 

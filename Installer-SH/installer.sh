@@ -84,6 +84,7 @@ Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog
  # Use this description if there is no suitable localization file.
  # WARNING! The maximum number of characters available for description is 100x11
 Info_Description_Default="\
+  Architectures (multi): x86/x86_64/amd64/aarch64/armv7l/armv6l/arm64/arm/armv6/armv7
   1) This universal installer (short description):
      - Linux and FreeBSD of various architectures are supported.
      - Suitable for installation on stand-alone PCs without Internet access.

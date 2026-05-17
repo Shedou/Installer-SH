@@ -40,8 +40,8 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Update_Menu="true"               # Automatically updates the menu...
 	
 	Install_Mode="User"              # "System" (root access required) / "User"
-	Install_Mode_CFG_Skip="false"    # Skip CFG...
-	Install_Configs_CFG_Skip="false" # Skip CFG...
+	Install_Mode_CFG_Skip="false"    # "true" - if you want to hide the installation mode settings window (for the user).
+	Install_Configs_CFG_Skip="false" # "true" - if you want to hide the configuration file location settings window (for the user).
 	Install_Configs="PortSoft"       # "SysDef" / "PortSoft".
 	# SysDef - System Default.
 	# PortSoft - A separate directory for storing configs.
@@ -1841,7 +1841,7 @@ function _SET_LOCALE_DEFAULT() {
 	Str_INSTALLCONFIGMODE_Confirm="Press Enter to continue in the current mode (configured by the package creator)."
 	Str_INSTALLCONFIGMODE_Help="Enter \"${Font_Green}u${Font_Reset_Color}\" or \"${Font_Yellow}s${Font_Reset_Color}\" to change the installation mode (${Font_Green}u - User${Font_Reset_Color} | ${Font_Yellow}s - System${Font_Reset_Color})."
 	
-	Str_INSTALLCONFIGCFG_Head="Настройка файлов конфигурации"
+	Str_INSTALLCONFIGCFG_Head="Setting up configuration files"
 	Str_INSTALLCONFIGCFG_CurrentMode="Current mode"
 	Str_INSTALLCONFIGCFG_Desc="Description of the mode"
 	Str_INSTALLCONFIGCFG_DescPortSoft="\

@@ -225,7 +225,7 @@ function _UPDATE_MENU() {
  ######### ----------------------------- #########
  ######### BEFORE FIRST DEPENDENCY CHECK #########
 
-function _HELP() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _HELP() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	echo -e "(-h) (-help) (--help)\n Installer-SH launch parameters: $ArgumentsString
 -updatebase  -uba - Update base menu files and PortSoft (ISH version $ScriptVersion).
 -update      -upd - Update the App without warnings about overwriting files!!!
@@ -264,7 +264,7 @@ function _CHECK_ARGS() {
 	if [[ "$ArgumentsString" =~ "-modesystem" ]] || [[ "$ArgumentsString" =~ "-msm" ]];  then MODE_SYSTEM="true"; fi
 }
 
-function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	
 	### --------------------------- ###
 	### Do not edit variables here! ###
@@ -339,7 +339,7 @@ function _INIT_TOOLS() { # -= (3) =-
 	fi
 }
 
-function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _PACK_ARCHIVES() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
 	
@@ -394,7 +394,7 @@ function _PACK_ARCHIVES() { # Здесь НЕЛЬЗЯ использовать �
 	read -r pause; exit
 }
 
-function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _TAR_PACK() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	TP_OutputFile="$Path_To_Script.tar"
 	TP_InputDirName="$(basename "$Path_To_Script")"
 	
@@ -412,7 +412,7 @@ function _TAR_PACK() { # Здесь НЕЛЬЗЯ использовать лок
 	fi
 }
 
-function _CLEAN() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _CLEAN() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	
 	function _CLEAN_FILE() {
 		CleanFileName="$1"
@@ -475,7 +475,7 @@ function _CLEAN() { # Здесь НЕЛЬЗЯ использовать лока�
 	fi
 }
 
-function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	
 	if [ "$MODE_ARCPACK" == "true" ]; then _PACK_ARCHIVES; fi
 	if [ "$MODE_CLEAN" == "true" ];   then _CLEAN; fi
@@ -526,7 +526,7 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Здесь НЕЛЬЗЯ ис�
  ######### ---------------------------- #########
  ######### BEFORE LAST DEPENDENCY CHECK #########
 
-function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _CHECK_SYSTEM_VERSION() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	
 	if [ -f "/etc/os-release" ]; then source "/etc/os-release"
 		Current_OS_Name_Full="$PRETTY_NAME"
@@ -546,19 +546,18 @@ function _CHECK_SYSTEM_VERSION() { # Здесь НЕЛЬЗЯ использов�
 	fi
 }
 
-function _CHECK_SYSTEM() { # -= (5) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
-	
+function _CHECK_SYSTEM() { # -= (5) =- # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	_CHECK_SYSTEM_VERSION
 	if [ "$Archive_Format" != "TarXZ" ]; then
 		if [ "$Multi_Arch" != "true" ]; then
 			if [ "$Tools_Architecture" != "$CurrentArchitectureNormalized" ]; then
-				_WARNING "SARC" "The system architecture ($CurrentArchitectureNormalized) does not match the selected tools architecture ($Tools_Architecture)!"
+				_ABORT "The system architecture ($CurrentArchitectureNormalized) does not match the selected tools architecture ($Tools_Architecture)!"
 			fi
 		fi
 	fi
 }
 
-function _INIT_FONTS() { # -= (6) =- # Здесь НЕЛЬЗЯ использовать локализацию т.к. функция "_SET_LOCALE" ещё не загружена!
+function _INIT_FONTS() { # -= (6) =- # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
 	
 	### Font styles: "${Font_Bold} BLACK TEXT ${Font_Reset} normal text."
 	# '\e[38;2;128;128;255m'
@@ -613,7 +612,7 @@ function _INIT_FONTS() { # -= (6) =- # Здесь НЕЛЬЗЯ использо�
 
 #_SET_LOCALE # -= (7) =-
 
-function _CHECK_SYSTEM_DE() { # -= (8) =- # Здесь можно использовать локализацию
+function _CHECK_SYSTEM_DE() { # -= (8) =-
 	
 	local check_de_raw=""
 	local check_de_err="0"
@@ -743,7 +742,7 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 	_INIT_OUTPUTS
 }
 
-function _IMPORTANT_CHECK_LAST() { # -= (10) =- # Здесь можно использовать локализацию
+function _IMPORTANT_CHECK_LAST() { # -= (10) =-
 	
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND # Double Clear Crutch for Old GNOME...
@@ -954,7 +953,7 @@ function _BASE_INSTALL_COMPLETE() {
  ######### ----------- #########
  ######### Test colors #########
 
-function _TEST_COLORS() { # Здесь можно использовать локализацию
+function _TEST_COLORS() {
 	
 	echo -e "\n${Font_Bold} -= TEST COLORS =-"
 	if [ "$Font_Styles_RGB" == "true" ]; then echo -e " RGB Mode"
@@ -1081,7 +1080,7 @@ function _WARNING() {
 
  ######### ------------------------- #########
  ######### Print package information #########
-function _PRINT_PACKAGE_INFO() { # -= (11) =- # Здесь можно использовать локализацию
+function _PRINT_PACKAGE_INFO() { # -= (11) =-
 if [ "$MODE_SILENT" == "false" ]; then # Пропустить функцию если включен тихий режим
 	
 	_CLEAR_BACKGROUND
@@ -1150,7 +1149,7 @@ function _CHECK_MD5_COMPARE() {
 	if [ "$MD5_Error_ProgramFiles" == "true" ] || [ "$MD5_Error_SystemFiles" == "true" ]; then MD5_Warning="true"; fi
 }
 
-function _CHECK_MD5_PRINT_GOOD() { # Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT_GOOD() {
 	
 	_CLEAR_BACKGROUND
 	
@@ -1169,7 +1168,7 @@ $Header
 	read -r pause
 }
 
-function _CHECK_MD5_PRINT_WARNING() { # Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT_WARNING() {
 	
 	_CLEAR_BACKGROUND
 	
@@ -1197,7 +1196,7 @@ $Header
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
 }
 
-function _CHECK_MD5_PRINT() { # Здесь можно использовать локализацию
+function _CHECK_MD5_PRINT() {
 	
 	_CLEAR_BACKGROUND
 	
@@ -1225,7 +1224,7 @@ function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывес
  ######### -------------------------- #########
  ######### Installation configuration #########
 
-function _INSTALL_CONFIG_MODE() { # -= (13) =- # Здесь можно использовать локализацию
+function _INSTALL_CONFIG_MODE() { # -= (13) =-
 if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true" ] || [ "$Install_Mode_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
 else
 	_CLEAR_BACKGROUND
@@ -1256,7 +1255,7 @@ $Str_INSTALLCONFIGMODE_DescSystem"
 fi
 }
 
-function _INSTALL_CONFIG_CFG() { # -= (13.1) =- # Здесь можно использовать локализацию
+function _INSTALL_CONFIG_CFG() { # -= (13.1) =-
 if [ "$MODE_SILENT" == "true" ] || [ "$Install_Configs_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND
@@ -1289,7 +1288,7 @@ fi
  ######### --------------------------- #########
  ######### Print installation settings #########
 
-function _PRINT_INSTALL_SETTINGS() { # -= (13.2) =- # Здесь можно использовать локализацию
+function _PRINT_INSTALL_SETTINGS() { # -= (13.2) =-
 if [ "$MODE_SILENT" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND
@@ -1348,7 +1347,7 @@ fi
  ######### ------------------- #########
  ######### Prepare Input Files #########
 
-function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использовать локализацию
+function _PREPARE_INPUT_FILES_GREP() {
 	
 	local prepare_text="/tmp/ish"
 	local prepare_path="/tmp/ish"
@@ -1373,7 +1372,7 @@ function _PREPARE_INPUT_FILES_GREP() { # Здесь можно использо�
 	fi
 }
 
-function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно использовать локализацию
+function _PREPARE_INPUT_FILES() { # -= (14) =-
 	
 	_CREATE_TEMP
 	
@@ -1445,7 +1444,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =- # Здесь можно испо�
  ######### ------------- #########
  ######### Check outputs #########
 
-function _CHECK_OUTPUTS() { # -= (15) =- # Здесь можно использовать локализацию
+function _CHECK_OUTPUTS() { # -= (15) =-
 	
 	local check_outputs_error="false"
 	local arr_files_sorted=()
@@ -1496,7 +1495,7 @@ function _INSTALL_HELPERS_XFCE_USER() {
 	cp -rf "$Input_Helpers_Dir/." "$Output_Helpers_Dir"
 }
 
-function _INSTALL_HELPERS() { # Здесь можно использовать локализацию
+function _INSTALL_HELPERS() {
 	
 	if [ -e "$Input_Helpers_Dir" ]; then
 		if [ "$Current_DE" == "XFCE" ]; then
@@ -1507,7 +1506,7 @@ function _INSTALL_HELPERS() { # Здесь можно использовать �
  ######### --------------------- #########
  ######### Install Desktop Icons #########
 
-function _INSTALL_DESKTOP_ICONS() { # Здесь можно использовать локализацию
+function _INSTALL_DESKTOP_ICONS() {
 	
 	if [ -e "$Input_Desktop_Dir" ]; then
 		cp -rf "$Input_Desktop_Dir/." "$Output_Desktop_Dir"
@@ -1517,7 +1516,7 @@ function _INSTALL_DESKTOP_ICONS() { # Здесь можно использова
  ######### ------------------------------- #########
  ######### Install application (USER MODE) #########
 
-function _INSTALL_APP_USER() { # Здесь можно использовать локализацию
+function _INSTALL_APP_USER() {
 	Unpack_Error_Code=""
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
@@ -1578,7 +1577,7 @@ $Header
  ######### --------------------------------- #########
  ######### Install application (SYSTEM MODE) #########
 
-function _INSTALL_APP_SYSTEM() { # Здесь можно использовать локализацию
+function _INSTALL_APP_SYSTEM() {
 	Unpack_Error_Code=""
 	if [ "$MODE_SILENT" == "false" ]; then
 		_CLEAR_BACKGROUND
@@ -1649,7 +1648,7 @@ function _INSTALL_APPLICATION() { # -= (16) =-
  ######### ------------------------ #########
  ######### Prepare uninstaller file #########
 
-function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использовать локализацию
+function _PREPARE_UNINSTALLER_SYSTEM() {
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
@@ -1673,7 +1672,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() { # Здесь можно использ�
 	else _ERROR "_PREPARE_UNINSTALLER_SYSTEM" "Output_Uninstaller not found."; fi
 }
 
-function _PREPARE_UNINSTALLER_USER() { # Здесь можно использовать локализацию
+function _PREPARE_UNINSTALLER_USER() {
 	
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do

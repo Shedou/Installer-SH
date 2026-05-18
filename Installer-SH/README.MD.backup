@@ -88,7 +88,7 @@ After the initial creation of the installation package with the program, further
 
 ### General recommendations
 
-- When providing program information, make sure the text doesn't mix Cyrillic and Latin characters, for example: Game10с-10mp and Game10c-10mp. Visually, they're identical, but the first version uses the Cyrillic "с" symbol. Mixing is bad form.
+- When providing program information, make sure the text doesn't mix Cyrillic and Latin characters, for example: Game10с-10mp and Game10c-10mp. Visually, they're identical, but the first version uses the Cyrillic "с" symbol. Mixing is bad form. Some Linux distributions are too broken out of the box to handle Cyrillic text.
 
 - Whenever possible, include the program name, version, and architecture in the name of the distributed installation package. It is also recommended to include the installation package version in the format 'ISH27'. This will allow installation packages to be located in one directory without name conflicts and will simplify the selection of the required option from the list of available ones.
 

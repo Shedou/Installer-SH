@@ -85,3 +85,9 @@ After the initial creation of the installation package with the program, further
 6) To create a distributable tar archive, use the command: `./installer.sh -tpk` or `./installer.sh -tarpack`. The tar archive will be created next to the installation package directory.
 
 * If you need to update the program, unpack the archives in the installer-data directory, update the necessary files, and run the packing and cleaning procedure again. Don't forget to change the versions in the main "`installer.sh`" file.
+
+### General recommendations
+
+- When providing program information, make sure the text doesn't mix Cyrillic and Latin characters, for example: Game10с-10mp and Game10c-10mp. Visually, they're identical, but the first version uses the Cyrillic "с" symbol. Mixing is bad form. Some Linux distributions are too broken out of the box to handle Cyrillic text.
+
+- Whenever possible, include the program name, version, and architecture in the name of the distributed installation package. It is also recommended to include the installation package version in the format 'ISH27'. This will allow installation packages to be located in one directory without name conflicts and will simplify the selection of the required option from the list of available ones.

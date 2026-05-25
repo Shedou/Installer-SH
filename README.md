@@ -14,23 +14,37 @@ Applications packaged in Installer-SH format can be found in the "[Chimbalix-Sof
 
 * Ease of use: Installing programs using Installer-SH does not require root privileges by default. Root privileges may be required when installing software in system mode for all users.
 
-* Easy management: Installed applications can be easily removed at any time thanks to the independence of the installation package.
+* Easy management: Installed applications can be easily removed at any time.
 
-* Reliability and autonomy: The installation package is designed for autonomous installation of applications, which means it is suitable for use on computers without Internet access.
+* Reliability: The installation package contains several independent data integrity checks, which allows detecting archives damaged during copying before they are installed on the system.
 
-* Backward compatibility: Installer-SH works starting with Debian 7 (Linux Kernel 3.2+), the installation package mainly uses GNU tools (https://www.gnu.org/software/software.html) and the 7-Zip archiver (https://7-zip.org, built into the package). Attention! Compatibility of programs packed in the Installer-SH format is on the conscience of the developer.
+* Independence: you can distribute and install software without an internet connection.
 
-* FreeBSD support: Starting with Installer-SH 2.6, FreeBSD support has been added.
+* Isolation: The default format stores configuration files and other junk generated during software use in a separate directory next to the program. It's also possible to switch to the classic mode, using the user's home directory for storing configuration files.
 
-* Different versions: The installation package was developed with the expectation of installing a variety of user applications, including different versions of the same program.
+* Portability: You can easily make a backup copy of the program with all settings and data (menu shortcuts are not saved) if it was installed in standard mode with the configuration files moved to a dedicated directory.
 
-* Easily updated and flexible: The installation package is designed to distribute one specific version of the application, but it is possible to pack several different programs, or different versions of the same program, at the discretion of the packer. Multiple installations of the program are possible, a warning will be displayed about overwriting existing files, this allows the developer to create one package in the Installer-SH format under a unique name, and simply update the archive with the application files.
+* Compatibility: The installation package does not require any specific dependencies or system libraries. Basic system utilities such as bash, tar, and Coreutils are required.
 
-* Standardized: The installation package follows the PortSoft specifications (https://github.com/Shedou/PortSoft) for applications, and the XDG Desktop specifications (https://specifications.freedesktop.org) for menu shortcut placement. Additionally, Installer-SH itself can prepare the PortSoft directory according to the specification on Linux distributions that do not support these specifications out of the box.
+* Multiplatform: A single installation package can install the program on various Linux and FreeBSD distributions.
 
-* Excellent compression: Thanks to the 7-Zip archiver, the advantage of Installer-SH over AppImage can reach 80% or more, depending on the type of compressed data, size and parameters, and the advantage over tar.xz can reach 10% or more, depending on the compressed data, size and parameters. Alternatively, you can use the less efficient but more compatible tar.xz compression when creating the installation package.
+* Multi-architecture: A single installation package can install the program on distributions of different architectures (x86, x86_64, amd64, aarch64, and others).
 
-* Silent mode (v2.3+): It is possible to mass install several programs in Installer-SH format with the "-silent" parameter, for more information read the help, run "installer.sh" with the "-h" parameter to call the help.
+* Different versions: Installer-SH can install different versions of the same program on the same system.
+
+* Flexible: Depending on the needs, the software developer or packager can customize the installation package as required.
+
+* Specifications: For maximum compatibility and convenience, the installation format complies with the PortSoft (https://github.com/Shedou/PortSoft) and XDG Desktop (https://specifications.freedesktop.org) specifications.
+
+* Self-sufficiency: Installer-SH can independently prepare the necessary foundation for further work in accordance with specifications.
+
+* Compression formats: By default, the most compatible compression format tar.xz is used, but at the discretion of the packer, the much more powerful 7-Zip format can be used to compress the program.
+
+* Silent Mode: You can perform a bulk installation of multiple programs in Installer-SH format using the "-silent" parameter.
+
+* Help: You can run "installer.sh" with the "-h" parameter for help with additional usage options. Also, please refer to the developer instructions in the README file in the installer directory if you plan to package your application in Installer-SH format.
+
+Note: FreeBSD support begins with Installer-SH 2.6. Silent mode support begins with Installer-SH 2.3. It is recommended to use the latest versions of the format when creating new software installation packages.
 
 ## License Installer-SH
 ```

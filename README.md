@@ -1,6 +1,6 @@
 ## Installer-SH [![Github Releases](https://img.shields.io/github/downloads/Shedou/Installer-SH/total.svg)](https://github.com/Shedou/Installer-SH/releases)
 
-Installer-SH is an independent installation package for Linux and FreeBSD applications, allowing you to distribute and install programs even on standalone computers.
+Installer-SH is a standalone installation package for Linux and FreeBSD applications, allowing you to distribute and install programs even on standalone computers with different architectures.
 
 ![Preview.](https://github.com/Shedou/Installer-SH/blob/main/Installer-SH/Preview.jpg)
 

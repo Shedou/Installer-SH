@@ -48,7 +48,7 @@ Comparison of software distribution formats [tested in different Linux and FreeB
 
 * Help: You can run "installer.sh" with the "-h" parameter for help with additional usage options. Also, please refer to the developer instructions in the README file in the installer directory if you plan to package your application in Installer-SH format.
 
-Notes: It is recommended to use the latest versions of the format when creating new software installation packages. FreeBSD support begins with Installer-SH 2.6. Silent mode support begins with Installer-SH 2.3. Isolation may not solve all the problems of very poorly developed software. Software compatibility depends on the software developer, not the installation package.
+Note: It is recommended to use the latest versions of the format when creating new software installation packages. Multiplatform and multiarchitecture support in a single package begins with Installer-SH 2.8. FreeBSD support begins with Installer-SH 2.6. Silent mode support begins with Installer-SH 2.3. Isolation may not solve all the problems of very poorly designed software. Software compatibility depends on the software developer, not the installation package.
 
 ## License Installer-SH
 ```

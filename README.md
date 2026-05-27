@@ -8,6 +8,8 @@ The current repository is for active development of Installer-SH, it contains th
 
 Stable and archived versions are available on the [downloads page](https://github.com/Shedou/Installer-SH/releases) or in the "[Installer-SH-Archive](https://github.com/Shedou/Installer-SH-Archive)" repository.
 
+### Usage: Run "installer.sh" and follow the instructions, or run with "installer.sh -silent" for a silent installation. Run "installer.sh -help" for help.
+
 Applications packaged in Installer-SH format can be found in the "[Chimbalix-Software-Catalog](https://github.com/Shedou/Chimbalix-Software-Catalog)" repository.
 
 Comparison of software distribution formats [tested in different Linux and FreeBSD](https://overclockers.ru/blog/Hard-Workshop/show/256127/Bol-shoe-sravnenie-i-testirovanie-formatov-ustanovki-PO-v-distributivah-Linux-i-FreeBSD-x86-x64) distributions (installing and running the game "2048"):

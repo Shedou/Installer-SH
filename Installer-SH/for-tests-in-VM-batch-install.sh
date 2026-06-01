@@ -17,18 +17,17 @@ Installers=(
 ### Remove the value of this variable if you do not want to update the menu after installing all applications.
 InstallLast="$Path_To_Script/ProgramFour/installer.sh"
 
-
 echo -e "
  ATTENTION! Configure this script before using!
 
- This script automatically installs many applications in Intaller-SH format
+ This script automatically installs many applications in Installer-SH format
   using silent mode.
  
  Enter \"y\" or \"yes\" to continue!"
 
 function InstallFile() {
-	file="$1"
-	mode="$2"
+	local file="$1"
+	local mode="$2"
 	if [ -e "$file" ]; then
 		echo -e " Installing: $file"
 		if ! [[ -x "$file" ]]; then chmod +x "$file"; fi
@@ -46,11 +45,10 @@ function InstallFile() {
 read -r confirmation
 
 if [ "$confirmation" == "y" ] || [ "$confirmation" == "yes" ]; then
-
 	for i in "${!Installers[@]}"; do InstallFile "${Installers[$i]}" "NoUpdateMenu"; done
-	if [ "$InstallLast" != "" ]; then InstallFile "$InstallLast" "sss"; fi
+	if [ "$InstallLast" != "" ]; then InstallFile "$InstallLast" "UpdateMenu"; fi
 fi
 
-echo "end."
+echo "End (pause)"
 read -r confirmation
 

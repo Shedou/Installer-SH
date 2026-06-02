@@ -12,7 +12,7 @@ Stable and archived versions are available on the [downloads page](https://githu
 
 Applications packaged in Installer-SH format can be found in the "[Chimbalix-Software-Catalog](https://github.com/Shedou/Chimbalix-Software-Catalog)" repository.
 
-Comparison of software distribution formats [tested in different Linux and FreeBSD](https://overclockers.ru/blog/Hard-Workshop/show/256127/Bol-shoe-sravnenie-i-testirovanie-formatov-ustanovki-PO-v-distributivah-Linux-i-FreeBSD-x86-x64) distributions (installing and running the game "2048"):
+Comparison of software distribution formats [tested in different Linux and FreeBSD](https://overclockers.ru/blog/Hard-Workshop/show/256127/Bol-shoe-sravnenie-i-testirovanie-formatov-ustanovki-PO-v-distributivah-Linux-i-FreeBSD-x86-x64) distributions (installing and running the [game "2048"](https://github.com/Shedou/Chimbalix-Software-Catalog/releases/tag/2048c103mpa)):
 
 ![Preview.](https://github.com/Shedou/Installer-SH/blob/main/Installer-SH/field-testing-of-formats-2026-05-24.png)
 

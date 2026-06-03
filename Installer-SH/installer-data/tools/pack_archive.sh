@@ -1,40 +1,66 @@
 #!/usr/bin/env bash
 # This Script part of "Installer-SH"
 
-Dictionary_Size_Base_Data="8"
-
 Path_To_Script="$( dirname "$(readlink -f "$0")")"
-
-Szip_bin="$Path_To_Script/7zip/7zzs"
 MD5_File="$Path_To_Script/MD5-Hash.txt"
 
-Base_Data="$Path_To_Script/base_data"
-Base_Data_Archive="$Path_To_Script/base_data.tar.xz"
+InputDataFolder="$Path_To_Script/base_data"
+OutputBaseArchive="$Path_To_Script/base_data.tar.xz"
+CurrentDateAndTime="$(date "+%Y-%m-%d_%H-%M-%S")"
 
-function _pack_archive() {
-	Name_File="$1"
-	DSize="$2"
-	Name_File_Target="$(basename "$3")"
-	Name_File_Target_full="$3"
-	
-	if [ -e "$Name_File" ]; then
-		if [ -e "$Name_File_Target" ]; then mv -T "$Name_File.tar.xz" "$Name_File-old""_$RANDOM"".tar.xz"; fi
-		cd "$Name_File" || exit
-		tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- *
+function create_base_archive() {
+	local temp_pwd="$PWD"
+	local exit_code=""
+	cd "$InputDataFolder" || exit
+	tar -cJf "$OutputBaseArchive" -- *
+	exit_code="$?"
+	if [ "$exit_code" -eq 0 ]; then
+		echo -e "The archive has been successfully created."
+	else
+		echo -e "Error creating archive (exit code: $exit_code). Exit!"
+		cd "$temp_pwd" || exit
+		exit 1
 	fi
-	MD5_DATA=$(md5sum "$Name_File_Target_full" | awk '{print $1}')
-	echo "$(basename "$Name_File_Target_full"): $MD5_DATA" >> "$MD5_File"
+	cd "$temp_pwd" || exit
 }
 
-_pack_archive "$Base_Data" "$Dictionary_Size_Base_Data" "$Base_Data_Archive"
+function check_files() {
+	if [ -e "$OutputBaseArchive" ]; then
+		echo -e "The archive already exists: $OutputBaseArchive"
+		echo -e " Creating a backup..."
+		if mv -T "$OutputBaseArchive" "$OutputBaseArchive""_$CurrentDateAndTime"; then
+			echo " Archive backup created: $OutputBaseArchive""_$CurrentDateAndTime"
+		else
+			echo -e " Error creating backup copy of existing archive... Exit!"
+			exit 1
+		fi
+	fi
+	
+	if [ ! -d "$InputDataFolder" ]; then
+		echo -e "Input data folder not found. Exit!"
+		exit 1
+	fi
+	
+	if [ -z "$(ls -A "$InputDataFolder")" ]; then
+		echo "The directory intended for archiving is empty! Exit!"
+		exit 1
+	fi
+}
 
-echo -e "$Spacer"
-echo -e "\n Pause..."
-read pause
+function create_md5_hash() {
+	MD5_DATA=$(md5sum "$OutputBaseArchive" | awk '{print $1}')
+	echo "$(basename "$OutputBaseArchive"): $MD5_DATA" >> "$MD5_File"
+}
+
+check_files
+create_base_archive
+create_md5_hash
+
+read -r -p "Pause..."
 
 # MIT License
 #
-# Copyright (c) 2024 Chimbal
+# Copyright (c) 2024-2026 Андрей Цымбалов (Chimbal)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

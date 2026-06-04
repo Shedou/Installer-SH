@@ -182,7 +182,15 @@ function _POST_INSTALL() { # -= (18) =-
 	if [ "$MODE_NOUPDATE_MENU" == "false" ] && [ "$Update_Menu" == "true" ]; then _UPDATE_MENU; fi
 	
 	# Exit
-	if [ "$MODE_SILENT" == "false" ]; then _ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"; fi
+	if [ "$MODE_SILENT" == "false" ]; then
+		_ABORT "${Font_Bold}${Font_Green}$Str_Complete_Install${Font_Reset_Color}${Font_Reset}"
+	else
+		# Вывод списка ошибок при наличии в тихом режиме
+		if [ "$List_Errors" != "" ]; then echo -e "
+  Error List ($Path_To_Script): $List_Errors"; fi
+	fi
+	
+
 	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_POST_INSTALL"; read -r pause; fi
 }
@@ -1925,15 +1933,24 @@ function _SET_LOCALE() { # -= (7) =-
 	local Locale_File="$Path_To_Script/locales/$Language"
 	
 	_SET_LOCALE_DEFAULT
-	if [ "$MODE_SILENT" == "false" ]; then
-		if [ -e "$Locale_File" ]; then
-			if [ "$(grep Locale_Version "$Locale_File")" == "Locale_Version=\"$LocaleVersion\"" ]; then
-				Locale_Use_Default="false"
+	if [[ -e "$Locale_File" ]]; then
+		if grep -qF "Locale_Version=\"${LocaleVersion}\"" "$Locale_File"; then
+			Locale_Use_Default="false"
+			
+			if [ "$MODE_SILENT" == "false" ]; then
 				Locale_Display="$Language"
-				source "$Locale_File"
+			else
+				Locale_Display="-silent ($Language)"
 			fi
+			
+			if ! source "$Locale_File" &> /dev/null; then
+				_ERROR "Load Locale File" "The localization file is corrupted!"
+				Locale_Use_Default="true"
+			fi
+		else
+			_ERROR "Localization" "The localization file version does not match the expected version!"
 		fi
-	else Locale_Display="-silent"; fi
+	fi
 	
 	Header="-=: Universal Software Installer (Installer-SH v$ScriptVersion) - Lang: $Locale_Display :=-"
 	Header="${Font_DarkYellow}${Font_Bold}${Header}${Font_Reset}${Font_Reset_Color}\n"

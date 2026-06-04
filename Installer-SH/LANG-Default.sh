@@ -8,4 +8,4 @@ if ! [[ -x "$Exe_File_Name" ]]; then
 	if ! chmod +x "$Exe_File_Name"; then echo " chmod error."; fi
 fi
 
-env LANG=C.UTF-8 "$Exe_File_Name"
+env LANG=C.UTF-8 "$Exe_File_Name" "$@"

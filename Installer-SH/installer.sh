@@ -1576,6 +1576,7 @@ $Header
 	
 	# Install Helpers
 	if [ "$Install_Helpers" == "true" ]; then _INSTALL_HELPERS; fi
+	
 	# Install Desktop files
 	if [ "$Install_Desktop_Icons" == "true" ]; then _INSTALL_DESKTOP_ICONS; fi
 	
@@ -1637,7 +1638,7 @@ $Header
 	sudo cp -rf "$Input_Menu_Apps_Dir/." "$Output_Menu_Apps"
 	
 	# Install Helpers
-	_INSTALL_HELPERS
+	if [ "$Install_Helpers" == "true" ]; then _INSTALL_HELPERS; fi
 	
 	# Install Desktop files
 	if [ "$Install_Desktop_Icons" == "true" ]; then

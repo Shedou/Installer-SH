@@ -1711,7 +1711,6 @@ function _PREPARE_UNINSTALLER() { # -= (17) =-
 }
 
 function _PREPARE_LAUNCHERS_SYSTEM() {
-	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
@@ -1743,7 +1742,6 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 }
 
 function _PREPARE_LAUNCHERS_USER() {
-	ISHSettingsFile="ish-settings"
 	if [ "$Install_Configs" == "SysDef" ]; then
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"

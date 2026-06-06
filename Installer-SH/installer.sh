@@ -309,7 +309,7 @@ function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Localization CANNOT be used he
 	MODE_SYSTEM="false"
 	
 	MODE_NO_SUDO="false"
-	UseMD5="false"
+	UseFreeBSDMD5="false"
 	NewLine='
 '
 	
@@ -519,7 +519,7 @@ function _IMPORTANT_CHECK_FIRST() {  # -= (4) =- # Localization CANNOT be used h
 		MODE_NO_SUDO="true"
 	fi
 	if ! type "tar" &> /dev/null; then      _ABORT "$String_CMD_N_F 'tar'"; fi
-	if ! type "md5sum" &> /dev/null; then UseMD5="true"
+	if ! type "md5sum" &> /dev/null; then UseFreeBSDMD5="true"
 		if ! type "md5" &> /dev/null;  then _ABORT "$String_CMD_N_F 'md5'"; fi
 	fi
 	if ! type "update-desktop-database" &> /dev/null; then _WARNING "Tool" "\"update-desktop-database\" not found..."; fi
@@ -858,7 +858,7 @@ fi
  ######### Check and compare MD5 of archive #########
 
 function _BASE_CHECK_MD5() {
-	if [ "$UseMD5" == "true" ]; then
+	if [ "$UseFreeBSDMD5" == "true" ]; then
 		Base_Data_MD5=$(md5 -q "$Archive_Base_Data" | awk '{print $1}')
 	else
 		Base_Data_MD5=$(md5sum "$Archive_Base_Data" | awk '{print $1}')
@@ -1143,7 +1143,7 @@ function _CHECK_MD5_COMPARE() {
 
 	MD5_Warning="false"
 	
-	if [ "$UseMD5" == "true" ]; then
+	if [ "$UseFreeBSDMD5" == "true" ]; then
 		MD5_Hash_ProgramFiles=$(md5 -q "$Archive_Program_Files" | awk '{print $1}')
 		MD5_Hash_SystemFiles=$(md5 -q "$Archive_System_Files" | awk '{print $1}')
 	else

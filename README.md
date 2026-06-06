@@ -18,7 +18,7 @@ Comparison of software distribution formats [tested in different Linux and FreeB
 
 ## Features of Installer-SH:
 
-* Honest, intuitive, and open: Installer-SH is developed by people, for people. It was designed to carry and present information about the application to the user before installation. Even a novice can build new packages using the original examples and following the existing structure.
+* Honest, intuitive, and open: Installer-SH is developed by people, for people. It was designed to carry and present information about the application to the user before installation. Even a novice can build new packages using original examples and an intuitive structure.
 
 * Ease of use: Installing programs using Installer-SH does not require root privileges by default. Root privileges may be required when installing software in system mode for all users.
 

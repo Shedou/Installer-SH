@@ -989,32 +989,28 @@ function _CLEAR_BACKGROUND() {
 }
 
 function _CLEAR_TEMP() { # Здесь нежелательно использовать локализацию
-	
-	local clear_temp_test=""
-	
 	if [ -n "$Temp_Dir" ]; then
 		if [ -e "$Temp_Dir" ]; then
+			local clear_temp_test=""
 			clear_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
 			if [ "$clear_temp_test" == "$Temp_Test" ]; then
-				if ! rm -rf "$Temp_Dir"; then _ABORT "Error clearinG temporary directory...\n   ($Temp_Dir)"; fi
+				if ! rm -rf "$Temp_Dir"; then _ABORT "Error removing temporary directory...\n   ($Temp_Dir)"; fi
 			else _ABORT "$clear_temp_test != $Temp_Test"; fi
 		fi
 	fi
 }
 
 function _CREATE_TEMP() { # Здесь нежелательно использовать локализацию
-	
-	local clear_temp_test=""
-	
 	if [ -n "$Temp_Dir" ]; then
 		_CLEAR_TEMP
+		local create_temp_test=""
 		create_temp_test="$(echo "$Temp_Dir" | cut -d/ -f 1-3)"
 		if [ "$create_temp_test" == "$Temp_Test" ]; then
 			if [ ! -e "$Temp_DirISH" ]; then
 				if ! mkdir -p "$Temp_DirISH"; then _ABORT "Error Creating temporary directory...\n   ($Temp_DirISH)"; fi
 				chmod 777 "$Temp_DirISH"
 			fi
-			if ! mkdir -p "$Temp_Dir"; then _ABORT "Error Creating temporary directory...\n   ($Temp_Dir)"; fi
+			if ! mkdir -p "$Temp_Dir"; then _ABORT "Error creating temporary directory...\n   ($Temp_Dir)"; fi
 			chmod 700 "$Temp_Dir"
 		else _ABORT "$create_temp_test != $Temp_Test"; fi
 	else _ABORT "_CREATE_TEMP: Temp_Dir variable not found"; fi

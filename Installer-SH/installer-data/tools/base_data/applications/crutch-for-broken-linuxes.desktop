@@ -10,12 +10,12 @@ Hidden=false
 
 Name=Applications (User)
 Comment=Open the PortSoft applications directory (in the user's home directory, if it exists).
-GenericName=
+GenericName=Applications (User)
 
 Icon=BASE_PATH_TO_SHARE_DDIR/apps.png
 Exec=bash -c 'HPDIR="$HOME/portsoft"; if [ ! -e "$HPDIR" ]; then HPDIR="$HOME"; fi; if type thunar &> /dev/null; then thunar "$HPDIR"; elif type dolphin &> /dev/null; then dolphin "$HPDIR"; elif type nautilus &> /dev/null; then nautilus "$HPDIR"; elif type pcmanfm &> /dev/null; then pcmanfm "$HPDIR"; elif type pcmanfm-qt &> /dev/null; then pcmanfm-qt "$HPDIR"; elif type nemo &> /dev/null; then nemo "$HPDIR"; elif type caja &> /dev/null; then caja "$HPDIR"; fi'
-TryExec=
-Path=
+#TryExec=
+#Path=
 #StartupWMClass=
 
 Terminal=false

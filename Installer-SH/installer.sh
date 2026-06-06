@@ -809,7 +809,7 @@ function _BASE_MAIN() {
 	
 	######### - Archive path - #########
 	Archive_Base_Data="$Path_Installer_Data/tools/base_data.tar.xz"
-	Archive_Base_Data_MD5="8adac9da1fccc9269db0e0e2045c09c1"
+	Archive_Base_Data_MD5="f01240f2ef392f85890ceef44aa7c58a"
 	
 	_BASE_PRINT_INFO
 	_BASE_CHECK_MD5

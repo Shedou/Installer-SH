@@ -9,8 +9,8 @@ NoDisplay=false
 Hidden=false
 
 Name=PROGRAM_NAME_IN_MENU
-Comment=
-GenericName=
+#Comment=
+#GenericName=
 
 Icon=PATH_TO_FOLDER/icons/icon.png
 Exec=PATH_TO_FOLDER/launcher %F

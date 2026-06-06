@@ -9,8 +9,8 @@ NoDisplay=false
 Hidden=false
 
 Name=Uninstall - PROGRAM_NAME_IN_MENU
-Comment=
-GenericName=
+#Comment=
+#GenericName=
 
 Icon=PATH_TO_FOLDER/PROGRAM_UNINSTALLER_ICON
 Exec=PATH_TO_FOLDER/PROGRAM_UNINSTALLER_FILE
@@ -34,10 +34,10 @@ Name[ru]=Удалить - PROGRAM_NAME_IN_MENU
 # - ------------- - #
 # - Actions Begin - #
 
-#Actions=Act;
+#Actions=DAct;
 
-#[Desktop Action Act]
-#Name=Acttion Template
+#[Desktop Action DAct]
+#Name=ActionName
 #Exec=thunar
 
 # -  Actions End  - #

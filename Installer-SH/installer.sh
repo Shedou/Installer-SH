@@ -359,7 +359,7 @@ function _PACK_ARCHIVES() { # Localization CANNOT be used here because the "_SET
 		if [ -e "$target_file" ]; then
 			echo -e "The archive already exists: $target_file"
 			echo -e " Creating a backup..."
-			if mv -T "$target_file" "$target_file""_$CurrentDateAndTime"; then
+			if mv "$target_file" "$target_file""_$CurrentDateAndTime"; then
 				echo " Archive backup created: $target_file""_$CurrentDateAndTime"
 			else
 				echo -e " Error creating backup copy of existing archive... Exit!"

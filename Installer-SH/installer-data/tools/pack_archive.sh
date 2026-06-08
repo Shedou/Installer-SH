@@ -28,7 +28,7 @@ function check_files() {
 	if [ -e "$OutputBaseArchive" ]; then
 		echo -e "The archive already exists: $OutputBaseArchive"
 		echo -e " Creating a backup..."
-		if mv -T "$OutputBaseArchive" "$OutputBaseArchive""_$CurrentDateAndTime"; then
+		if mv "$OutputBaseArchive" "$OutputBaseArchive""_$CurrentDateAndTime"; then
 			echo " Archive backup created: $OutputBaseArchive""_$CurrentDateAndTime"
 		else
 			echo -e " Error creating backup copy of existing archive... Exit!"

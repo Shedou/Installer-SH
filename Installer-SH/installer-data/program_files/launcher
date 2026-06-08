@@ -53,12 +53,12 @@ if [ -e "$PathToScript/ish-settings" ]; then
 	source "$PathToScript/ish-settings" ## IMPORT SETTINGS 
 fi
 
-if [ -z "$ISHPogramArch" ]; then ISHPogramArch="other"; fi # CHECKING IMPORTED VARIABLES
+if [ -z "$ISHProgramArch" ]; then ISHProgramArch="other"; fi # CHECKING IMPORTED VARIABLES
 if [ -z "$ISHProgramFName" ]; then ISHProgramFName="other"; fi
 if [ -z "$ISHInstallPathUser" ]; then ISHInstallPathUser="$HOME/portsoft"; fi
 if [ -z "$ISHInstallPathSystem" ]; then ISHInstallPathSystem="/portsoft"; fi
-if [ -z "$ISHInstallPathUserFull" ]; then ISHInstallPathUserFull="$ISHInstallPathUser/$ISHPogramArch/$ISHProgramFName"; fi
-if [ -z "$ISHInstallPathSystemFull" ]; then ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHPogramArch/$ISHProgramFName"; fi
+if [ -z "$ISHInstallPathUserFull" ]; then ISHInstallPathUserFull="$ISHInstallPathUser/$ISHProgramArch/$ISHProgramFName"; fi
+if [ -z "$ISHInstallPathSystemFull" ]; then ISHInstallPathSystemFull="$ISHInstallPathSystem/$ISHProgramArch/$ISHProgramFName"; fi
 # Checks if the program is installed in system mode, and if so, uses the user's home directory to store data and configurations.
 if [ "$PathToScript" == "$ISHInstallPathSystemFull" ]; then
 	ish_path_rights="true"

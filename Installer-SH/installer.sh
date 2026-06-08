@@ -26,8 +26,8 @@ function _MAIN() {
 
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -apk).
-	Archive_MD5_Hash_ProgramFiles="01b2e4f5df0d3260e96247f4e66ad2be"
-	Archive_MD5_Hash_SystemFiles="121b9610118ca512fa6c829f6772e6e7"
+	Archive_MD5_Hash_ProgramFiles="ba33c848881fe784d214b78214bcdfda"
+	Archive_MD5_Hash_SystemFiles="459c8c41e84a6c088c8a7c36c9fab5c3"
 	
 	# For applications that have executable files for different platforms and architectures (Linux / FreeBSD).
 	# Disables architecture mismatch warnings. Disables cleaning of unnecessary files in the "tools/7zip" directory (if TarXZ is used).
@@ -1745,10 +1745,10 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 	fi
 	
 	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-		sudo sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		sudo sed -i "" "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
-		sudo sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		sudo sed -i "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	fi
 	
@@ -1776,10 +1776,10 @@ function _PREPARE_LAUNCHERS_USER() {
 	fi
 	
 	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-		sed -i "" "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		sed -i "" "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
-		sed -i "s/ISHPogramArch=.*/ISHPogramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		sed -i "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
 		sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	fi
 	

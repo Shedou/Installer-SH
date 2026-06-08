@@ -256,20 +256,22 @@ function _HELP() { # Localization CANNOT be used here because the "_SET_LOCALE" 
 }
 
 function _CHECK_ARGS() {
-	if [[ "$ArgumentsString" =~ "-help" ]] || [[ "$ArgumentsString" =~ "-h" ]] || [[ "$ArgumentsString" =~ "--help" ]]; then _HELP; fi
-	if [[ "$ArgumentsString" =~ "-forcemenu" ]] || [[ "$ArgumentsString" =~ "-fmu" ]];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
-	if [[ "$ArgumentsString" =~ "-noupdmenu" ]] || [[ "$ArgumentsString" =~ "-nmu" ]];  then MODE_NOUPDATE_MENU="true"; fi
-	if [[ "$ArgumentsString" =~ "-debug" ]] || [[ "$ArgumentsString" =~ "-dbg" ]];      then MODE_DEBUG="true"; fi
-	if [[ "$ArgumentsString" =~ "-silent" ]] || [[ "$ArgumentsString" =~ "-slt" ]];     then MODE_SILENT="true"; fi
-	if [[ "$ArgumentsString" =~ "-arcpack" ]] || [[ "$ArgumentsString" =~ "-apk" ]];    then MODE_ARCPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-clean" ]] || [[ "$ArgumentsString" =~ "-cln" ]];      then MODE_CLEAN="true"; fi
-	if [[ "$ArgumentsString" =~ "-tarpack" ]] || [[ "$ArgumentsString" =~ "-tpk" ]];    then MODE_TARPACK="true"; fi
-	if [[ "$ArgumentsString" =~ "-updatebase" ]] || [[ "$ArgumentsString" =~ "-uba" ]]; then MODE_UPDATEBASE="true"; fi
-	if [[ "$ArgumentsString" =~ "-update" ]] || [[ "$ArgumentsString" =~ "-upd" ]];     then MODE_UPDATE="true"; fi
-	if [[ "$ArgumentsString" =~ "-cfgportsoft" ]] || [[ "$ArgumentsString" =~ "-cps" ]]; then CFG_PORTSOFT="true"; fi
-	if [[ "$ArgumentsString" =~ "-cfgsysdef" ]] || [[ "$ArgumentsString" =~ "-csd" ]];   then CFG_SYSDEF="true"; fi
-	if [[ "$ArgumentsString" =~ "-modeuser" ]] || [[ "$ArgumentsString" =~ "-mur" ]];    then MODE_USER="true"; fi
-	if [[ "$ArgumentsString" =~ "-modesystem" ]] || [[ "$ArgumentsString" =~ "-msm" ]];  then MODE_SYSTEM="true"; fi
+	for curarg in "${Arguments[@]}"; do
+		if [ "$curarg" == "-help" ] || [ "$curarg" == "-h" ] || [ "$curarg" == "--help" ]; then _HELP; fi
+		if [ "$curarg" == "-forcemenu" ] || [ "$curarg" == "-fmu" ];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+		if [ "$curarg" == "-noupdmenu" ] || [ "$curarg" == "-nmu" ];  then MODE_NOUPDATE_MENU="true"; fi
+		if [ "$curarg" == "-debug" ] || [ "$curarg" == "-dbg" ];      then MODE_DEBUG="true"; fi
+		if [ "$curarg" == "-silent" ] || [ "$curarg" == "-slt" ];     then MODE_SILENT="true"; fi
+		if [ "$curarg" == "-arcpack" ] || [ "$curarg" == "-apk" ];    then MODE_ARCPACK="true"; fi
+		if [ "$curarg" == "-clean" ] || [ "$curarg" == "-cln" ];      then MODE_CLEAN="true"; fi
+		if [ "$curarg" == "-tarpack" ] || [ "$curarg" == "-tpk" ];    then MODE_TARPACK="true"; fi
+		if [ "$curarg" == "-updatebase" ] || [ "$curarg" == "-uba" ]; then MODE_UPDATEBASE="true"; fi
+		if [ "$curarg" == "-update" ] || [ "$curarg" == "-upd" ];     then MODE_UPDATE="true"; fi
+		if [ "$curarg" == "-cfgportsoft" ] || [ "$curarg" == "-cps" ]; then CFG_PORTSOFT="true"; fi
+		if [ "$curarg" == "-cfgsysdef" ] || [ "$curarg" == "-csd" ];   then CFG_SYSDEF="true"; fi
+		if [ "$curarg" == "-modeuser" ] || [ "$curarg" == "-mur" ];    then MODE_USER="true"; fi
+		if [ "$curarg" == "-modesystem" ] || [ "$curarg" == "-msm" ];  then MODE_SYSTEM="true"; fi
+	done
 }
 
 function _INIT_GLOBAL_VARIABLES() { # -= (1) =- # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!

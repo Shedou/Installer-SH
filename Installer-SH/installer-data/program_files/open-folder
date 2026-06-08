@@ -16,6 +16,6 @@ elif type nemo &> /dev/null;       then nemo "$Path_To_Script"
 elif type caja &> /dev/null;       then caja "$Path_To_Script"
 else
 	echo "No file managers found."
-	echo "Installer-SH - https://github.com/Shedou/Chimbalix-Software-Catalog"
-	read pause
+	echo "Installer-SH - https://github.com/Shedou/Installer-SH"
+	read -r -p "Pause..."
 fi

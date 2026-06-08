@@ -49,7 +49,7 @@ if [ "$choice" == "y" ] || [ "$choice" == "yes" ]; then
 	echo -e "\n Current filesystem size for PortSoft directory = $RAMSize."
 	
 	if [ -e "$PortSoftDir" ]; then
-		echo -у "
+		echo -e "
  ATTENTION! PortSoft directory already exists!
  The existing directory will be mounted!
  Old files will be inaccessible until the file system is mounted in RAM!

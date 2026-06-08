@@ -212,9 +212,9 @@ function _POST_INSTALL_UPDATE_MENU_XDG() {
 		
 		if [ "$Install_Mode" == "System" ]; then
 			if [ -e "/usr/share/applications" ]; then
-				update-desktop-database /usr/share/applications &> /dev/null
+				sudo update-desktop-database /usr/share/applications &> /dev/null
 			else
-				update-desktop-database /usr/local/share/applications &> /dev/null
+				sudo update-desktop-database /usr/local/share/applications &> /dev/null
 			fi
 		fi
 	fi

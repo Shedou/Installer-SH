@@ -1252,8 +1252,8 @@ $Str_INSTALLCONFIGMODE_DescSystem"
  $Str_INSTALLCONFIGMODE_Help"
 	
 	read -r install_config_confirm_s
-	if [ "$install_config_confirm_s" == "s" ]; then Install_Mode="System"
-	elif [ "$install_config_confirm_s" == "u" ]; then Install_Mode="User"; fi
+	if [ "$install_config_confirm_s" == "s" ]; then Install_Mode="System"; _INIT_OUTPUTS
+	elif [ "$install_config_confirm_s" == "u" ]; then Install_Mode="User"; _INIT_OUTPUTS; fi
 
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
 fi
@@ -1336,7 +1336,6 @@ $Header
 	
 	read -r install_settings_confirm
 	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then
-		_INIT_OUTPUTS
 		# Second Check PortSoft
 		if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
 			_BASE_MAIN

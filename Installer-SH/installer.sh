@@ -1692,7 +1692,7 @@ function _PREPARE_UNINSTALLER_USER() {
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
+				if [ "$(stat -f "%p" "$Output_Uninstaller")" != "100744" ]; then chmod 744 "$Output_Uninstaller"; fi
 			else
 				if [ "$(stat -c "%a" "$Output_Uninstaller")" != "744" ]; then chmod 744 "$Output_Uninstaller"; fi
 			fi

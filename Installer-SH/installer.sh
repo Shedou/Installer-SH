@@ -1452,10 +1452,10 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 function _CHECK_OUTPUTS() { # -= (15) =-
 	
 	local check_outputs_error="false"
-	local arr_files_sorted=()
+	local arr_files_detected=()
 	
 	for file in "${!Output_Files_All[@]}"; do
-		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_sorted[file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
+		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_detected[file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
 	done
 	
 	if [ "$check_outputs_error" == "true" ] && [ "$MODE_UPDATE" == "false" ]; then
@@ -1465,7 +1465,7 @@ $Header
  ${Font_Bold}${Font_Cyan}$Str_CHECKOUTPUTS_Head${Font_Reset_Color}${Font_Reset}"
 		echo -e "
   $Str_ATTENTION! $Str_CHECKOUTPUTS_Already_Present
-$(for file in "${!arr_files_sorted[@]}"; do echo "   ${arr_files_sorted[$file]}"; done)"
+$(for file in "${!arr_files_detected[@]}"; do echo "   ${arr_files_detected[$file]}"; done)"
 		echo -e "
    $Str_CHECKOUTPUTS_Attention
    ${Font_Yellow}$Str_CHECKOUTPUTS_Attention2${Font_Reset_Color}

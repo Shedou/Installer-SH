@@ -353,15 +353,31 @@ function _PACK_ARCHIVES() { # Localization CANNOT be used here because the "_SET
 	Program_Files="$Path_Installer_Data/program_files"
 	System_Files="$Path_Installer_Data/system_files"
 	
+	function check_file() {
+		local CurrentDateAndTime="$(date "+%Y-%m-%d_%H-%M-%S")"
+		local target_file="$1"
+		if [ -e "$target_file" ]; then
+			echo -e "The archive already exists: $target_file"
+			echo -e " Creating a backup..."
+			if mv -T "$target_file" "$target_file""_$CurrentDateAndTime"; then
+				echo " Archive backup created: $target_file""_$CurrentDateAndTime"
+			else
+				echo -e " Error creating backup copy of existing archive... Exit!"
+				exit 1
+			fi
+		fi
+	}
+	
 	function _pack_archive() {
-		Name_File="$1"
-		DSize="$2"
-		Name_File_Target="$(basename "$3")"
-		Name_File_Target_full="$3"
+		local Name_File="$1"
+		local DSize="$2"
+		local Name_File_Target="$(basename "$3")"
+		local Name_File_Target_full="$3"
+		local temp_pwd="$PWD"
 		
 		if [ "$Archive_Format" == "SZip" ]; then
 			if [ -e "$Name_File" ]; then
-				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".7z"; fi
+				check_file "$Name_File_Target_full"
 				echo -e "\n"
 				cd "$Path_Installer_Data" || exit
 				"$Tool_SevenZip_bin" a -snl -mx9 -m0=LZMA2:d"$DSize"m -ms=1g -mqs=on -mmt=3 "$Name_File_Target" "$Name_File/."
@@ -370,11 +386,18 @@ function _PACK_ARCHIVES() { # Localization CANNOT be used here because the "_SET
 		
 		if [ "$Archive_Format" == "TarXZ" ]; then
 			if [ -e "$Name_File" ]; then
-				if [ -e "$Name_File_Target" ]; then mv -T "$Name_File_Target" "$Name_File-old""_$RANDOM"".tar.xz"; fi
+				check_file "$Name_File_Target_full"
 				cd "$Name_File" || exit
-				tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- * && echo -e "\n $Name_File_Target - OK" || echo -e "\n BAD, Try with simple tar command..."; tar -cJf ../"$Name_File_Target" -- *
+				if tar -cf ../"$Name_File_Target" -I "xz -9 --lzma2=dict=$DSize"M -- *; then
+					echo -e "\n $Name_File_Target - OK"
+				else
+					echo -e "\n BAD, Try with simple tar command..."
+					tar -cJf ../"$Name_File_Target" -- *
+				fi
 			fi
 		fi
+		
+		cd "$temp_pwd" || exit
 		
 		if ! type "md5sum" &> /dev/null; then
 			PackArcMD5=$(md5 -q "$Name_File_Target_full" | awk '{print $1}')

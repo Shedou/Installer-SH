@@ -1730,6 +1730,15 @@ function _PREPARE_UNINSTALLER() { # -= (17) =-
 }
 
 function _PREPARE_LAUNCHERS_SYSTEM() {
+	function pls_check_rights() {
+		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
+			if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100644" ]; then sudo chmod 644 "$Output_Install_Dir/$ISHSettingsFile"; fi
+		else
+			if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "644" ]; then sudo chmod 644 "$Output_Install_Dir/$ISHSettingsFile"; fi
+		fi
+	}
+	
 	if [ "$Install_Configs" == "SysDef" ]; then
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sudo sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
@@ -1743,24 +1752,29 @@ function _PREPARE_LAUNCHERS_SYSTEM() {
 			sudo sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
-	
+	pls_check_rights
 	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		sudo sed -i "" "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		pls_check_rights
 		sudo sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
 		sudo sed -i "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		pls_check_rights
 		sudo sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	fi
-	
-	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
-	else
-		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then sudo chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
-	fi
+	pls_check_rights
 }
 
 function _PREPARE_LAUNCHERS_USER() {
+	function plu_check_rights() {
+		# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
+		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
+			if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100644" ]; then chmod 644 "$Output_Install_Dir/$ISHSettingsFile"; fi
+		else
+			if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "644" ]; then chmod 644 "$Output_Install_Dir/$ISHSettingsFile"; fi
+		fi
+	}
+	
 	if [ "$Install_Configs" == "SysDef" ]; then
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 			sed -i "" 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="false"/' "$Output_Install_Dir/$ISHSettingsFile"
@@ -1774,21 +1788,18 @@ function _PREPARE_LAUNCHERS_USER() {
 			sed -i 's/ISHMoveHomeDir=.*/ISHMoveHomeDir="true"/' "$Output_Install_Dir/$ISHSettingsFile"
 		fi
 	fi
+	plu_check_rights
 	
 	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
 		sed -i "" "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		plu_check_rights
 		sed -i "" "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	else
 		sed -i "s/ISHProgramArch=.*/ISHProgramArch=\"$Program_Architecture\"/" "$Output_Install_Dir/$ISHSettingsFile"
+		plu_check_rights
 		sed -i "s/ISHProgramFName=.*/ISHProgramFName=\"$Unique_App_Folder_Name\"/" "$Output_Install_Dir/$ISHSettingsFile"
 	fi
-	
-	# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
-	if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-		if [ "$(stat -f "%p" "$Output_Install_Dir/$ISHSettingsFile")" != "100755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
-	else
-		if [ "$(stat -c "%a" "$Output_Install_Dir/$ISHSettingsFile")" != "755" ]; then chmod 755 "$Output_Install_Dir/$ISHSettingsFile"; fi
-	fi
+	plu_check_rights
 }
 
 function _PREPARE_LAUNCHERS() { # -= (17.1) =-

@@ -797,7 +797,7 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =-
 	
 	# Проверка наличия архивов с файлами приложения
 	
-	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"program_files.\" not found.\n $Archive_Program_Files"; fi
+	if [ ! -e "$Archive_Program_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"program_files\" not found.\n $Archive_Program_Files"; fi
 	if [ ! -e "$Archive_System_Files" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Archive \"system_files\" not found.\n $Archive_System_Files"; fi
 	
 	if [ -e "$Temp_Dir" ]; then _ERROR "_IMPORTANT_CHECK_LAST" "Temp Dir is already present!\n  $Temp_Dir"; fi

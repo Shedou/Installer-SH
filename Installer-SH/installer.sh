@@ -258,7 +258,7 @@ function _HELP() { # Localization CANNOT be used here because the "_SET_LOCALE" 
 function _CHECK_ARGS() {
 	for curarg in "${Arguments[@]}"; do
 		if [ "$curarg" == "-help" ] || [ "$curarg" == "-h" ] || [ "$curarg" == "--help" ]; then _HELP; fi
-		if [ "$curarg" == "-forcemenu" ] || [ "$curarg" == "-fmu" ];  then _CHECK_SYSTEM_DE; _UPDATE_MENU; exit; fi
+		if [ "$curarg" == "-forcemenu" ] || [ "$curarg" == "-fmu" ];  then _UPDATE_MENU; exit; fi
 		if [ "$curarg" == "-noupdmenu" ] || [ "$curarg" == "-nmu" ];  then MODE_NOUPDATE_MENU="true"; fi
 		if [ "$curarg" == "-debug" ] || [ "$curarg" == "-dbg" ];      then MODE_DEBUG="true"; fi
 		if [ "$curarg" == "-silent" ] || [ "$curarg" == "-slt" ];     then MODE_SILENT="true"; fi

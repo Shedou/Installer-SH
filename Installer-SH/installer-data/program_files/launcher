@@ -134,7 +134,7 @@ if [ "$exit_code" != "0" ]; then
 		elif type "uxterm" &> /dev/null; then terminal_executable="uxterm"; fi
 	fi
 	
-	$terminal_executable -e "$StringMessage"
+	"$terminal_executable" -e "$StringMessage"
 fi
 
 if [ "$ISHTerminalPause" == "true" ]; then read -r pause; fi

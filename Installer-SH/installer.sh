@@ -53,10 +53,11 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	Debug_Test_Colors="false" # Test colors (for debugging purposes)
 	Font_Styles_RGB="false"   # Disabled for compatibility with older distros...
 	
-	# WARNING! Do not use capital letters in this place!
+	# WARNING! Do not use special characters or spaces here!
+	# WARNING! Don't use capital letters unless necessary!
 	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
 	Unique_App_Folder_Name="installer-sh-28" #=> UNIQUE_APP_FOLDER_NAME
-	# GOOD: ex-app-16, exapp-16 | BAD: Ex-app-16, ExApp 16...
+	# GOOD: ex-app-16, exapp-16 | BAD: Ex&app-16, ExApp 16...
 	# Unique name of the output directory.
 
  ######### - ------------------- - #########

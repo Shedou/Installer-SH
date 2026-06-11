@@ -431,18 +431,22 @@ function _TAR_PACK() { # Localization CANNOT be used here because the "_SET_LOCA
 	TP_OutputFile="$Path_To_Script.tar"
 	TP_InputDirName="$(basename "$Path_To_Script")"
 	
-	cd ..
+	local temp_pwd="$PWD"
+	cd "$Path_To_Script" || exit
+	cd .. || exit
 	
 	if [ ! -e "$TP_OutputFile" ]; then 
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then tar -cf "$TP_OutputFile" "$TP_InputDirName"
 		else tar --owner=ish --group=ish -cf "$TP_OutputFile" "$TP_InputDirName"; fi
-		
 		echo -e "Distributable archive created:\n\n $Path_To_Script.tar\n\n COMPLETED"
+		cd "$temp_pwd" || exit
 		read -r pause; exit
 	else
 		echo -e "File already exists!\n\n $TP_OutputFile\n\n !!! WARNING !!!"
+		cd "$temp_pwd" || exit
 		read -r pause; exit
 	fi
+	cd "$temp_pwd" || exit
 }
 
 function _CLEAN() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
@@ -1254,7 +1258,7 @@ function _CHECK_MD5() { # -= (12) =- # Проверить хэши и вывес
  ######### Installation configuration #########
 
 function _INSTALL_CONFIG_MODE() { # -= (13) =-
-if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true" ] || [ "$Install_Mode_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
+if [ "$MODE_SILENT" == "true" ] || [ "$MODE_NO_SUDO" == "true" ] || [ "$Install_Mode_CFG_Skip" == "true" ]; then : # Пропустить функцию если включен тихий режим или нет команды sudo
 else
 	_CLEAR_BACKGROUND
 	
@@ -1285,7 +1289,7 @@ fi
 }
 
 function _INSTALL_CONFIG_CFG() { # -= (13.1) =-
-if [ "$MODE_SILENT" == "true" ] || [ "$Install_Configs_CFG_Skip" != "false" ]; then : # Пропустить функцию если включен тихий режим
+if [ "$MODE_SILENT" == "true" ] || [ "$Install_Configs_CFG_Skip" == "true" ]; then : # Пропустить функцию если включен тихий режим
 else
 	_CLEAR_BACKGROUND
 	
@@ -1434,7 +1438,8 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 		fi
 	done
 	
-	OLD_IFS=$IFS; IFS=''
+	local OLD_IFS="$IFS"
+	IFS=''
 	
 	local Files_Bin_Dir=();   while read -r line; do Files_Bin_Dir+=("$line");   done < <(ls "$Input_Bin_Dir")
 	local Files_Menu=();      while read -r line; do Files_Menu+=("$line");      done < <(ls "$Input_Menu_Files_Dir")
@@ -1457,7 +1462,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 		for file in "${!Files_Desktop_Dir[@]}"; do local arr_2[file]="$Output_Desktop_Dir/${Files_Desktop_Dir[$file]}"; done
 	fi
 	
-	IFS=$OLD_IFS
+	IFS="$OLD_IFS"
 	
 	for file in "${!Files_Menu[@]}"; do arr_3[file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
 	for file in "${!Files_Menu_Dir[@]}"; do arr_4[file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done

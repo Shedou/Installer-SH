@@ -42,7 +42,13 @@ function _remove {
 				echo -ne " - ok.\n"
 			else
 				echo -ne "\n ${Font_Yellow}${Font_Bold}Need root rights... Try with sudo.${Font_Reset}${Font_Reset_Color}\n"
-				if sudo rm -rf "$file"; then if_sudo="true"; fi
+				if sudo rm -rf "$file"; then
+					if_sudo="true"
+				else
+					echo -e "Abort..."
+					read -r -p "Pause..."
+					exit 1
+				fi
 			fi
 		else 
 			if sudo rm -rf "$file"; then echo -ne " - ok.\n"
@@ -75,13 +81,15 @@ if [ "$Confirm" == "y" ] || [ "$Confirm" == "yes" ]; then
 	for i in "${!FilesToDelete[@]}"; do _remove "${FilesToDelete[$i]}"; done
 	
 	if type "update-desktop-database" &> /dev/null; then
-		update-desktop-database ~/.local/share/applications &> /dev/null
-		if [ -e "/usr/share/applications" ]; then
-			update-desktop-database /usr/share/applications &> /dev/null
+		if [ "$if_sudo" == "true" ]; then
+			if [ -e "/usr/share/applications" ]; then
+				sudo update-desktop-database /usr/share/applications &> /dev/null
+			else
+				sudo update-desktop-database /usr/local/share/applications &> /dev/null
+			fi
 		else
-			update-desktop-database /usr/local/share/applications &> /dev/null
+			update-desktop-database ~/.local/share/applications &> /dev/null
 		fi
-		
 	fi
 	
 	echo -e "\n ${Font_Bold}${Font_Green}Uninstallation completed.${Font_Reset_Color}${Font_Reset}\n"

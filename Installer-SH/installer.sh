@@ -446,7 +446,6 @@ function _TAR_PACK() { # Localization CANNOT be used here because the "_SET_LOCA
 		cd "$temp_pwd" || exit
 		read -r pause; exit
 	fi
-	cd "$temp_pwd" || exit
 }
 
 function _CLEAN() { # Localization CANNOT be used here because the "_SET_LOCALE" function is not loaded yet!
@@ -1562,6 +1561,11 @@ $Header
 	if [ ! -e "$Output_Install_Dir" ]; then if ! mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
 	elif ! touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
 	
+	if [ ! -e "$Output_Bin_Dir" ]; then if ! mkdir -p "$Output_Bin_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_Files" ]; then if ! mkdir -p "$Output_Menu_Files"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_DDir" ]; then if ! mkdir -p "$Output_Menu_DDir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_Apps" ]; then if ! mkdir -p "$Output_Menu_Apps"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	
 	if [ "$Archive_Format" == "SZip" ]; then
@@ -1586,9 +1590,6 @@ $Header
 	fi
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Install_Bin_Menu"; fi
-	
-	# Check Bin folder
-	if [ ! -e "$Output_Bin_Dir" ]; then mkdir "$Output_Bin_Dir"; fi
 	
 	# Copy Bin files
 	cp -rf "$Input_Bin_Dir/." "$Output_Bin_Dir"
@@ -1623,6 +1624,11 @@ $Header
 	# Check Output Folder
 	if [ ! -e "$Output_Install_Dir" ]; then if ! sudo mkdir -p "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
 	elif ! sudo touch "$Output_Install_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi
+	
+	if [ ! -e "$Output_Bin_Dir" ]; then if ! sudo mkdir -p "$Output_Bin_Dir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_Files" ]; then if ! sudo mkdir -p "$Output_Menu_Files"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_DDir" ]; then if ! sudo mkdir -p "$Output_Menu_DDir"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
+	if [ ! -e "$Output_Menu_Apps" ]; then if ! sudo mkdir -p "$Output_Menu_Apps"; then _ABORT "$Str_INSTALLAPP_No_Rights"; fi; fi
 	
 	if [ "$MODE_SILENT" == "false" ]; then echo " $Str_INSTALLAPP_Unpack_App"; fi
 	

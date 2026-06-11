@@ -808,8 +808,8 @@ function _IMPORTANT_CHECK_LAST() { # -= (10) =-
 		fi
 	fi
 	
-	# Check PortSoft
-	if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ] || [ "$MODE_UPDATEBASE" == "true" ]; then
+	# Update PortSoft (-updatebase, -uba)
+	if [ "$MODE_UPDATEBASE" == "true" ]; then
 		_BASE_MAIN
 		if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
 	fi
@@ -1360,15 +1360,16 @@ $Header
  ${Font_Bold}${Font_Red}$Str_PRINTINSTALLSETTINGS_Confirm${Font_Reset_Color}${Font_Reset}"
 	
 	read -r install_settings_confirm
-	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then
-		# Second Check PortSoft
-		if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
-			_BASE_MAIN
-			if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
-		fi
+	if [ "$install_settings_confirm" == "y" ] || [ "$install_settings_confirm" == "yes" ]; then :
 	else _ABORT "${Font_Bold}${Font_Green}$Str_Interrupted_By_User${Font_Reset_Color}${Font_Reset}"; fi
-
+	
 	if [ "$MODE_DEBUG" == "true" ]; then echo "_PRINT_INSTALL_SETTINGS"; read -r pause; fi
+fi
+
+# Check PortSoft
+if [ ! -e "$Output_PortSoft" ] || [ ! -e "$Output_Menu_DDir" ]; then
+	_BASE_MAIN
+	if [ "$MODE_SILENT" == "false" ]; then _CLEAR_BACKGROUND; fi
 fi
 }
 

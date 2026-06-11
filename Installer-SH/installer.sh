@@ -657,48 +657,48 @@ function _CHECK_SYSTEM_DE() { # -= (8) =-
 	
 	# Normalize
 	### COSMIC - GNOME - KDE - LXDE - LXQT - MATE - RAZOR - ROX - TDE - UNITY - XFCE - EDE - CINNAMON - PANTHEON - DDE - ENDLESS - LEGACY - BUDGIE - OPENBOX - SWAY
-	if [ "$check_de_raw" == "COSMIC" ];            then local check_de_raw="COSMIC"   # COSMIC Desktop
-	elif [ "$check_de_raw" == "GNOME" ];           then local check_de_raw="GNOME"    # GNOME Desktop
-	elif [ "$check_de_raw" == "GNOME-Classic" ];   then local check_de_raw="GNOME"    # GNOME Classic Desktop
-	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then local check_de_raw="GNOME"    # GNOME Flashback Desktop
-	elif [ "$check_de_raw" == "KDE" ];             then local check_de_raw="KDE"      # KDE Desktop
-	elif [ "$check_de_raw" == "LXDE" ];            then local check_de_raw="LXDE"     # LXDE Desktop
-	elif [ "$check_de_raw" == "LXQt" ];            then local check_de_raw="LXQT"     # LXQt Desktop
-	elif [ "$check_de_raw" == "MATE" ];            then local check_de_raw="MATE"     # MATE Desktop
-	elif [ "$check_de_raw" == "Razor" ];           then local check_de_raw="RAZOR"    # Razor-qt Desktop
-	elif [ "$check_de_raw" == "ROX" ];             then local check_de_raw="ROX"      # ROX Desktop
-	elif [ "$check_de_raw" == "TDE" ];             then local check_de_raw="TDE"      # Trinity Desktop
-	elif [ "$check_de_raw" == "Unity" ];           then local check_de_raw="UNITY"    # Unity Shell
-	elif [ "$check_de_raw" == "XFCE" ];            then local check_de_raw="XFCE"     # XFCE Desktop
-	elif [ "$check_de_raw" == "EDE" ];             then local check_de_raw="EDE"      # EDE Desktop
-	elif [ "$check_de_raw" == "Cinnamon" ];        then local check_de_raw="CINNAMON" # Cinnamon Desktop
-	elif [ "$check_de_raw" == "Pantheon" ];        then local check_de_raw="PANTHEON" # Pantheon Desktop
-	elif [ "$check_de_raw" == "DDE" ];             then local check_de_raw="DDE"      # Deepin Desktop
-	elif [ "$check_de_raw" == "Endless" ];         then local check_de_raw="ENDLESS"  # Endless OS desktop
-	elif [ "$check_de_raw" == "Old" ];             then local check_de_raw="LEGACY"   # Legacy menu systems
-	elif [ "$check_de_raw" == "plasma" ];          then local check_de_raw="KDE" ### Extra names
-	elif [ "$check_de_raw" == "xfce" ];            then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "xubuntu" ];         then local check_de_raw="XFCE"
-	elif [ "$check_de_raw" == "lxde" ];            then local check_de_raw="LXDE"
-	elif [ "$check_de_raw" == "mate" ];            then local check_de_raw="MATE"
-	elif [ "$check_de_raw" == "ubuntu" ];          then local check_de_raw="GNOME"
-	elif [ "$check_de_raw" == "lxqt" ];            then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "Lubuntu" ];         then local check_de_raw="LXQT"
-	elif [ "$check_de_raw" == "cinnamon" ];        then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "X-Cinnamon" ];      then local check_de_raw="CINNAMON"
-	elif [ "$check_de_raw" == "budgie-desktop" ];  then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "Budgie" ];          then local check_de_raw="BUDGIE"
-	elif [ "$check_de_raw" == "openbox" ];         then local check_de_raw="OPENBOX"
-	elif [ "$check_de_raw" == "sway" ];            then local check_de_raw="SWAY"
-	else local check_de_err="1"; fi
+	if [ "$check_de_raw" == "COSMIC" ];            then check_de_raw="COSMIC"   # COSMIC Desktop
+	elif [ "$check_de_raw" == "GNOME" ];           then check_de_raw="GNOME"    # GNOME Desktop
+	elif [ "$check_de_raw" == "GNOME-Classic" ];   then check_de_raw="GNOME"    # GNOME Classic Desktop
+	elif [ "$check_de_raw" == "GNOME-Flashback" ]; then check_de_raw="GNOME"    # GNOME Flashback Desktop
+	elif [ "$check_de_raw" == "KDE" ];             then check_de_raw="KDE"      # KDE Desktop
+	elif [ "$check_de_raw" == "LXDE" ];            then check_de_raw="LXDE"     # LXDE Desktop
+	elif [ "$check_de_raw" == "LXQt" ];            then check_de_raw="LXQT"     # LXQt Desktop
+	elif [ "$check_de_raw" == "MATE" ];            then check_de_raw="MATE"     # MATE Desktop
+	elif [ "$check_de_raw" == "Razor" ];           then check_de_raw="RAZOR"    # Razor-qt Desktop
+	elif [ "$check_de_raw" == "ROX" ];             then check_de_raw="ROX"      # ROX Desktop
+	elif [ "$check_de_raw" == "TDE" ];             then check_de_raw="TDE"      # Trinity Desktop
+	elif [ "$check_de_raw" == "Unity" ];           then check_de_raw="UNITY"    # Unity Shell
+	elif [ "$check_de_raw" == "XFCE" ];            then check_de_raw="XFCE"     # XFCE Desktop
+	elif [ "$check_de_raw" == "EDE" ];             then check_de_raw="EDE"      # EDE Desktop
+	elif [ "$check_de_raw" == "Cinnamon" ];        then check_de_raw="CINNAMON" # Cinnamon Desktop
+	elif [ "$check_de_raw" == "Pantheon" ];        then check_de_raw="PANTHEON" # Pantheon Desktop
+	elif [ "$check_de_raw" == "DDE" ];             then check_de_raw="DDE"      # Deepin Desktop
+	elif [ "$check_de_raw" == "Endless" ];         then check_de_raw="ENDLESS"  # Endless OS desktop
+	elif [ "$check_de_raw" == "Old" ];             then check_de_raw="LEGACY"   # Legacy menu systems
+	elif [ "$check_de_raw" == "plasma" ];          then check_de_raw="KDE" ### Extra names
+	elif [ "$check_de_raw" == "xfce" ];            then check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "xubuntu" ];         then check_de_raw="XFCE"
+	elif [ "$check_de_raw" == "lxde" ];            then check_de_raw="LXDE"
+	elif [ "$check_de_raw" == "mate" ];            then check_de_raw="MATE"
+	elif [ "$check_de_raw" == "ubuntu" ];          then check_de_raw="GNOME"
+	elif [ "$check_de_raw" == "lxqt" ];            then check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "Lubuntu" ];         then check_de_raw="LXQT"
+	elif [ "$check_de_raw" == "cinnamon" ];        then check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "X-Cinnamon" ];      then check_de_raw="CINNAMON"
+	elif [ "$check_de_raw" == "budgie-desktop" ];  then check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "Budgie" ];          then check_de_raw="BUDGIE"
+	elif [ "$check_de_raw" == "openbox" ];         then check_de_raw="OPENBOX"
+	elif [ "$check_de_raw" == "sway" ];            then check_de_raw="SWAY"
+	else check_de_err="1"; fi
 	
 	if [ "$check_de_err" == "1" ]; then
 		_WARNING "$Str_CHECKSYSDE_DE_CHECK" "$Str_CHECKSYSDE_XDG_INFO_INCORRECT"
 		
-		if xfce4-session --version &>/dev/null;    then local check_de_raw="XFCE"
-		elif plasmashell --version &>/dev/null;    then local check_de_raw="KDE"
-		elif plasma-desktop --version &>/dev/null; then local check_de_raw="KDE"
-		elif gnome-shell --version &>/dev/null;    then local check_de_raw="GNOME"
+		if xfce4-session --version &>/dev/null;    then check_de_raw="XFCE"
+		elif plasmashell --version &>/dev/null;    then check_de_raw="KDE"
+		elif plasma-desktop --version &>/dev/null; then check_de_raw="KDE"
+		elif gnome-shell --version &>/dev/null;    then check_de_raw="GNOME"
 		fi
 	fi
 	
@@ -1056,7 +1056,7 @@ function _ABORT() { # Здесь нежелательно использоват
 	# Стандартное сообщение об ошибке если аргументы не были поданы при вызове функции
 	local abort_message="${Font_Red}message not set...${Font_Reset_Color}"
 	# Проверка наличия первого аргумента, если аргумент есть - стандартное сообщение перезаписывается новым
-	if [ -n "$1" ]; then local abort_message="$1"; fi
+	if [ -n "$1" ]; then abort_message="$1"; fi
 	
 	# Расширенная проверка ошибок
 	if [ "$abort_message" == "funcerr" ] && [ -n "$2" ] && [ -n "$3" ]; then
@@ -1093,8 +1093,8 @@ $Header
 function _ERROR() {
 	local err_first="Empty Error Title"
 	local err_second="No description..."
-	if [ -n "$1" ]; then local err_first="$1"; fi
-	if [ -n "$2" ]; then local err_second="$2"; fi
+	if [ -n "$1" ]; then err_first="$1"; fi
+	if [ -n "$2" ]; then err_second="$2"; fi
 	List_Errors="${List_Errors}\n   $err_first: $err_second"
 }
 
@@ -1102,8 +1102,8 @@ function _ERROR() {
 function _WARNING() {
 	local warn_first="Empty Warning Title"
 	local warn_second="No description."
-	if [ -n "$1" ]; then local warn_first="$1"; fi
-	if [ -n "$2" ]; then local warn_second="$2"; fi
+	if [ -n "$1" ]; then warn_first="$1"; fi
+	if [ -n "$2" ]; then warn_second="$2"; fi
 	List_Warnings="${List_Warnings}\n   $warn_first: $warn_second"
 }
 
@@ -1382,10 +1382,10 @@ function _PREPARE_INPUT_FILES_GREP() {
 	local prepare_error="false"
 	
 	if [ -n "$1" ] && [ -n "$2" ]; then
-		local prepare_text="$1"
-		local prepare_path="$2"
+		prepare_text="$1"
+		prepare_path="$2"
 	else
-		local prepare_error="true"
+		prepare_error="true"
 		_WARNING "PREPARE_INPUT_FILES_GREP" "not enough arguments for the function to work."
 	fi
 	
@@ -1429,7 +1429,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 	
 	while [ "$All_Renamed" == "false" ]; do
 		if find "$Temp_Dir/" -name "UNIQUE_APP_FOLDER_NAME*" | sed -e "p;s~UNIQUE_APP_FOLDER_NAME~$Unique_App_Folder_Name~" | xargs -n2 mv &> /dev/null; then
-			local All_Renamed="true"
+			All_Renamed="true"
 		fi
 	done
 	
@@ -1458,9 +1458,9 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 	
 	IFS=$OLD_IFS
 	
-	for file in "${!Files_Menu[@]}"; do local arr_3[file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
-	for file in "${!Files_Menu_Dir[@]}"; do local arr_4[file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
-	for file in "${!Files_Menu_Apps[@]}"; do local arr_5[file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
+	for file in "${!Files_Menu[@]}"; do arr_3[file]="$Output_Menu_Files/${Files_Menu[$file]}"; done
+	for file in "${!Files_Menu_Dir[@]}"; do arr_4[file]="$Output_Menu_DDir/${Files_Menu_Dir[$file]}"; done
+	for file in "${!Files_Menu_Apps[@]}"; do arr_5[file]="$Output_Menu_Apps/${Files_Menu_Apps[$file]}"; done
 	
 	Output_Files_All=("$Output_Install_Dir" "${arr_0[@]}" "${arr_1[@]}" "${arr_2[@]}" "${arr_3[@]}" "${arr_4[@]}" "${arr_5[@]}")
 	
@@ -1476,7 +1476,7 @@ function _CHECK_OUTPUTS() { # -= (15) =-
 	local arr_files_detected=()
 	
 	for file in "${!Output_Files_All[@]}"; do
-		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_detected[file]="${Output_Files_All[$file]}"; local check_outputs_error="true"; fi
+		if [ -e "${Output_Files_All[$file]}" ]; then arr_files_detected[file]="${Output_Files_All[$file]}"; check_outputs_error="true"; fi
 	done
 	
 	if [ "$check_outputs_error" == "true" ] && [ "$MODE_UPDATE" == "false" ]; then

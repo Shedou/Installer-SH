@@ -4,7 +4,7 @@
 	<Menu><!-- apps category -->
 		<Name>apps</Name>
 		<Menu><!-- SubMenu -->
-			<Name>MENU_DIRECTORY_NAME</Name>
+			<Name>UNIQUE_APP_BASENAME</Name>
 			<Directory>apps/UNIQUE_APP_FOLDER_NAME/UNIQUE_APP_FOLDER_NAME.directory</Directory>
 			<Include>
 				<Category>UNIQUE_APP_FOLDER_NAME</Category>
@@ -13,7 +13,7 @@
 				-->
 			</Include>
 			<Menu><!-- Service -->
-				<Name>MENU_DIRECTORY_NAME-Service</Name>
+				<Name>UNIQUE_APP_BASENAME-Service</Name>
 				<Directory>apps/UNIQUE_APP_FOLDER_NAME/UNIQUE_APP_FOLDER_NAME-Service.directory</Directory>
 				<Include>
 					<Category>UNIQUE_APP_FOLDER_NAME-Service</Category>

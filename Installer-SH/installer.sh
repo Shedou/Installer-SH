@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
-ScriptVersion="2.8"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
+ScriptVersion="2.9"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 CurrentArchitecture="Undefined"; CurrentArchitecture="$(uname -m)"; CurrentArchitectureNormalized="x32 or x64"
 CurrentOperatingSystem="Undefined"; CurrentOperatingSystem="$(uname -s)" # Linux / FreeBSD
@@ -27,7 +27,7 @@ function _MAIN() {
 function _INSTALLER_SETTINGS() { # -= (2) =-
 	# Archives MD5 Hash. Necessary for integrity checking. Generated automatically when packing archives (installer.sh -arcpack / -apk).
 	Archive_MD5_Hash_ProgramFiles="a08cd9a3b2a997fb03e636419b8b295f"
-	Archive_MD5_Hash_SystemFiles="459c8c41e84a6c088c8a7c36c9fab5c3"
+	Archive_MD5_Hash_SystemFiles="27e1bd1fc9d185683cd437914603d755"
 	
 	# For applications that have executable files for different platforms and architectures (Linux / FreeBSD).
 	# Disables architecture mismatch warnings. Disables cleaning of unnecessary files in the "tools/7zip" directory (if TarXZ is used).
@@ -55,20 +55,24 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	
 	# WARNING! Do not use special characters or spaces here!
 	# WARNING! Don't use capital letters unless necessary!
-	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
-	Unique_App_Folder_Name="installer-sh-28" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Base_Name="installer-sh"               #=> UNIQUE_APP_BASENAME
+	Unique_App_Folder_Name="$Unique_App_Base_Name-28" #=> UNIQUE_APP_FOLDER_NAME
 	# GOOD: ex-app-16, exapp-16 | BAD: Ex&app-16, ExApp 16...
-	# Unique name of the output directory.
+	# 
+	# Unique_App_Base_Name - the program's base name.
+	#  Different versions of the program with the same base name will be placed in the same section of the application menu.
+	# Unique_App_Folder_Name - the name of the directory in which the program will be installed.
+	# WARNING! This name is also used as a template for "bin" files in the "/usr/bin" or "/home/USER/.local/bin" directory.
 
  ######### - ------------------- - #########
  ######### - Package Information - #########
  ######### - ------------------- - #########
 
-AppVersion="2.8" # Application version
+AppVersion="2.9" # Application version
 
 Info_Name="Installer-SH"
 Info_Version="v$AppVersion"
-Info_Release_Date="2026-05-xx"
+Info_Release_Date="2026-06-xx"
 Info_Category="Other"
  # Specify the compatibility of the program, not the installation package!
 Info_Platform="Linux / FreeBSD - Chimbalix, Debian 7+, Fedora 20+ and more..." # (Target App compatibility, not the script)
@@ -1395,10 +1399,11 @@ function _PREPARE_INPUT_FILES_GREP() {
 	fi
 	
 	if [ "$prepare_error" == "false" ]; then 
+		local EscapedPath="${prepare_path//&/\\&}"
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-			find "$Temp_Dir" -type f -exec sed -i "" "s~$prepare_text~$prepare_path~g" {} +
+			find "$Temp_Dir" -type f -exec sed -i "" "s~$prepare_text~$EscapedPath~g" {} +
 		else
-			find "$Temp_Dir" -type f -exec sed -i "s~$prepare_text~$prepare_path~g" {} +
+			find "$Temp_Dir" -type f -exec sed -i "s~$prepare_text~$EscapedPath~g" {} +
 		fi
 	fi
 }
@@ -1425,6 +1430,7 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 	_PREPARE_INPUT_FILES_GREP "PROGRAM_UNINSTALLER_ICON" "$Program_Uninstaller_Icon"
 	_PREPARE_INPUT_FILES_GREP "ADDITIONAL_CATEGORIES" "$Additional_Categories"
 	_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_NAME" "$Menu_Directory_Name"
+	_PREPARE_INPUT_FILES_GREP "UNIQUE_APP_BASENAME" "$Unique_App_Base_Name"
 	_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
 	_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_SERVICE_ICON" "$Menu_Directory_Service_Icon"
 	

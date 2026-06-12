@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
  # LICENSE for this script is at the end of this file
  # FreeSpace=$(df -m "$Out_InstallDir" | grep "/" | awk '{print $4}')\
+if [ "$(id -u)" -eq 0 ]; then echo -e "Please! Do not use sudo or the root account to run the installer!"; exit 1; fi
 ScriptVersion="2.9"; LocaleVersion="2.5" # Versions... DON'T TOUCH THIS!
 Arguments=("$@"); ArgumentsString=""; for i in "${!Arguments[@]}"; do ArgumentsString="$ArgumentsString ${Arguments[$i]}"; done
 CurrentArchitecture="Undefined"; CurrentArchitecture="$(uname -m)"; CurrentArchitectureNormalized="x32 or x64"

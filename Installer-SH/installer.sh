@@ -1449,10 +1449,10 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 	
 	IFS=''
 	
-	local Files_Bin_Dir=();   while read -r line; do Files_Bin_Dir+=("$line");   done < <(ls "$Input_Bin_Dir")
-	local Files_Menu=();      while read -r line; do Files_Menu+=("$line");      done < <(ls "$Input_Menu_Files_Dir")
-	local Files_Menu_Dir=();  while read -r line; do Files_Menu_Dir+=("$line");  done < <(ls "$Input_Menu_Desktop_Dir")
-	local Files_Menu_Apps=(); while read -r line; do Files_Menu_Apps+=("$line"); done < <(ls "$Input_Menu_Apps_Dir")
+	local Files_Bin_Dir=();   for file in "$Input_Bin_Dir"/*;          do [ -e "$file" ] && Files_Bin_Dir+=("$(basename "$file")"); done
+	local Files_Menu=();      for file in "$Input_Menu_Files_Dir"/*;   do [ -e "$file" ] && Files_Menu+=("$(basename "$file")"); done
+	local Files_Menu_Dir=();  for file in "$Input_Menu_Desktop_Dir"/*; do [ -e "$file" ] && Files_Menu_Dir+=("$(basename "$file")"); done
+	local Files_Menu_Apps=(); for file in "$Input_Menu_Apps_Dir"/*;    do [ -e "$file" ] && Files_Menu_Apps+=("$(basename "$file")"); done
 	
 	local arr_0=(); local arr_1=(); local arr_2=(); local arr_3=(); local arr_4=(); local arr_5=()
 	

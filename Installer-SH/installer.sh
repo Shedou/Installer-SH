@@ -1430,15 +1430,23 @@ function _PREPARE_INPUT_FILES() { # -= (14) =-
 	_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_ICON" "$Menu_Directory_Icon"
 	_PREPARE_INPUT_FILES_GREP "MENU_DIRECTORY_SERVICE_ICON" "$Menu_Directory_Service_Icon"
 	
-	local All_Renamed="false"
-	
-	while [ "$All_Renamed" == "false" ]; do
-		if find "$Temp_Dir/" -name "UNIQUE_APP_FOLDER_NAME*" | sed -e "p;s~UNIQUE_APP_FOLDER_NAME~$Unique_App_Folder_Name~" | xargs -n2 mv &> /dev/null; then
-			All_Renamed="true"
-		fi
-	done
-	
 	local OLD_IFS="$IFS"
+	IFS=$'\0'
+	
+	function process_objects() {
+		local type="$1"
+		find "$Temp_Dir" -type "$type" -print0 | while read -r -d $'\0' tmpdir_old_path; do
+			local tmpdir_new_path="${tmpdir_old_path//UNIQUE_APP_FOLDER_NAME/$Unique_App_Folder_Name}"
+			if [ "$tmpdir_old_path" != "$tmpdir_new_path" ]; then
+				mv "$tmpdir_old_path" "$tmpdir_new_path"
+			fi
+		done
+		IFS="$OLD_IFS"
+	}
+	
+	process_objects "d"
+	process_objects "f"
+	
 	IFS=''
 	
 	local Files_Bin_Dir=();   while read -r line; do Files_Bin_Dir+=("$line");   done < <(ls "$Input_Bin_Dir")
@@ -1696,9 +1704,9 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
+				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}\"$EscapedFile\"~" "$Output_Uninstaller"
 			else
-				sudo sed -i "s~FilesToDelete=(~&\n$EscapedFile~" "$Output_Uninstaller"
+				sudo sed -i "s~FilesToDelete=(~&\n\"$EscapedFile\"~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
@@ -1721,9 +1729,9 @@ function _PREPARE_UNINSTALLER_USER() {
 			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
+				sed -i "" "s~FilesToDelete=(~&\\${NewLine}\"$EscapedFile~\"" "$Output_Uninstaller"
 			else
-				sed -i "s~FilesToDelete=(~&\n$EscapedFile~" "$Output_Uninstaller"
+				sed -i "s~FilesToDelete=(~&\n\"$EscapedFile\"~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!

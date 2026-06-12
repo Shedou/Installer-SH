@@ -1396,11 +1396,9 @@ function _PREPARE_INPUT_FILES_GREP() {
 	
 	if [ "$prepare_error" == "false" ]; then 
 		if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "" "s|$prepare_text|$prepare_path|g" &> /dev/null
-			find "$Temp_Dir" -type f -exec sed -i "" "s|$prepare_text|$prepare_path|g" {} +
+			find "$Temp_Dir" -type f -exec sed -i "" "s~$prepare_text~$prepare_path~g" {} +
 		else
-			#grep -rl "$prepare_text" "$Temp_Dir" | xargs sed -i "s|$prepare_text|$prepare_path|g" &> /dev/null
-			find "$Temp_Dir" -type f -exec sed -i "s|$prepare_text|$prepare_path|g" {} +
+			find "$Temp_Dir" -type f -exec sed -i "s~$prepare_text~$prepare_path~g" {} +
 		fi
 	fi
 }

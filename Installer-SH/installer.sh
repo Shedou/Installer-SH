@@ -1693,11 +1693,12 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
+			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
+				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
 			else
-				sudo sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+				sudo sed -i "s~FilesToDelete=(~&\n$EscapedFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!
@@ -1717,11 +1718,12 @@ function _PREPARE_UNINSTALLER_USER() {
 	if [ -e "$Output_Uninstaller" ]; then
 		for filename in "${!Output_Files_All[@]}"; do
 			local CurrentFile="${Output_Files_All[$filename]}"
+			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$CurrentFile~" "$Output_Uninstaller"
+				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
 			else
-				sed -i "s~FilesToDelete=(~&\n$CurrentFile~" "$Output_Uninstaller"
+				sed -i "s~FilesToDelete=(~&\n$EscapedFile~" "$Output_Uninstaller"
 			fi
 			
 			# КОСТЫЛЬ ДЛЯ КРИВЫХ ДИСТРИБУТИВОВ, У КОТОРЫХ СЛЕТАЮТ ПРАВА ДОСТУПА К ФАЙЛУ ПОСЛЕ РАБОТЫ УТИЛИТЫ "SED"!

@@ -84,7 +84,7 @@ Info_Licensing="Freeware - Open Source (MIT)
     Trialware - 30 days free, Proprietary (Other License Name)"
 Info_Maintainer="Chimbal (Андрей Цымбалов)" # Package creator
 Info_Developer="Chimbal (Андрей Цымбалов)"  # Software developer
-Info_URL="https://github.com/Shedou/Chimbalix-Software-Catalog
+Info_URL="https://github.com/Shedou/Installer-SH
        https://overclockers.ru/blog/Hard-Workshop"
 
  # Use this description if there is no suitable localization file.
@@ -104,7 +104,6 @@ Info_Description_Default="\
  # Use the variable names given in the comments to simplify the preparation of menu files.
 
 Additional_Categories="chi-other;Utility;Education;" #=> ADDITIONAL_CATEGORIES
- # -=== Chimbalix 24.4+ main categories:
  # Check the "Menu-Categories.ods" table for more information
  # (file will be removed when using the -clean / -cn option).
 
@@ -468,6 +467,7 @@ function _CLEAN() { # Localization CANNOT be used here because the "_SET_LOCALE"
 	if [ "$cleaning_confirmation" == "y" ] || [ "$cleaning_confirmation" == "yes" ]; then
 		_CLEAN_FILE "$Path_To_Script/EULA-example.txt"
 		_CLEAN_FILE "$Path_To_Script/Menu-Categories.ods"
+		_CLEAN_FILE "$Path_To_Script/for-test-batch-install.sh"
 		_CLEAN_FILE "$Path_To_Script/for-tests-in-VM-batch-install.sh"
 		_CLEAN_FILE "$Path_To_Script/for-tests-in-VM-create-PortSoft-in-RAM.sh"
 		_CLEAN_FILE "$Path_Installer_Data/program_files"
@@ -1985,7 +1985,8 @@ function _SET_LOCALE_DEFAULT() {
 }
 
 function _SET_LOCALE() { # -= (7) =-
-	local Language="${LANG%%.*}"
+	if [ -z "$LANG" ]; then Language="Default"
+	else local Language="${LANG%%.*}"; fi
 	local Locale_File="$Path_To_Script/locales/$Language"
 	
 	_SET_LOCALE_DEFAULT

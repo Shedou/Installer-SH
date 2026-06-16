@@ -57,7 +57,7 @@ function _INSTALLER_SETTINGS() { # -= (2) =-
 	# WARNING! Do not use special characters or spaces here!
 	# WARNING! Don't use capital letters unless necessary!
 	Unique_App_Base_Name="installer-sh"               #=> UNIQUE_APP_BASENAME
-	Unique_App_Folder_Name="$Unique_App_Base_Name-28" #=> UNIQUE_APP_FOLDER_NAME
+	Unique_App_Folder_Name="$Unique_App_Base_Name-29" #=> UNIQUE_APP_FOLDER_NAME
 	# GOOD: ex-app-16, exapp-16 | BAD: Ex&app-16, ExApp 16...
 	# 
 	# Unique_App_Base_Name - the program's base name.

@@ -765,7 +765,7 @@ function _INIT_GLOBAL_PATHS() { # -= (9) =-
 		Install_Path_Bin_System="/usr/local/bin"
 	fi
 	if [ ! -e "$SysEtcPath/xdg" ]; then SysEtcPath="/usr/local/etc"; fi
-	if [ ! -e "$SysUsrPath/applications" ] || [ ! -e "$SysEtcPath/xdg" ]; then _ABORT "Try installing in User mode..."; fi
+	if [ ! -e "$SysUsrPath/applications" ] || [ ! -e "$SysEtcPath/xdg" ]; then _WARNING "Distro doesn't follow XDG specifications fully?"; fi
 	
 	Out_System_Helpers_Dir="$SysUsrPath/xfce4/helpers"
 	Out_System_Menu_Files="$SysEtcPath/xdg/menus/applications-merged"

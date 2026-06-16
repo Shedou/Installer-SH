@@ -1709,7 +1709,7 @@ function _PREPARE_UNINSTALLER_SYSTEM() {
 			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}\"$EscapedFile\"~" "$Output_Uninstaller"
+				sudo sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
 			else
 				sudo sed -i "s~FilesToDelete=(~&\n\"$EscapedFile\"~" "$Output_Uninstaller"
 			fi
@@ -1734,7 +1734,7 @@ function _PREPARE_UNINSTALLER_USER() {
 			local EscapedFile="${CurrentFile//&/\\&}"
 			
 			if [ "$CurrentOperatingSystem" == "FreeBSD" ]; then
-				sed -i "" "s~FilesToDelete=(~&\\${NewLine}\"$EscapedFile~\"" "$Output_Uninstaller"
+				sed -i "" "s~FilesToDelete=(~&\\${NewLine}$EscapedFile~" "$Output_Uninstaller"
 			else
 				sed -i "s~FilesToDelete=(~&\n\"$EscapedFile\"~" "$Output_Uninstaller"
 			fi
